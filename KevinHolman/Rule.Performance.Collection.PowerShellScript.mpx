@@ -1,0 +1,157 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!-- In this fragment you need to replace:
+
+##CompanyID##
+##AppName##
+##ClassID##
+##ObjectName##
+##InstanceName##
+##CounterName##
+
+	This fragment includes a RULE that uses a PowerShell script to collect data and output/map it to Performance data for collection
+	ObjectName, CounterName, and InstanceName you can make up in this case, as we are mapping the data from PowerShell to a made up Performance Counter
+-->
+
+<!-- This fragment depends on references:
+	RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library"
+	RequiredReference: Alias="System", ID="System.Library"	
+	RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+	RequiredReference: Alias="Perf", ID="System.Performance.Library"
+	RequiredReference: Alias="MSDL", ID="Microsoft.SystemCenter.DataWarehouse.Library"
+--> 
+  <TypeDefinitions>
+    <ModuleTypes>
+      <DataSourceModuleType ID="##CompanyID##.##AppName##.PowerShell.Script.Perf.DS" Accessibility="Internal" Batching="false">
+        <Configuration>
+          <xsd:element type="xsd:integer" name="TimeoutSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element type="xsd:integer" name="IntervalSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+          <OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <DataSource ID="Scheduler" TypeID="System!System.Scheduler">
+                <Scheduler>
+                  <SimpleReccuringSchedule>
+                    <Interval Unit="Seconds">$Config/IntervalSeconds$</Interval>
+                  </SimpleReccuringSchedule>
+                  <ExcludeDates />
+                </Scheduler>
+              </DataSource>
+              <ProbeAction ID="Probe" TypeID="##CompanyID##.##AppName##.PowerShell.Script.Perf.PA">
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              </ProbeAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="Probe">
+                <Node ID="Scheduler" />
+              </Node>
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.PropertyBagData</OutputType>
+      </DataSourceModuleType>
+      <ProbeActionModuleType ID="##CompanyID##.##AppName##.PowerShell.Script.Perf.PA" Accessibility="Internal" Batching="false" PassThrough="false">
+        <Configuration>
+          <xsd:element type="xsd:integer" name="TimeoutSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <ProbeAction ID="Probe" TypeID="Windows!Microsoft.Windows.PowerShellPropertyBagTriggerOnlyProbe">
+                <ScriptName>##CompanyID##.##AppName##.PowerShell.Script.Perf.PA.ps1</ScriptName>
+                <ScriptBody>#=================================================================================
+#  Description of Script here
+#=================================================================================
+
+#=================================================================================
+# Constants section - modify stuff here:
+
+# Assign script name variable for use in event logging
+$ScriptName = ""##CompanyID##.##AppName##.PowerShell.Script.Perf.PA.ps1""
+#=================================================================================
+
+# Gather script start time
+$StartTime = Get-Date             
+
+# Gather who the script is running as
+$whoami = whoami
+
+# Load MOMScript API and Propertybag for output
+$momapi = New-Object -comObject MOM.ScriptAPI
+$bag = $api.CreatePropertyBag()
+
+# Log an event for the script starting			  
+$momapi.LogScriptEvent($ScriptName,1234,0, "Script is starting. Running, as ($whoami).")
+
+# Main body of the script
+#=================================================================================
+#Setting a Value to an arbitrary number for example purposes                  
+$Value = "347"
+				  
+#Adding the value from the script into the propertybag
+$bag.AddValue("Value",$Value)
+#=================================================================================
+# End Main body of the script
+
+#Log an event for script ending and total execution time.
+$EndTime = Get-Date
+$ScriptTime = ($EndTime - $StartTime).TotalSeconds
+$momapi.LogScriptEvent($ScriptName,1234,0,"Script has completed.  Runtime was ($ScriptTime) seconds.")
+
+#Output the propertybag  
+$bag
+</ScriptBody>
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              </ProbeAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="Probe" />
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.PropertyBagData</OutputType>
+        <TriggerOnly>true</TriggerOnly>
+      </ProbeActionModuleType>
+    </ModuleTypes>
+  </TypeDefinitions>
+  <Monitoring>
+    <Rules>
+      <Rule ID="##CompanyID##.##AppName##.PowerShell.Script.Perf.Rule" Enabled="true" Target="##ClassID##" ConfirmDelivery="false" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>PerformanceCollection</Category>
+        <DataSources>
+          <DataSource ID="DS" TypeID="##CompanyID##.##AppName##.PowerShell.Script.Perf.DS">
+            <TimeoutSeconds>120</TimeoutSeconds>
+            <IntervalSeconds>900</IntervalSeconds>
+          </DataSource>
+        </DataSources>
+        <ConditionDetection ID="System.Performance.DataGenericMapper" TypeID="Perf!System.Performance.DataGenericMapper">
+          <ObjectName>##ObjectName##</ObjectName>
+          <CounterName>##CounterName##</CounterName>
+          <InstanceName>##InstanceName##</InstanceName>
+          <Value>$Data/Property[@Name='Value']$</Value>
+        </ConditionDetection>
+        <WriteActions>
+          <WriteAction ID="Microsoft.SystemCenter.CollectPerformanceData" TypeID="SC!Microsoft.SystemCenter.CollectPerformanceData" />  <!-- Write to OpsDB -->
+          <WriteAction ID="Microsoft.SystemCenter.DataWarehouse.PublishPerformanceData" TypeID="MSDL!Microsoft.SystemCenter.DataWarehouse.PublishPerformanceData" />  <!-- Write to DW -->
+        </WriteActions>
+      </Rule>
+    </Rules>
+  </Monitoring>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>
+        <DisplayString ElementID="##CompanyID##.##AppName##.PowerShell.Script.Perf.Rule">
+          <Name>##CompanyID## ##AppName## PowerShell Script Perf Rule</Name>
+          <Description></Description>
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>  
+</ManagementPackFragment>

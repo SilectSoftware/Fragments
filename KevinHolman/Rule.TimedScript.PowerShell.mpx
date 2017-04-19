@@ -1,0 +1,122 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!-- In this fragment you need to replace:
+
+##CompanyID##
+##AppName##
+##ClassID##
+
+	This fragment includes a rule that runs a PowerShell script on a timer
+-->
+	
+<!-- This fragment depends on references:
+	RequiredReference: Alias="System", ID="System.Library"
+	RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+--> 
+  <Monitoring>
+    <Rules>
+      <Rule ID="##CompanyID##.##AppName##.TimedPowerShell.Rule" Enabled="true" Target="##ClassID##" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>Custom</Category>
+        <DataSources>
+          <DataSource ID="Scheduler" TypeID="System!System.Scheduler">
+            <Scheduler>
+              <SimpleReccuringSchedule>
+                <Interval Unit="Seconds">3600</Interval>
+              </SimpleReccuringSchedule>
+              <ExcludeDates />
+            </Scheduler>
+          </DataSource>		  
+        </DataSources>
+        <WriteActions>
+          <WriteAction ID="PSWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
+            <ScriptName>##CompanyID##.##AppName##.TimedPowerShell.Rule.ps1</ScriptName>
+            <ScriptBody>#=================================================================================
+#  Description of Script here
+#=================================================================================
+
+#=================================================================================
+# Constants section - modify stuff here:
+
+# Assign script name variable for use in event logging
+$ScriptName = "##CompanyID##.##AppName##.TimedPowerShell.Rule.ps1"
+#=================================================================================
+
+# Gather script start time
+$StartTime = Get-Date             
+
+# Gather who the script is running as
+$whoami = whoami
+
+# Load MOMScript API
+$momapi = New-Object -comObject MOM.ScriptAPI
+
+# Log an event for the script starting			  
+$momapi.LogScriptEvent($ScriptName,1234,0, "Script is starting. Running, as ($whoami).")
+
+$MServer = ""
+
+# Clear any previous errors
+if($Error)
+  {
+  $Error.Clear()
+  }
+
+
+#=================================================================================
+# Import the OperationsManager module and connect to the management group
+# THIS SECTION IS OPTIONAL - delete if you dont need to get data from SCOM SDK
+Try   
+  {
+  $SCOMPowerShellKey = "HKLM:\SOFTWARE\Microsoft\System Center Operations Manager\12\Setup\Powershell\V2"
+  $SCOMModulePath = Join-Path (Get-ItemProperty $SCOMPowerShellKey).InstallDirectory "OperationsManager"
+  Import-module $SCOMModulePath
+  }
+Catch 
+  { 
+  $momapi.LogScriptEvent($ScriptName,1234,2, "Unable to load the OperationsManager module, Error is: $error") 
+  }
+Try   
+  {
+  New-DefaultManagementGroupConnection $MServer
+  }
+Catch 
+  {
+  $momapi.LogScriptEvent($ScriptName,1234,2, "Unable to connect to the management server: $MServer.  Error when calling New-DefaultManagementGroupConnection.  Error is: $error")
+  }	
+#=================================================================================
+
+
+# Clear any previous errors
+if($Error)
+  {
+  $Error.Clear()
+  }
+
+#=================================================================================
+# MAIN body of your script
+
+
+
+#=================================================================================
+
+#Log an event for script ending and total execution time.
+$EndTime = Get-Date
+$ScriptTime = ($EndTime - $StartTime).TotalSeconds
+$momapi.LogScriptEvent($ScriptName,1234,0,"Script has completed.  Runtime was ($ScriptTime) seconds.")
+</ScriptBody>
+            <TimeoutSeconds>120</TimeoutSeconds>
+          </WriteAction>
+        </WriteActions>
+      </Rule>
+    </Rules>
+  </Monitoring>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>
+        <DisplayString ElementID="##CompanyID##.##AppName##.TimedPowerShell.Rule">
+          <Name>##CompanyID## ##AppName## TimedPowerShell Rule</Name>
+          <Description />
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks> 
+</ManagementPackFragment>

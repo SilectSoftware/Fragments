@@ -1,0 +1,269 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!-- In this fragment you need to replace:
+
+##CompanyID##
+##AppName##
+##ClassID##
+
+	This fragment includes a Monitor which runs a timed PowerShell script as the DataSource
+	The script calls a SQL query against a database and the output submitted by the script in a propertybag.
+-->
+
+<!-- This fragment depends on references:  
+	RequiredReference: Alias="System", ID="System.Library"
+	RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+	RequiredReference: Alias="Health", ID="System.Health.Library"
+--> 
+  <TypeDefinitions>
+    <ModuleTypes>
+      <DataSourceModuleType ID="##CompanyID##.##AppName##.TimedScript.PowerShell.SQLQuery.Monitor.DataSourceModuleType" Accessibility="Internal" Batching="false">
+        <Configuration>
+          <xsd:element type="xsd:integer" name="TimeoutSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element type="xsd:integer" name="IntervalSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+          <OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <DataSource ID="Scheduler" TypeID="System!System.Scheduler">
+                <Scheduler>
+                  <SimpleReccuringSchedule>
+                    <Interval Unit="Seconds">$Config/IntervalSeconds$</Interval>
+                  </SimpleReccuringSchedule>
+                  <ExcludeDates />
+                </Scheduler>
+              </DataSource>
+              <ProbeAction ID="Probe" TypeID="##CompanyID##.##AppName##.TimedScript.PowerShell.SQLQuery.Monitor.ProbeActionModuleType">
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              </ProbeAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="Probe">
+                <Node ID="Scheduler" />
+              </Node>
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.PropertyBagData</OutputType>
+      </DataSourceModuleType>
+      <ProbeActionModuleType ID="##CompanyID##.##AppName##.TimedScript.PowerShell.SQLQuery.Monitor.ProbeActionModuleType" Accessibility="Internal" Batching="false" PassThrough="false">
+        <Configuration>
+          <xsd:element type="xsd:integer" name="TimeoutSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <ProbeAction ID="Probe" TypeID="Windows!Microsoft.Windows.PowerShellPropertyBagTriggerOnlyProbe">
+                <ScriptName>##CompanyID##.##AppName##.TimedScript.PowerShell.SQLQuery.Monitor.ProbeActionModuleType.ps1</ScriptName>
+                <ScriptBody>#=================================================================================
+#  Description of Script here
+#=================================================================================
+
+#=================================================================================
+# Constants section - modify stuff here:
+$SQLServer = "sqlservername.domain.com"
+$SQLDBName =  "OperationsManager"
+$SqlQuery = "SELECT count(*) from AlertView"
+# Assign script name variable for use in event logging
+$ScriptName = "##CompanyID##.##AppName##.TimedScript.PowerShell.SQLQuery.Monitor.ProbeActionModuleType.ps1"
+#=================================================================================
+
+# Gather script start time
+$StartTime = Get-Date             
+
+# Gather who the script is running as
+$WhoAmI = whoami
+
+# Load MomScript API and PropertyBag function 
+$momapi = new-object -comObject 'MOM.ScriptAPI'
+$bag = $momapi.CreatePropertyBag()
+
+#Log script event that we are starting task
+$momapi.LogScriptEvent($ScriptName,1234,0, "Starting script.  Running as ($whoami)")
+
+
+# Connect to and then Query the database
+  $SqlConnection = New-Object System.Data.SqlClient.SqlConnection
+  $SqlConnection.ConnectionString = "Server=$SQLServer;Database=$SQLDBName;Integrated Security=True"
+  $SqlCmd = New-Object System.Data.SqlClient.SqlCommand
+  $SqlCmd.CommandText = $SqlQuery
+  $SqlCmd.Connection = $SqlConnection
+  $SqlAdapter = New-Object System.Data.SqlClient.SqlDataAdapter
+  $SqlAdapter.SelectCommand = $SqlCmd
+  $ds = New-Object System.Data.DataSet
+  $SqlAdapter.Fill($ds) | Out-Null
+  $SqlConnection.Close()
+
+# Set the output to a variable
+$AlertCount = $ds.Tables[0] | select -ExpandProperty Column1
+
+# If you had multiple rows and columns to evaluate you would do something like this
+#
+# foreach ($row in $ds.Tables[0].Rows)
+#  {
+#    $VAR1 = $row[0].ToString().Trim()
+#    $VAR2 = $row[1].ToString().Trim()
+#
+
+# Log the output of the SQL query
+$momapi.LogScriptEvent($ScriptName,1234,0, "The number of Alerts are ($AlertCount)")
+
+#Log an event for script ending and total execution time.
+$EndTime = Get-Date
+$ScriptTime = ($EndTime - $StartTime).TotalSeconds
+$momapi.LogScriptEvent($ScriptName,1234,0,"Script has completed.  Runtime was ($ScriptTime) seconds.")
+
+#Output the PropertyBag
+$bag.AddValue('AlertCount',$AlertCount)
+$bag
+</ScriptBody>
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              </ProbeAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="Probe" />
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.PropertyBagData</OutputType>
+        <TriggerOnly>true</TriggerOnly>
+      </ProbeActionModuleType>
+    </ModuleTypes>
+    <MonitorTypes>
+      <UnitMonitorType ID="##CompanyID##.##AppName##.TimedScript.PowerShell.SQLQuery.Monitor.UnitMonitorType" Accessibility="Internal">
+        <MonitorTypeStates>
+          <MonitorTypeState ID="GoodCondition" NoDetection="false" />
+          <MonitorTypeState ID="BadCondition" NoDetection="false" />
+        </MonitorTypeStates>
+        <Configuration>
+          <xsd:element type="xsd:integer" name="TimeoutSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element type="xsd:integer" name="IntervalSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element type="xsd:integer" name="AlertThreshold" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />		  
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+          <OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
+          <OverrideableParameter ID="AlertThreshold" Selector="$Config/AlertThreshold$" ParameterType="int" />		  
+        </OverrideableParameters>
+        <MonitorImplementation>
+          <MemberModules>
+            <DataSource ID="DataSource" TypeID="##CompanyID##.##AppName##.TimedScript.PowerShell.SQLQuery.Monitor.DataSourceModuleType">
+              <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              <IntervalSeconds>$Config/IntervalSeconds$</IntervalSeconds>
+            </DataSource>
+            <ProbeAction ID="Probe" TypeID="##CompanyID##.##AppName##.TimedScript.PowerShell.SQLQuery.Monitor.ProbeActionModuleType">
+              <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+            </ProbeAction>
+            <ConditionDetection ID="GoodConditionFilter" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="Double">Property[@Name='AlertCount']</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Less</Operator>
+                  <ValueExpression>
+                    <Value Type="Double">$Config/AlertThreshold$</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </ConditionDetection>
+            <ConditionDetection ID="BadConditionFilter" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="Double">Property[@Name='AlertCount']</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Greater</Operator>
+                  <ValueExpression>
+                    <Value Type="String">$Config/AlertThreshold$</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </ConditionDetection>
+          </MemberModules>
+          <RegularDetections>
+            <RegularDetection MonitorTypeStateID="GoodCondition">
+              <Node ID="GoodConditionFilter">
+                <Node ID="DataSource" />
+              </Node>
+            </RegularDetection>
+            <RegularDetection MonitorTypeStateID="BadCondition">
+              <Node ID="BadConditionFilter">
+                <Node ID="DataSource" />
+              </Node>
+            </RegularDetection>
+          </RegularDetections>
+          <OnDemandDetections>
+            <OnDemandDetection MonitorTypeStateID="GoodCondition">
+              <Node ID="GoodConditionFilter">
+                <Node ID="DataSource" />
+              </Node>
+            </OnDemandDetection>
+            <OnDemandDetection MonitorTypeStateID="BadCondition">
+              <Node ID="BadConditionFilter">
+                <Node ID="DataSource" />
+              </Node>
+            </OnDemandDetection>
+          </OnDemandDetections>
+        </MonitorImplementation>
+      </UnitMonitorType>
+    </MonitorTypes>
+  </TypeDefinitions>
+  <Monitoring>
+    <Monitors>
+      <UnitMonitor ID="##CompanyID##.##AppName##.TimedScript.PowerShell.SQLQuery.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="##CompanyID##.##AppName##.TimedScript.PowerShell.SQLQuery.Monitor.UnitMonitorType" ConfirmDelivery="false">
+        <Category>AvailabilityHealth</Category>
+        <AlertSettings AlertMessage="##CompanyID##.##AppName##.TimedScript.PowerShell.SQLQuery.Monitor.Alert.Message">
+          <AlertOnState>Warning</AlertOnState>
+          <AutoResolve>true</AutoResolve>
+          <AlertPriority>Normal</AlertPriority>
+          <AlertSeverity>Warning</AlertSeverity>
+          <AlertParameters>
+            <AlertParameter1>$Data/Context/Property[@Name='AlertCount']$</AlertParameter1>
+          </AlertParameters>		  
+        </AlertSettings>
+        <OperationalStates>
+          <OperationalState ID="Success" MonitorTypeStateID="GoodCondition" HealthState="Success" />
+          <OperationalState ID="Warning" MonitorTypeStateID="BadCondition" HealthState="Warning" />
+        </OperationalStates>
+        <Configuration>
+          <TimeoutSeconds>120</TimeoutSeconds>
+          <IntervalSeconds>900</IntervalSeconds>
+		  <AlertThreshold>50</AlertThreshold>
+        </Configuration>
+      </UnitMonitor>
+    </Monitors>
+  </Monitoring>
+  <Presentation>
+    <StringResources>
+      <StringResource ID="##CompanyID##.##AppName##.TimedScript.PowerShell.SQLQuery.Monitor.Alert.Message" />
+    </StringResources>
+  </Presentation>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>
+        <DisplayString ElementID="##CompanyID##.##AppName##.TimedScript.PowerShell.SQLQuery.Monitor">
+          <Name>##CompanyID## ##AppName## TimedScript PowerShell SQLQuery Monitor</Name>
+          <Description></Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.TimedScript.PowerShell.SQLQuery.Monitor" SubElementID="Success">
+          <Name>GoodCondition</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.TimedScript.PowerShell.SQLQuery.Monitor" SubElementID="Warning">
+          <Name>BadCondition</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.TimedScript.PowerShell.SQLQuery.Monitor.Alert.Message">
+          <Name>##CompanyID## ##AppName## TimedScript PowerShell SQLQuery Monitor: Failure</Name>
+          <Description>##CompanyID## ##AppName## TimedScript PowerShell Monitor: detected a bad condition
+The output of the SQL Query was {0}</Description>
+        </DisplayString>		
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>

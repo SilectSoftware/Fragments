@@ -1,0 +1,132 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!-- In this fragment you need to replace:
+
+##CompanyID##
+##AppName##
+##ClassID##
+##RegKeyPath##
+##RegKeyPathSanitizeForUseInElementID##
+
+	This fragment includes a Monitor which checks for the existence of a registry Key
+	RegKeyPath - needs to be in the format of "SOFTWARE\Microsoft\CCM" or "SYSTEM\CurrentControlSet\Services\CcmExec" as HKLM is assumed
+	RegKeyPathSanitizeForUseInElementID - needs to be the actual key name or your description of it (NO SPACES or special characters allowed) such as "CcmExec"
+-->
+	
+<!-- This fragment depends on references:
+	RequiredReference: Alias="System", ID="System.Library"
+	RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+	RequiredReference: Alias="Health", ID="System.Health.Library"	
+--> 
+  <TypeDefinitions>
+    <MonitorTypes>
+      <UnitMonitorType ID="##CompanyID##.##AppName##.RegKeyExists.##RegKeyPathSanitizeForUseInElementID##.MonitorType" Accessibility="Public">
+        <MonitorTypeStates>
+          <MonitorTypeState ID="RegKeyExists" NoDetection="false" />
+          <MonitorTypeState ID="RegKeyMissing" NoDetection="false" />
+        </MonitorTypeStates>
+        <Configuration />
+        <MonitorImplementation>
+          <MemberModules>
+            <DataSource ID="RegDS" TypeID="Windows!Microsoft.Windows.RegistryProvider">
+              <ComputerName>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/NetworkName$</ComputerName>
+              <RegistryAttributeDefinitions>
+                <RegistryAttributeDefinition>
+                  <AttributeName>##RegKeyPathSanitizeForUseInElementID##</AttributeName>
+                  <Path>##RegKeyPath##</Path>
+                  <PathType>0</PathType>  <!-- 0=regKey 1=regValue -->
+                  <AttributeType>0</AttributeType>  <!-- 0=CheckIfExists (Boolean) 1=treat data as (String) 2=treat data as (Integer) -->
+                </RegistryAttributeDefinition>
+              </RegistryAttributeDefinitions>
+              <Frequency>3600</Frequency>  <!-- seconds -->
+            </DataSource>
+            <ConditionDetection ID="CDExists" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="Boolean">Values/##RegKeyPathSanitizeForUseInElementID##</XPathQuery>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
+                  </ValueExpression>
+                  <Operator>Equal</Operator>  <!-- Common options for SimpleExpression Operator are "Equal" "NotEqual" "Greater" "Less" "GreaterEqual" "LessEqual" "Like" "NotLike" -->
+                  <ValueExpression>
+                    <Value Type="Boolean">true</Value>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </ConditionDetection>
+            <ConditionDetection ID="CDMissing" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="Boolean">Values/##RegKeyPathSanitizeForUseInElementID##</XPathQuery>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
+                  </ValueExpression>
+                  <Operator>Equal</Operator>  <!-- Common options for SimpleExpression Operator are "Equal" "NotEqual" "Greater" "Less" "GreaterEqual" "LessEqual" "Like" "NotLike" -->
+                  <ValueExpression>
+                    <Value Type="Boolean">false</Value>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </ConditionDetection>
+          </MemberModules>
+          <RegularDetections>
+            <RegularDetection MonitorTypeStateID="RegKeyExists">
+              <Node ID="CDExists">
+                <Node ID="RegDS" />
+              </Node>
+            </RegularDetection>
+            <RegularDetection MonitorTypeStateID="RegKeyMissing">
+              <Node ID="CDMissing">
+                <Node ID="RegDS" />
+              </Node>
+            </RegularDetection>
+          </RegularDetections>
+        </MonitorImplementation>
+      </UnitMonitorType>
+    </MonitorTypes>
+  </TypeDefinitions>
+  <Monitoring>
+    <Monitors>
+      <UnitMonitor ID="##CompanyID##.##AppName##.RegKeyExists.##RegKeyPathSanitizeForUseInElementID##.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.ConfigurationState" Remotable="true" Priority="Normal" TypeID="##CompanyID##.##AppName##.RegKeyExists.##RegKeyPathSanitizeForUseInElementID##.MonitorType" ConfirmDelivery="true">
+        <Category>Custom</Category>
+        <AlertSettings AlertMessage="##CompanyID##.##AppName##.RegKeyExists.##RegKeyPathSanitizeForUseInElementID##.Monitor.Alert.Message">
+          <AlertOnState>Warning</AlertOnState>  <!-- Warning or Error should match OperationalStates below  -->
+          <AutoResolve>true</AutoResolve>
+          <AlertPriority>Normal</AlertPriority>
+          <AlertSeverity>MatchMonitorHealth</AlertSeverity>  <!-- Common options for AlertSeverity are MatchMonitorHealth, Information, Warning, Error -->
+        </AlertSettings>
+        <OperationalStates>
+          <OperationalState ID="Success" MonitorTypeStateID="RegKeyExists" HealthState="Success" />
+          <OperationalState ID="Warning" MonitorTypeStateID="RegKeyMissing" HealthState="Warning" />  <!-- HealthState = Warning or Error -->
+        </OperationalStates>
+        <Configuration />
+      </UnitMonitor>
+    </Monitors>
+  </Monitoring>
+  <Presentation>
+    <StringResources>
+      <StringResource ID="##CompanyID##.##AppName##.RegKeyExists.##RegKeyPathSanitizeForUseInElementID##.Monitor.Alert.Message" />
+    </StringResources>
+  </Presentation>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>
+        <DisplayString ElementID="##CompanyID##.##AppName##.RegKeyExists.##RegKeyPathSanitizeForUseInElementID##.MonitorType">
+          <Name>##CompanyID## ##AppName## RegKeyExists ##RegKeyPathSanitizeForUseInElementID## MonitorType</Name>
+          <Description>Monitor Type to check a registry key existence</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.RegKeyExists.##RegKeyPathSanitizeForUseInElementID##.Monitor">
+          <Name>##CompanyID## ##AppName## RegKeyExists ##RegKeyPathSanitizeForUseInElementID## Monitor</Name>
+          <Description></Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.RegKeyExists.##RegKeyPathSanitizeForUseInElementID##.Monitor" SubElementID="Success">
+          <Name>RegKeyExists</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.RegKeyExists.##RegKeyPathSanitizeForUseInElementID##.Monitor" SubElementID="Warning">
+          <Name>RegKeyMissing</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.RegKeyExists.##RegKeyPathSanitizeForUseInElementID##.Monitor.Alert.Message">
+          <Name>##CompanyID## ##AppName## RegKeyExists ##RegKeyPathSanitizeForUseInElementID## Monitor Alert</Name>
+          <Description>##CompanyID## ##AppName## RegKeyExists ##RegKeyPathSanitizeForUseInElementID## Monitor detected the registry path ##RegKeyPath## is missing</Description>
+        </DisplayString>		
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>

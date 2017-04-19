@@ -1,0 +1,8 @@
+C:\Workspace\Code\Fragments\bin\Debug\Fragments.exe.config
+C:\Workspace\Code\Fragments\bin\Debug\Fragments.exe
+C:\Workspace\Code\Fragments\bin\Debug\Fragments.pdb
+C:\Workspace\Code\Fragments\obj\Debug\Fragments.csprojResolveAssemblyReference.cache
+C:\Workspace\Code\Fragments\obj\Debug\Fragments.Properties.Resources.resources
+C:\Workspace\Code\Fragments\obj\Debug\Fragments.csproj.GenerateResource.Cache
+C:\Workspace\Code\Fragments\obj\Debug\Fragments.exe
+C:\Workspace\Code\Fragments\obj\Debug\Fragments.pdb

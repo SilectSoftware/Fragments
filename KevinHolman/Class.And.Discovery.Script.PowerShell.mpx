@@ -1,0 +1,149 @@
+<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!-- In this fragment you need to replace:
+
+##CompanyID##
+##AppName##
+
+	This fragment includes a class definition and discovery based on a PowerShell Script
+	In this example we added a a couple additional class properties to demo that capability 
+-->
+
+<!-- This fragment depends on references:
+	RequiredReference: Alias="System", ID="System.Library"
+	RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+--> 
+  <TypeDefinitions>
+    <EntityTypes>
+      <ClassTypes>
+        <ClassType ID="##CompanyID##.##AppName##.Class" Base="Windows!Microsoft.Windows.LocalApplication" Accessibility="Public" Abstract="false" Hosted="true" Singleton="false">
+          <Property ID="Version" Type="string"/>
+          <Property ID="Path" Type="string"/>
+		<!-- We choose Microsoft.Windows.LocalApplication as our generic base class -->
+		<!-- This specific fragment example has class properties for Version and Path as examples only.  You can change or remove these if not desired -->		
+        </ClassType>	
+      </ClassTypes>
+    </EntityTypes>
+  </TypeDefinitions>
+  <Monitoring>
+    <Discoveries>
+      <Discovery ID="##CompanyID##.##AppName##.Class.Discovery" Target="Windows!Microsoft.Windows.Server.OperatingSystem" Enabled="true" ConfirmDelivery="false" Remotable="true" Priority="Normal">
+      <!-- We choose Microsoft.Windows.Server.OperatingSystem as the preferred target class to ensure this will run on all Windows Servers, but will not create duplicates on clusters -->
+        <Category>Discovery</Category>
+        <DiscoveryTypes>
+			<DiscoveryClass TypeID="##CompanyID##.##AppName##.Class">
+            <Property PropertyID="Version"/>
+            <Property PropertyID="Path"/>
+          </DiscoveryClass>
+        </DiscoveryTypes>
+        <DataSource ID="PSDiscovery" TypeID="Windows!Microsoft.Windows.TimedPowerShell.DiscoveryProvider">
+          <IntervalSeconds>86400</IntervalSeconds>
+          <SyncTime />
+          <ScriptName>##CompanyID##.##AppName##.Class.Discovery.ps1</ScriptName>
+          <ScriptBody>#=================================================================================
+#  Description of Script here
+#=================================================================================
+param($SourceId,$ManagedEntityId,$ComputerName)
+
+# For testing discovery manually in PowerShell:
+# $SourceId = '{00000000-0000-0000-0000-000000000000}'
+# $ManagedEntityId = '{00000000-0000-0000-0000-000000000000}'
+# $Computername = 'server.domain.com'
+
+#=================================================================================
+# Constants section - modify stuff here:
+
+# Assign script name variable for use in event logging
+$ScriptName = "##CompanyID##.##AppName##.Class.Discovery.ps1"
+#=================================================================================
+		  
+# Gather script start time
+$StartTime = Get-Date 
+
+# Gather who the script is running as
+$whoami = whoami
+
+#Load the MOMScript API and discovery propertybag
+$momapi = New-Object -comObject "Mom.ScriptAPI"  
+$dbag = $momapi.CreateDiscoveryData(0, $sourceId, $managedEntityId)
+
+#Log script event that we are starting task
+$momapi.LogScriptEvent($ScriptName,1234,0, "Starting script.  Running as ($whoami)")
+
+# Begin Main Script
+#=================================================================================
+# Test to see if folder exists
+$Folder = "C:\AuthorMPs"
+$FolderExists = Test-Path $Folder
+
+#Set variables for discovered instances
+$Version = "2.0"
+
+# If folder exists create instance of class
+If ($FolderExists -eq $true)
+{
+	$instance = $dbag.CreateClassInstance("$MPElement[Name='##CompanyID##.##AppName##.Class']$")
+	$instance.AddProperty("$MPElement[Name='Windows!Microsoft.Windows.Computer']/PrincipalName$", $ComputerName)
+	$instance.AddProperty("$MPElement[Name='##CompanyID##.##AppName##.Class']/Version$", $Version)
+	$instance.AddProperty("$MPElement[Name='##CompanyID##.##AppName##.Class']/Path$", $Folder)
+	$instance.AddProperty("$MPElement[Name='System!System.Entity']/DisplayName$", $ComputerName)
+	$dbag.AddInstance($instance)
+}
+Else
+{
+	# Log an event for no objects discovered
+	$momapi.LogScriptEvent($ScriptName,1234,0,"Discovery script returned no discovered objects") 		
+}
+#=================================================================================
+
+#Output Discovery Propertybag
+$dbag
+
+# Return Discovery Bag to the command line for testing (does not work from ISE):
+# $momapi.Return($dbag)
+
+#Log an event for script ending and total execution time.
+$EndTime = Get-Date
+$ScriptTime = ($EndTime - $StartTime).TotalSeconds
+$momapi.LogScriptEvent($ScriptName,1234,0,"Script has completed.  Runtime was ($ScriptTime) seconds.")
+</ScriptBody>
+          <Parameters>
+            <Parameter>
+              <Name>SourceID</Name>
+              <Value>$MPElement$</Value>
+            </Parameter>
+            <Parameter>
+              <Name>ManagedEntityID</Name>
+              <Value>$Target/Id$</Value>
+            </Parameter>
+            <Parameter>
+              <Name>ComputerName</Name>
+              <Value>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$</Value>
+            </Parameter>
+          </Parameters>
+          <TimeoutSeconds>120</TimeoutSeconds>
+        </DataSource>
+      </Discovery>
+    </Discoveries>
+  </Monitoring>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>
+        <!-- Classes -->	  
+        <DisplayString ElementID="##CompanyID##.##AppName##.Class">
+          <Name>##CompanyID## ##AppName## Class</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Class" SubElementID="Version">
+          <Name>Version</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Class" SubElementID="Path">
+          <Name>Path</Name>
+        </DisplayString>
+        <!-- Discoveries -->		
+        <DisplayString ElementID="##CompanyID##.##AppName##.Class.Discovery">
+          <Name>##CompanyID## ##AppName## Class Discovery</Name>
+        </DisplayString>		
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>
+  

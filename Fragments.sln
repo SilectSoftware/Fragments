@@ -1,0 +1,73 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fragments", "Fragments.csproj", "{5E5CF590-40CA-46BB-BCD5-0CD441EB85C0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{27D4D423-33FC-4422-88BD-2FA934332076}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "KevinHolman", "KevinHolman", "{D2702823-10AA-413D-B537-69A4BB3ABA5A}"
+	ProjectSection(SolutionItems) = preProject
+		KevinHolman\Class.And.Discovery.Registry.KeyExists.mpx = KevinHolman\Class.And.Discovery.Registry.KeyExists.mpx
+		KevinHolman\Class.And.Discovery.Registry.Keys.PowerShell.mpx = KevinHolman\Class.And.Discovery.Registry.Keys.PowerShell.mpx
+		KevinHolman\Class.And.Discovery.Registry.ValueExists.mpx = KevinHolman\Class.And.Discovery.Registry.ValueExists.mpx
+		KevinHolman\Class.And.Discovery.Registry.ValueExpression.mpx = KevinHolman\Class.And.Discovery.Registry.ValueExpression.mpx
+		KevinHolman\Class.And.Discovery.Script.PowerShell.mpx = KevinHolman\Class.And.Discovery.Script.PowerShell.mpx
+		KevinHolman\Class.And.Discovery.Script.VBScript.mpx = KevinHolman\Class.And.Discovery.Script.VBScript.mpx
+		KevinHolman\Class.And.Discovery.SNMP.Device.byOID.mpx = KevinHolman\Class.And.Discovery.SNMP.Device.byOID.mpx
+		KevinHolman\Class.And.Discovery.Unix.FileExists.mpx = KevinHolman\Class.And.Discovery.Unix.FileExists.mpx
+		KevinHolman\Class.And.Discovery.WMIQuery.mpx = KevinHolman\Class.And.Discovery.WMIQuery.mpx
+		KevinHolman\Class.Group.ClassInstances.mpx = KevinHolman\Class.Group.ClassInstances.mpx
+		KevinHolman\Class.Group.ClassInstances.WithRollup.mpx = KevinHolman\Class.Group.ClassInstances.WithRollup.mpx
+		KevinHolman\Class.Group.WindowsComputers.mpx = KevinHolman\Class.Group.WindowsComputers.mpx
+		KevinHolman\Class.Group.WindowsComputersAndHealthServiceWatchers.mpx = KevinHolman\Class.Group.WindowsComputersAndHealthServiceWatchers.mpx
+		KevinHolman\EmptyFragment.mpx = KevinHolman\EmptyFragment.mpx
+		KevinHolman\Folder.State.Alert.Perf.Views.mpx = KevinHolman\Folder.State.Alert.Perf.Views.mpx
+		KevinHolman\Monitor.Performance.ConsecSamples.ThenScript.TwoState.mpx = KevinHolman\Monitor.Performance.ConsecSamples.ThenScript.TwoState.mpx
+		KevinHolman\Monitor.Performance.ConsecSamples.TwoState.mpx = KevinHolman\Monitor.Performance.ConsecSamples.TwoState.mpx
+		KevinHolman\Monitor.Process.mpx = KevinHolman\Monitor.Process.mpx
+		KevinHolman\Monitor.RegistryKey.Exists.mpx = KevinHolman\Monitor.RegistryKey.Exists.mpx
+		KevinHolman\Monitor.RegistryValue.Content.mpx = KevinHolman\Monitor.RegistryValue.Content.mpx
+		KevinHolman\Monitor.RegistryValue.Exists.mpx = KevinHolman\Monitor.RegistryValue.Exists.mpx
+		KevinHolman\Monitor.Service.NoAlert.mpx = KevinHolman\Monitor.Service.NoAlert.mpx
+		KevinHolman\Monitor.Service.WithAlert.IgnoreDisabled.mpx = KevinHolman\Monitor.Service.WithAlert.IgnoreDisabled.mpx
+		KevinHolman\Monitor.Service.WithAlert.mpx = KevinHolman\Monitor.Service.WithAlert.mpx
+		KevinHolman\Monitor.Service.WithRecovery.mpx = KevinHolman\Monitor.Service.WithRecovery.mpx
+		KevinHolman\Monitor.Service.WithRecovery.WithAlertRules.mpx = KevinHolman\Monitor.Service.WithRecovery.WithAlertRules.mpx
+		KevinHolman\Monitor.SNMP.Poll.OIDValue.Integer.Performance.mpx = KevinHolman\Monitor.SNMP.Poll.OIDValue.Integer.Performance.mpx
+		KevinHolman\Monitor.TimedScript.PowerShell.mpx = KevinHolman\Monitor.TimedScript.PowerShell.mpx
+		KevinHolman\Monitor.TimedScript.PowerShell.SQLQuery.mpx = KevinHolman\Monitor.TimedScript.PowerShell.SQLQuery.mpx
+		KevinHolman\Monitor.TimedScript.VBScript.mpx = KevinHolman\Monitor.TimedScript.VBScript.mpx
+		KevinHolman\Monitor.TimedScript.VBScript.WithArguments.mpx = KevinHolman\Monitor.TimedScript.VBScript.WithArguments.mpx
+		KevinHolman\Monitor.Unix.ShellCommand.mpx = KevinHolman\Monitor.Unix.ShellCommand.mpx
+		KevinHolman\Rule.AlertGenerating.EventLog.mpx = KevinHolman\Rule.AlertGenerating.EventLog.mpx
+		KevinHolman\Rule.AlertGenerating.EventLog.RepeatedEvent.mpx = KevinHolman\Rule.AlertGenerating.EventLog.RepeatedEvent.mpx
+		KevinHolman\Rule.AlertGenerating.SNMPTrap.AlertOnOID.mpx = KevinHolman\Rule.AlertGenerating.SNMPTrap.AlertOnOID.mpx
+		KevinHolman\Rule.AlertGenerating.SNMPTrap.AlertOnOIDandVarbind.mpx = KevinHolman\Rule.AlertGenerating.SNMPTrap.AlertOnOIDandVarbind.mpx
+		KevinHolman\Rule.AlertGenerating.TextLog.Fragment.mpx = KevinHolman\Rule.AlertGenerating.TextLog.Fragment.mpx
+		KevinHolman\Rule.Performance.Collection.Perfmon.mpx = KevinHolman\Rule.Performance.Collection.Perfmon.mpx
+		KevinHolman\Rule.Performance.Collection.PowerShellScript.mpx = KevinHolman\Rule.Performance.Collection.PowerShellScript.mpx
+		KevinHolman\Rule.TimedScript.PowerShell.mpx = KevinHolman\Rule.TimedScript.PowerShell.mpx
+		KevinHolman\version info.txt = KevinHolman\version info.txt
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5E5CF590-40CA-46BB-BCD5-0CD441EB85C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E5CF590-40CA-46BB-BCD5-0CD441EB85C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E5CF590-40CA-46BB-BCD5-0CD441EB85C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E5CF590-40CA-46BB-BCD5-0CD441EB85C0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
