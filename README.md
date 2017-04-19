@@ -1,7 +1,7 @@
 # Fragments
 Fragments allow users to add new rules, monitors, discoveries, etc. to management packs, quickly and accurately.
 
-Keving Holman of Microsoft has written a series of blog articles about using fragments with VSAE (Visual Studio Authoring Extensions).
+Kevin Holman of Microsoft has written a series of blog articles about using fragments with VSAE (Visual Studio Authoring Extensions).
 See the following article to get started.
 
 Authoring Management Packs – the fast and easy way, using Visual Studio???
