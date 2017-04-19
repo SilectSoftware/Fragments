@@ -1,4 +1,0 @@
-Silect Software Fragments
--------------------------
-
-TBD
