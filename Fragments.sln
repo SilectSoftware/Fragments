@@ -66,6 +66,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserSubmissions", "UserSubm
 		UserSubmissions\ReadMe.txt = UserSubmissions\ReadMe.txt
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Personal", "Personal", "{A56F91E9-E626-497B-A813-F2B35DCF9AA8}"
+	ProjectSection(SolutionItems) = preProject
+		Personal\ReadMe.txt = Personal\ReadMe.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
