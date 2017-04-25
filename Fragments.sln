@@ -11,49 +11,49 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "KevinHolman", "KevinHolman", "{D2702823-10AA-413D-B537-69A4BB3ABA5A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kevin Holman", "Kevin Holman", "{D2702823-10AA-413D-B537-69A4BB3ABA5A}"
 	ProjectSection(SolutionItems) = preProject
-		KevinHolman\Class.And.Discovery.Registry.KeyExists.mpx = KevinHolman\Class.And.Discovery.Registry.KeyExists.mpx
-		KevinHolman\Class.And.Discovery.Registry.Keys.PowerShell.mpx = KevinHolman\Class.And.Discovery.Registry.Keys.PowerShell.mpx
-		KevinHolman\Class.And.Discovery.Registry.ValueExists.mpx = KevinHolman\Class.And.Discovery.Registry.ValueExists.mpx
-		KevinHolman\Class.And.Discovery.Registry.ValueExpression.mpx = KevinHolman\Class.And.Discovery.Registry.ValueExpression.mpx
-		KevinHolman\Class.And.Discovery.Script.PowerShell.mpx = KevinHolman\Class.And.Discovery.Script.PowerShell.mpx
-		KevinHolman\Class.And.Discovery.Script.VBScript.mpx = KevinHolman\Class.And.Discovery.Script.VBScript.mpx
-		KevinHolman\Class.And.Discovery.SNMP.Device.byOID.mpx = KevinHolman\Class.And.Discovery.SNMP.Device.byOID.mpx
-		KevinHolman\Class.And.Discovery.Unix.FileExists.mpx = KevinHolman\Class.And.Discovery.Unix.FileExists.mpx
-		KevinHolman\Class.And.Discovery.WMIQuery.mpx = KevinHolman\Class.And.Discovery.WMIQuery.mpx
-		KevinHolman\Class.Group.ClassInstances.mpx = KevinHolman\Class.Group.ClassInstances.mpx
-		KevinHolman\Class.Group.ClassInstances.WithRollup.mpx = KevinHolman\Class.Group.ClassInstances.WithRollup.mpx
-		KevinHolman\Class.Group.WindowsComputers.mpx = KevinHolman\Class.Group.WindowsComputers.mpx
-		KevinHolman\Class.Group.WindowsComputersAndHealthServiceWatchers.mpx = KevinHolman\Class.Group.WindowsComputersAndHealthServiceWatchers.mpx
-		KevinHolman\EmptyFragment.mpx = KevinHolman\EmptyFragment.mpx
-		KevinHolman\Folder.State.Alert.Perf.Views.mpx = KevinHolman\Folder.State.Alert.Perf.Views.mpx
-		KevinHolman\Monitor.Performance.ConsecSamples.ThenScript.TwoState.mpx = KevinHolman\Monitor.Performance.ConsecSamples.ThenScript.TwoState.mpx
-		KevinHolman\Monitor.Performance.ConsecSamples.TwoState.mpx = KevinHolman\Monitor.Performance.ConsecSamples.TwoState.mpx
-		KevinHolman\Monitor.Process.mpx = KevinHolman\Monitor.Process.mpx
-		KevinHolman\Monitor.RegistryKey.Exists.mpx = KevinHolman\Monitor.RegistryKey.Exists.mpx
-		KevinHolman\Monitor.RegistryValue.Content.mpx = KevinHolman\Monitor.RegistryValue.Content.mpx
-		KevinHolman\Monitor.RegistryValue.Exists.mpx = KevinHolman\Monitor.RegistryValue.Exists.mpx
-		KevinHolman\Monitor.Service.NoAlert.mpx = KevinHolman\Monitor.Service.NoAlert.mpx
-		KevinHolman\Monitor.Service.WithAlert.IgnoreDisabled.mpx = KevinHolman\Monitor.Service.WithAlert.IgnoreDisabled.mpx
-		KevinHolman\Monitor.Service.WithAlert.mpx = KevinHolman\Monitor.Service.WithAlert.mpx
-		KevinHolman\Monitor.Service.WithRecovery.mpx = KevinHolman\Monitor.Service.WithRecovery.mpx
-		KevinHolman\Monitor.Service.WithRecovery.WithAlertRules.mpx = KevinHolman\Monitor.Service.WithRecovery.WithAlertRules.mpx
-		KevinHolman\Monitor.SNMP.Poll.OIDValue.Integer.Performance.mpx = KevinHolman\Monitor.SNMP.Poll.OIDValue.Integer.Performance.mpx
-		KevinHolman\Monitor.TimedScript.PowerShell.mpx = KevinHolman\Monitor.TimedScript.PowerShell.mpx
-		KevinHolman\Monitor.TimedScript.PowerShell.SQLQuery.mpx = KevinHolman\Monitor.TimedScript.PowerShell.SQLQuery.mpx
-		KevinHolman\Monitor.TimedScript.VBScript.mpx = KevinHolman\Monitor.TimedScript.VBScript.mpx
-		KevinHolman\Monitor.TimedScript.VBScript.WithArguments.mpx = KevinHolman\Monitor.TimedScript.VBScript.WithArguments.mpx
-		KevinHolman\Monitor.Unix.ShellCommand.mpx = KevinHolman\Monitor.Unix.ShellCommand.mpx
-		KevinHolman\Rule.AlertGenerating.EventLog.mpx = KevinHolman\Rule.AlertGenerating.EventLog.mpx
-		KevinHolman\Rule.AlertGenerating.EventLog.RepeatedEvent.mpx = KevinHolman\Rule.AlertGenerating.EventLog.RepeatedEvent.mpx
-		KevinHolman\Rule.AlertGenerating.SNMPTrap.AlertOnOID.mpx = KevinHolman\Rule.AlertGenerating.SNMPTrap.AlertOnOID.mpx
-		KevinHolman\Rule.AlertGenerating.SNMPTrap.AlertOnOIDandVarbind.mpx = KevinHolman\Rule.AlertGenerating.SNMPTrap.AlertOnOIDandVarbind.mpx
-		KevinHolman\Rule.AlertGenerating.TextLog.Fragment.mpx = KevinHolman\Rule.AlertGenerating.TextLog.Fragment.mpx
-		KevinHolman\Rule.Performance.Collection.Perfmon.mpx = KevinHolman\Rule.Performance.Collection.Perfmon.mpx
-		KevinHolman\Rule.Performance.Collection.PowerShellScript.mpx = KevinHolman\Rule.Performance.Collection.PowerShellScript.mpx
-		KevinHolman\Rule.TimedScript.PowerShell.mpx = KevinHolman\Rule.TimedScript.PowerShell.mpx
-		KevinHolman\version info.txt = KevinHolman\version info.txt
+		Kevin Holman\Class.And.Discovery.Registry.KeyExists.mpx = Kevin Holman\Class.And.Discovery.Registry.KeyExists.mpx
+		Kevin Holman\Class.And.Discovery.Registry.Keys.PowerShell.mpx = Kevin Holman\Class.And.Discovery.Registry.Keys.PowerShell.mpx
+		Kevin Holman\Class.And.Discovery.Registry.ValueExists.mpx = Kevin Holman\Class.And.Discovery.Registry.ValueExists.mpx
+		Kevin Holman\Class.And.Discovery.Registry.ValueExpression.mpx = Kevin Holman\Class.And.Discovery.Registry.ValueExpression.mpx
+		Kevin Holman\Class.And.Discovery.Script.PowerShell.mpx = Kevin Holman\Class.And.Discovery.Script.PowerShell.mpx
+		Kevin Holman\Class.And.Discovery.Script.VBScript.mpx = Kevin Holman\Class.And.Discovery.Script.VBScript.mpx
+		Kevin Holman\Class.And.Discovery.SNMP.Device.byOID.mpx = Kevin Holman\Class.And.Discovery.SNMP.Device.byOID.mpx
+		Kevin Holman\Class.And.Discovery.Unix.FileExists.mpx = Kevin Holman\Class.And.Discovery.Unix.FileExists.mpx
+		Kevin Holman\Class.And.Discovery.WMIQuery.mpx = Kevin Holman\Class.And.Discovery.WMIQuery.mpx
+		Kevin Holman\Class.Group.ClassInstances.mpx = Kevin Holman\Class.Group.ClassInstances.mpx
+		Kevin Holman\Class.Group.ClassInstances.WithRollup.mpx = Kevin Holman\Class.Group.ClassInstances.WithRollup.mpx
+		Kevin Holman\Class.Group.WindowsComputers.mpx = Kevin Holman\Class.Group.WindowsComputers.mpx
+		Kevin Holman\Class.Group.WindowsComputersAndHealthServiceWatchers.mpx = Kevin Holman\Class.Group.WindowsComputersAndHealthServiceWatchers.mpx
+		Kevin Holman\EmptyFragment.mpx = Kevin Holman\EmptyFragment.mpx
+		Kevin Holman\Folder.State.Alert.Perf.Views.mpx = Kevin Holman\Folder.State.Alert.Perf.Views.mpx
+		Kevin Holman\Monitor.Performance.ConsecSamples.ThenScript.TwoState.mpx = Kevin Holman\Monitor.Performance.ConsecSamples.ThenScript.TwoState.mpx
+		Kevin Holman\Monitor.Performance.ConsecSamples.TwoState.mpx = Kevin Holman\Monitor.Performance.ConsecSamples.TwoState.mpx
+		Kevin Holman\Monitor.Process.mpx = Kevin Holman\Monitor.Process.mpx
+		Kevin Holman\Monitor.RegistryKey.Exists.mpx = Kevin Holman\Monitor.RegistryKey.Exists.mpx
+		Kevin Holman\Monitor.RegistryValue.Content.mpx = Kevin Holman\Monitor.RegistryValue.Content.mpx
+		Kevin Holman\Monitor.RegistryValue.Exists.mpx = Kevin Holman\Monitor.RegistryValue.Exists.mpx
+		Kevin Holman\Monitor.Service.NoAlert.mpx = Kevin Holman\Monitor.Service.NoAlert.mpx
+		Kevin Holman\Monitor.Service.WithAlert.IgnoreDisabled.mpx = Kevin Holman\Monitor.Service.WithAlert.IgnoreDisabled.mpx
+		Kevin Holman\Monitor.Service.WithAlert.mpx = Kevin Holman\Monitor.Service.WithAlert.mpx
+		Kevin Holman\Monitor.Service.WithRecovery.mpx = Kevin Holman\Monitor.Service.WithRecovery.mpx
+		Kevin Holman\Monitor.Service.WithRecovery.WithAlertRules.mpx = Kevin Holman\Monitor.Service.WithRecovery.WithAlertRules.mpx
+		Kevin Holman\Monitor.SNMP.Poll.OIDValue.Integer.Performance.mpx = Kevin Holman\Monitor.SNMP.Poll.OIDValue.Integer.Performance.mpx
+		Kevin Holman\Monitor.TimedScript.PowerShell.mpx = Kevin Holman\Monitor.TimedScript.PowerShell.mpx
+		Kevin Holman\Monitor.TimedScript.PowerShell.SQLQuery.mpx = Kevin Holman\Monitor.TimedScript.PowerShell.SQLQuery.mpx
+		Kevin Holman\Monitor.TimedScript.VBScript.mpx = Kevin Holman\Monitor.TimedScript.VBScript.mpx
+		Kevin Holman\Monitor.TimedScript.VBScript.WithArguments.mpx = Kevin Holman\Monitor.TimedScript.VBScript.WithArguments.mpx
+		Kevin Holman\Monitor.Unix.ShellCommand.mpx = Kevin Holman\Monitor.Unix.ShellCommand.mpx
+		Kevin Holman\Rule.AlertGenerating.EventLog.mpx = Kevin Holman\Rule.AlertGenerating.EventLog.mpx
+		Kevin Holman\Rule.AlertGenerating.EventLog.RepeatedEvent.mpx = Kevin Holman\Rule.AlertGenerating.EventLog.RepeatedEvent.mpx
+		Kevin Holman\Rule.AlertGenerating.SNMPTrap.AlertOnOID.mpx = Kevin Holman\Rule.AlertGenerating.SNMPTrap.AlertOnOID.mpx
+		Kevin Holman\Rule.AlertGenerating.SNMPTrap.AlertOnOIDandVarbind.mpx = Kevin Holman\Rule.AlertGenerating.SNMPTrap.AlertOnOIDandVarbind.mpx
+		Kevin Holman\Rule.AlertGenerating.TextLog.Fragment.mpx = Kevin Holman\Rule.AlertGenerating.TextLog.Fragment.mpx
+		Kevin Holman\Rule.Performance.Collection.Perfmon.mpx = Kevin Holman\Rule.Performance.Collection.Perfmon.mpx
+		Kevin Holman\Rule.Performance.Collection.PowerShellScript.mpx = Kevin Holman\Rule.Performance.Collection.PowerShellScript.mpx
+		Kevin Holman\Rule.TimedScript.PowerShell.mpx = Kevin Holman\Rule.TimedScript.PowerShell.mpx
+		Kevin Holman\version info.txt = Kevin Holman\version info.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Silect", "Silect", "{09D41F4F-1FF3-42E7-A7DE-918B448841AD}"
@@ -61,14 +61,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Silect", "Silect", "{09D41F
 		Silect\ReadMe.txt = Silect\ReadMe.txt
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserSubmissions", "UserSubmissions", "{D7FE9A71-A3E5-4BF9-8222-E7C2259B67B3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "User Submissions", "User Submissions", "{D7FE9A71-A3E5-4BF9-8222-E7C2259B67B3}"
 	ProjectSection(SolutionItems) = preProject
-		UserSubmissions\ReadMe.txt = UserSubmissions\ReadMe.txt
+		User Submissions\ReadMe.txt = User Submissions\ReadMe.txt
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Personal", "Personal", "{A56F91E9-E626-497B-A813-F2B35DCF9AA8}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "My Fragments", "My Fragments", "{A56F91E9-E626-497B-A813-F2B35DCF9AA8}"
 	ProjectSection(SolutionItems) = preProject
-		Personal\ReadMe.txt = Personal\ReadMe.txt
+		My Fragments\ReadMe.txt = My Fragments\ReadMe.txt
 	EndProjectSection
 EndProject
 Global
