@@ -58,6 +58,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kevin Holman", "Kevin Holma
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Silect", "Silect", "{09D41F4F-1FF3-42E7-A7DE-918B448841AD}"
 	ProjectSection(SolutionItems) = preProject
+		Silect\MonitorSNMP.Poll.OIDValue.PowerShell.mpx = Silect\MonitorSNMP.Poll.OIDValue.PowerShell.mpx
 		Silect\ReadMe.txt = Silect\ReadMe.txt
 	EndProjectSection
 EndProject

@@ -1,0 +1,320 @@
+<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd = "http://www.w3.org/2001/XMLSchema">
+  <!--
+Description:
+  This fragment defines an SNMP monitor which will process the raw value using a PowerShell script.
+  This allows you to transform values into a form more usable with Operations Manager.
+
+For example: consider a device that returns CPU temperature in the form "31.2C". That value (with the C) can
+  not be used in a monitor because the comparison would need to be done as a string (which can fail because
+  "9.1C" would be larger). Nor can the value be used for charting. Finally, you may want the value converted
+  to Fahrenheit. With a script you can do all of those things.
+
+@@Author=Mike Sargent@@
+@@Workflow=SNMP Monitor@@
+
+In this fragment you need to replace:
+  ##CompanyID##
+  ##DeviceName##
+  ##MonitorName##
+  ##ThresholdValue##
+  ##OID##
+
+This fragment depends on references:
+  RequiredReference: Alias="SNMP", ID="System.Snmp.Library", Version="7.0.8433.0"
+  RequiredReference: Alias="NetworkLibrary", ID="System.NetworkManagement.Library", Version="7.1.10226.0"
+  RequiredReference: Alias="System", ID="System.Library", Version="7.5.8501.0"
+  RequiredReference: Alias="Health", ID="System.Health.Library", Version="7.0.8433.0"
+  RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library", Version="7.5.8501.0"
+-->
+  <TypeDefinitions>
+    <ModuleTypes>
+      <DataSourceModuleType ID="##CompanyID##.##DeviceName##.##MonitorName##.Monitor.Probe" Accessibility="Internal" Batching="false">
+        <Configuration>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="Interval" type="xsd:integer"></xsd:element>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="SpreadOver" type="xsd:double"></xsd:element>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="IPAddress" type="xsd:string"></xsd:element>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="CommunityString" type="xsd:string"></xsd:element>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="SnmpVersion" type="xsd:string"></xsd:element>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="OID" type="xsd:string"></xsd:element>
+        </Configuration>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <DataSource ID="PollSnmpDevice" TypeID="##CompanyID##.##DeviceName##.##MonitorName##.Monitor.DS">
+                <Interval>$Config/Interval$</Interval>
+                <SpreadOver>$Config/SpreadOver$</SpreadOver>
+                <IPAddress>$Config/IPAddress$</IPAddress>
+                <CommunityString>$Config/CommunityString$</CommunityString>
+                <SnmpVersion>$Config/SnmpVersion$</SnmpVersion>
+                <OID>$Config/OID$</OID>
+              </DataSource>
+              <ProbeAction ID="ScriptProbe" TypeID="Windows!Microsoft.Windows.PowerShellPropertyBagProbe">
+                <ScriptName>LastUpdate.ps1</ScriptName>
+                <ScriptBody>
+param ([string] $value)
+
+$api = New-Object -comObject 'Mom.ScriptAPI'
+
+# ---------- Replace the following with your logic. ----------
+# Format of $value is: "31.2C"
+
+$rawValue = $value
+$value = $value.Replace("C","") # get rid of Celsius indicator
+$value = 9.0 * $value / 5.0 + 32.0 # convert C to F
+# ---------- Replace the above with your logic. ----------
+
+$bag = $api.CreatePropertyBag()
+$bag.AddValue("RawValue",$rawValue)
+$bag.AddValue("ResultValue",$value)
+$bag
+
+remove-variable bag
+remove-variable api
+                </ScriptBody>
+                <Parameters>
+                  <Parameter>
+                    <Name>value</Name>
+                    <Value>$Data/SnmpVarBinds/SnmpVarBind[1]/Value$</Value>
+                  </Parameter>
+                </Parameters>
+                <TimeoutSeconds>180</TimeoutSeconds>
+              </ProbeAction>
+              <ConditionDetection ID="ValueFilter" TypeID="System!System.ExpressionFilter">
+                <Expression>
+                  <SimpleExpression>
+                    <ValueExpression>
+                      <XPathQuery Type="Double">/DataItem/Property[@Name='ResultValue']</XPathQuery>
+                    </ValueExpression>
+                    <Operator>GreaterEqual</Operator>
+                    <ValueExpression>
+                      <Value Type="Double">0</Value>
+                    </ValueExpression>
+                  </SimpleExpression>
+                </Expression>
+              </ConditionDetection>
+            </MemberModules>
+            <Composition>
+              <Node ID="ValueFilter">
+                <Node ID="ScriptProbe">
+                  <Node ID="PollSnmpDevice" />
+                </Node>
+              </Node>
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.PropertyBagData</OutputType>
+      </DataSourceModuleType>
+      <DataSourceModuleType ID="##CompanyID##.##DeviceName##.##MonitorName##.Monitor.DS" Accessibility="Internal" Batching="false">
+        <Configuration>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="Interval" type="xsd:integer"></xsd:element>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="SpreadOver" type="xsd:double"></xsd:element>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="IPAddress" type="xsd:string"></xsd:element>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="CommunityString" type="xsd:string"></xsd:element>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="SnmpVersion" type="xsd:string"></xsd:element>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="OID" type="xsd:string"></xsd:element>
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="Interval" Selector="$Config/Interval$" ParameterType="int" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <DataSource ID="Scheduler" TypeID="System!System.Scheduler">
+                <Scheduler>
+                  <SimpleReccuringSchedule>
+                    <Interval>$Config/Interval$</Interval>
+                    <SpreadInitializationOverInterval Unit="Seconds">$Config/SpreadOver$</SpreadInitializationOverInterval>
+                  </SimpleReccuringSchedule>
+                  <ExcludeDates></ExcludeDates>
+                </Scheduler>
+              </DataSource>
+              <ProbeAction ID="SnmpProbe" TypeID="NetworkLibrary!System.NetworkManagement.SnmpProbe">
+                <IsWriteAction>false</IsWriteAction>
+                <IP>$Config/IPAddress$</IP>
+                <CommunityString>$Config/CommunityString$</CommunityString>
+                <Version>$Config/SnmpVersion$</Version>
+                <SnmpVarBinds>
+                  <SnmpVarBind>
+                    <OID>$Config/OID$</OID>
+                    <Syntax>0</Syntax>
+                    <Value VariantType="8"></Value>
+                  </SnmpVarBind>
+                </SnmpVarBinds>
+                <OutputOnError>true</OutputOnError>
+              </ProbeAction>
+              <ConditionDetection ID="ValueFilter" TypeID="System!System.ExpressionFilter">
+                <Expression>
+                  <SimpleExpression>
+                    <ValueExpression>
+                      <XPathQuery Type="String">ErrorCode</XPathQuery>
+                    </ValueExpression>
+                    <Operator>Equal</Operator>
+                    <ValueExpression>
+                      <Value Type="String">1</Value>
+                    </ValueExpression>
+                  </SimpleExpression>
+                </Expression>
+              </ConditionDetection>
+            </MemberModules>
+            <Composition>
+              <Node ID="ValueFilter">
+                <Node ID="SnmpProbe">
+                  <Node ID="Scheduler" />
+                </Node>
+              </Node>
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>SNMP!System.SnmpData</OutputType>
+      </DataSourceModuleType>
+    </ModuleTypes>
+    <MonitorTypes>
+      <UnitMonitorType ID="##CompanyID##.##DeviceName##.##MonitorName##.UnitMonitor.Type" Accessibility="Internal">
+        <MonitorTypeStates>
+          <MonitorTypeState ID="StateOK" NoDetection="false" />
+          <MonitorTypeState ID="StateFail" NoDetection="false" />
+        </MonitorTypeStates>
+        <Configuration>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="Interval" type="xsd:integer"></xsd:element>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="SpreadOver" type="xsd:double"></xsd:element>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="IPAddress" type="xsd:string"></xsd:element>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="CommunityString" type="xsd:string"></xsd:element>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="SnmpVersion" type="xsd:string"></xsd:element>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="OID" type="xsd:string"></xsd:element>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema" minOccurs="1" name="Threshold" type="xsd:string"></xsd:element>
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="Threshold" Selector="$Config/Threshold$" ParameterType="double" />
+        </OverrideableParameters>
+        <MonitorImplementation>
+          <MemberModules>
+            <DataSource ID="DS1" TypeID="##CompanyID##.##DeviceName##.##MonitorName##.Monitor.Probe">
+              <Interval>$Config/Interval$</Interval>
+              <SpreadOver>$Config/SpreadOver$</SpreadOver>
+              <IPAddress>$Config/IPAddress$</IPAddress>
+              <CommunityString>$Config/CommunityString$</CommunityString>
+              <SnmpVersion>$Config/SnmpVersion$</SnmpVersion>
+              <OID>$Config/OID$</OID>
+            </DataSource>
+            <ConditionDetection ID="CDStateFail" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="Double">Property[@Name='ResultValue']</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Greater</Operator>
+                  <ValueExpression>
+                    <Value Type="Double">$Config/Threshold$</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </ConditionDetection>
+            <ConditionDetection ID="CDStateOK" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="Double">Property[@Name='ResultValue']</XPathQuery>
+                  </ValueExpression>
+                  <Operator>LessEqual</Operator>
+                  <ValueExpression>
+                    <Value Type="Double">$Config/Threshold$</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </ConditionDetection>
+          </MemberModules>
+          <RegularDetections>
+            <RegularDetection MonitorTypeStateID="StateOK">
+              <Node ID="CDStateOK">
+                <Node ID="DS1" />
+              </Node>
+            </RegularDetection>
+            <RegularDetection MonitorTypeStateID="StateFail">
+              <Node ID="CDStateFail">
+                <Node ID="DS1" />
+              </Node>
+            </RegularDetection>
+          </RegularDetections>
+        </MonitorImplementation>
+      </UnitMonitorType>
+    </MonitorTypes>
+  </TypeDefinitions>
+  <Monitoring>
+    <Monitors>
+      <UnitMonitor ID="##CompanyID##.##DeviceName##.##MonitorName##.Monitor" Accessibility="Public" Enabled="true"
+                   Target="##ClassID##" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true"
+                   Priority="Normal" TypeID="##CompanyID##.##DeviceName##.##MonitorName##.UnitMonitor.Type" ConfirmDelivery="false">
+        <Category>AvailabilityHealth</Category>
+        <AlertSettings AlertMessage="##CompanyID##.##DeviceName##.##MonitorName##.Monitor.Alert.Message">
+          <AlertOnState>Warning</AlertOnState>
+          <AutoResolve>true</AutoResolve>
+          <AlertPriority>Low</AlertPriority>
+          <AlertSeverity>Warning</AlertSeverity>
+          <AlertParameters>
+            <AlertParameter1>$Target/Property[Type="System!System.Entity"]/DisplayName$</AlertParameter1>
+            <AlertParameter2>$Data/Context/Property[@Name='ResultValue']$</AlertParameter2>
+            <AlertParameter3>$Data/Context/Property[@Name='RawValue']$</AlertParameter3>
+          </AlertParameters>
+        </AlertSettings>
+        <OperationalStates>
+          <OperationalState ID="Success" MonitorTypeStateID="StateOK" HealthState="Success" />
+          <OperationalState ID="Error" MonitorTypeStateID="StateFail" HealthState="Warning" />
+        </OperationalStates>
+        <Configuration>
+          <Interval>3600</Interval>
+          <SpreadOver>180</SpreadOver>
+          <IPAddress>$Target/Property[Type="NetworkLibrary!System.NetworkManagement.Node"]/SNMPAddress$</IPAddress>
+          <CommunityString>$RunAs[Name="NetworkLibrary!System.NetworkManagement.Snmp.MonitoringAccount"]/CommunityString$</CommunityString>
+          <SnmpVersion>$Target/Property[Type="NetworkLibrary!System.NetworkManagement.Node"]/SNMPVersion$</SnmpVersion>
+          <OID>##OID##</OID>
+          <Threshold>##ThresholdValue##</Threshold>
+        </Configuration>
+      </UnitMonitor>
+    </Monitors>
+  </Monitoring>
+  <Presentation>
+    <StringResources>
+      <StringResource ID="##CompanyID##.##DeviceName##.##MonitorName##.Monitor.Alert.Message" />
+    </StringResources>
+  </Presentation>
+  <LanguagePacks>
+    <LanguagePack ID="ENU">
+      <DisplayStrings>
+        <DisplayString ElementID="##CompanyID##.##DeviceName##.##MonitorName##.Monitor.DS">
+          <Name>##CompanyID## ##DeviceName## SNMP device ##MonitorName## Monitor DataSource</Name>
+          <Description>This data source is used to retrieve the value of the ##MonitorName## OID.</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##DeviceName##.##MonitorName##.Monitor.DS" SubElementID="Interval">
+          <Name>Interval</Name>
+          <Description>Monitor execution frequency in seconds.</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##DeviceName##.##MonitorName##.Monitor.Probe">
+          <Name>##CompanyID## ##DeviceName## SNMP device ##MonitorName## Monitor Probe Action</Name>
+          <Description>This probe action is used to convert the value of the ##MonitorName## OID.</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##DeviceName##.##MonitorName##.UnitMonitor.Type">
+          <Name>##CompanyID## ##DeviceName## SNMP device ##MonitorName## Unit Monitor Type</Name>
+          <Description>This unit monitor type is used to compare the value of ##MonitorName## to the threshold.</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##DeviceName##.##MonitorName##.UnitMonitor.Type" SubElementID="Threshold">
+          <Name>Threshold</Name>
+          <Description>The threshold value. Values greater than this raise an alert.</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##DeviceName##.##MonitorName##.Monitor.Alert.Message">
+          <Name>##CompanyID## ##DeviceName## ##MonitorName## Monitor: Failure</Name>
+          <Description>The value of ##MonitorName## in above the threshold on {0}. The current value is {1} (raw value is {2}).</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##DeviceName##.##MonitorName##.Monitor">
+          <Name>##CompanyID## ##DeviceName## ##MonitorName## Monitor</Name>
+          <Description>This monitor compares the current value to the threshold and if greater an alert will be raised.</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##DeviceName##.##MonitorName##.Monitor" SubElementID="Success">
+          <Name>Below Threshold</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##DeviceName##.##MonitorName##.Monitor" SubElementID="Error">
+          <Name>Above Threshold</Name>
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>
