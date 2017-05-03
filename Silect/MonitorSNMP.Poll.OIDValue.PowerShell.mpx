@@ -10,6 +10,7 @@ For example: consider a device that returns CPU temperature in the form "31.2C".
   to Fahrenheit. With a script you can do all of those things.
 
 @@Author=Mike Sargent@@
+@@Author=Silect Software, Inc.@@
 @@Workflow=SNMP Monitor@@
 
 In this fragment you need to replace:
