@@ -1,17 +1,17 @@
 <ManagementPackFragment SchemaVersion="2.0" xmlns:xsd = "http://www.w3.org/2001/XMLSchema">
   <!--
+%%
 Description:
   This fragment defines an SNMP monitor which will process the raw value using a PowerShell script.
   This allows you to transform values into a form more usable with Operations Manager.
 
-For example: consider a device that returns CPU temperature in the form "31.2C". That value (with the C) can
+  For example: consider a device that returns CPU temperature in the form "31.2C". That value (with the C) can
   not be used in a monitor because the comparison would need to be done as a string (which can fail because
   "9.1C" would be larger). Nor can the value be used for charting. Finally, you may want the value converted
   to Fahrenheit. With a script you can do all of those things.
-
-@@Author=Mike Sargent@@
-@@Author=Silect Software, Inc.@@
-@@Workflow=SNMP Monitor@@
+Version: 1.0
+LastModified: 11-May-2017
+%%
 
 In this fragment you need to replace:
   ##CompanyID##
@@ -26,6 +26,10 @@ This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library", Version="7.5.8501.0"
   RequiredReference: Alias="Health", ID="System.Health.Library", Version="7.0.8433.0"
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library", Version="7.5.8501.0"
+
+@@Author=Mike Sargent@@
+@@Author=Silect Software, Inc.@@
+@@Workflow=SNMP Monitor@@
 -->
   <TypeDefinitions>
     <ModuleTypes>
