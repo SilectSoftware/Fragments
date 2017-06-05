@@ -1,16 +1,20 @@
 <ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-<!-- In this fragment you need to replace:
+<!--
+%%
+Description:
+  This fragment includes a class definition and discovery based on a VBSCRIPT
+  In this example we added a a couple additional class properties to demo that capability 
+Version: 1.1
+LastModified: 29-May-2017
+%%
 
-##CompanyID##
-##AppName##
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName##
 
-	This fragment includes a class definition and discovery based on a VBSCRIPT
-	In this example we added a a couple additional class properties to demo that capability 
--->
-
-<!-- This fragment depends on references:
-	RequiredReference: Alias="System", ID="System.Library"
-	RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+This fragment depends on references:
+  RequiredReference: Alias="System", ID="System.Library"
+  RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
 --> 
   <TypeDefinitions>
     <EntityTypes>

@@ -1,23 +1,27 @@
 ﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-<!-- In this fragment you need to replace:
+<!--
+%%
+Description:
+  This fragment includes a RULE that uses a PowerShell script to collect data and output/map it to Performance data for collection
+  ObjectName, CounterName, and InstanceName you can make up in this case, as we are mapping the data from PowerShell to a made up Performance Counter
+Version: 1.1
+LastModified: 29-May-2017
+%%
 
-##CompanyID##
-##AppName##
-##ClassID##
-##ObjectName##
-##InstanceName##
-##CounterName##
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName##
+  ##ClassID##
+  ##ObjectName##
+  ##InstanceName##
+  ##CounterName##
 
-	This fragment includes a RULE that uses a PowerShell script to collect data and output/map it to Performance data for collection
-	ObjectName, CounterName, and InstanceName you can make up in this case, as we are mapping the data from PowerShell to a made up Performance Counter
--->
-
-<!-- This fragment depends on references:
-	RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library"
-	RequiredReference: Alias="System", ID="System.Library"	
-	RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
-	RequiredReference: Alias="Perf", ID="System.Performance.Library"
-	RequiredReference: Alias="MSDL", ID="Microsoft.SystemCenter.DataWarehouse.Library"
+This fragment depends on references:
+  RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library"
+  RequiredReference: Alias="System", ID="System.Library"	
+  RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+  RequiredReference: Alias="Perf", ID="System.Performance.Library"
+  RequiredReference: Alias="MSDL", ID="Microsoft.SystemCenter.DataWarehouse.Library"
 --> 
   <TypeDefinitions>
     <ModuleTypes>

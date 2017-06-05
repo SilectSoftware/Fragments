@@ -1,20 +1,24 @@
 ﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-<!-- In this fragment you need to replace:
+<!--
+%%
+Description:
+  This fragment includes a Rule to generate an alert on a specific EventID and Event Source REPEATED within a specified time frame
+Version: 1.1
+LastModified: 29-May-2017
+%%
 
-##CompanyID##
-##AppName##
-##ClassID##
-##EventID##
-##EventSource##
-##LogName##
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName##
+  ##ClassID##
+  ##EventID##
+  ##EventSource##
+  ##LogName##
 
-	This fragment includes a Rule to generate an alert on a specific EventID and Event Source REPEATED within a specified time frame
--->
-	
-<!-- This fragment depends on references:
-	RequiredReference: Alias="System", ID="System.Library"
-	RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
-	RequiredReference: Alias="Health", ID="System.Health.Library"	
+This fragment depends on references:
+  RequiredReference: Alias="System", ID="System.Library"
+  RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+  RequiredReference: Alias="Health", ID="System.Health.Library"	
 --> 
   <Monitoring>
     <Rules>

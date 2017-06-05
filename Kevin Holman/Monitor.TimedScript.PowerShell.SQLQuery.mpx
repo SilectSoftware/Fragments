@@ -1,18 +1,22 @@
 ﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-<!-- In this fragment you need to replace:
+<!--
+%%
+Description:
+  This fragment includes a Monitor which runs a timed PowerShell script as the DataSource
+  The script calls a SQL query against a database and the output submitted by the script in a propertybag.
+Version: 1.1
+LastModified: 29-May-2017
+%%
 
-##CompanyID##
-##AppName##
-##ClassID##
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName##
+  ##ClassID##
 
-	This fragment includes a Monitor which runs a timed PowerShell script as the DataSource
-	The script calls a SQL query against a database and the output submitted by the script in a propertybag.
--->
-
-<!-- This fragment depends on references:  
-	RequiredReference: Alias="System", ID="System.Library"
-	RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
-	RequiredReference: Alias="Health", ID="System.Health.Library"
+This fragment depends on references:  
+  RequiredReference: Alias="System", ID="System.Library"
+  RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+  RequiredReference: Alias="Health", ID="System.Health.Library"
 --> 
   <TypeDefinitions>
     <ModuleTypes>

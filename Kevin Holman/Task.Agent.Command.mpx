@@ -1,0 +1,46 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--
+%%
+Description:
+  This fragment includes an AGENT TASK that will execute a command on the existing filesystem
+  ClassID is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem
+  TaskName is a short name for the task with no spaces or special characters allowed
+  You will need to customize your ApplicationName and CommandLine as needed.  EventCreate included for example only
+Version: 1.0
+LastModified: 29-May-2017
+%%
+
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName##
+  ##ClassID##
+  ##TaskName##
+
+This fragment depends on references:
+  RequiredReference: Alias="System", ID="System.Library"
+--> 
+  <Monitoring>
+	<Tasks>
+      <Task ID="##CompanyID##.##AppName##.##TaskName##.Task" Accessibility="Public" Enabled="false" Target="##ClassID##" Timeout="120" Remotable="true">
+        <Category>Custom</Category>
+        <WriteAction ID="CMDWA" TypeID="System!System.CommandExecuter">
+          <ApplicationName>%systemroot%\System32\cmd.exe</ApplicationName>
+          <WorkingDirectory />
+          <CommandLine>/c EVENTCREATE /T ERROR /ID 100 /L APPLICATION /SO TEST /D "This is a Test event 100"</CommandLine>
+          <TimeoutSeconds>60</TimeoutSeconds>
+          <RequireOutput>true</RequireOutput>
+        </WriteAction>
+      </Task>	
+	</Tasks>
+  </Monitoring>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##TaskName##.Task">
+          <Name>##TaskName## Task</Name>
+        </DisplayString>	  
+      </DisplayStrings>
+      <KnowledgeArticles></KnowledgeArticles>
+    </LanguagePack>
+  </LanguagePacks>   
+</ManagementPackFragment>

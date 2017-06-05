@@ -1,19 +1,23 @@
 ﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-<!-- In this fragment you need to replace:
+<!--
+%%
+Description:
+  This fragment includes RULE for SNMP traps which will generate a trap based on a receipt from a specific OID
+  See example use here:  https://blogs.technet.microsoft.com/kevinholman/2015/02/03/snmp-trap-monitoring-with-scom-2012-r2/
+  VarbindData - is by default a string, you can change this as needed.  This uses a regular expression pattern match in this example
+Version: 1.1
+LastModified: 29-May-2017
+%%
 
-##CompanyID##
-##AppName##
-##OID##
-##VarbindData##
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName##
+  ##OID##
+  ##VarbindData##
 
-	This fragment includes RULE for SNMP traps which will generate a trap based on a receipt from a specific OID
-	See example use here:  https://blogs.technet.microsoft.com/kevinholman/2015/02/03/snmp-trap-monitoring-with-scom-2012-r2/
-	VarbindData - is by default a string, you can change this as needed.  This uses a regular expression pattern match in this example
--->
-
-<!-- This fragment depends on references:
-	RequiredReference: Alias="Health", ID="System.Health.Library"
-	RequiredReference: Alias="SNL", ID="System.NetworkManagement.Library"
+This fragment depends on references:
+  RequiredReference: Alias="Health", ID="System.Health.Library"
+  RequiredReference: Alias="SNL", ID="System.NetworkManagement.Library"
 --> 
   <Monitoring>
 	<Rules>

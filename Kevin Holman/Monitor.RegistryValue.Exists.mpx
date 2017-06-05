@@ -1,25 +1,29 @@
 ﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-<!-- In this fragment you need to replace:
-
-##CompanyID##
-##AppName##
-##ClassID##
-##RegValuePath##
-##RegValuePathSanitizeForUseInElementID##
-
-	This fragment includes a Monitor which checks for the existence of a registry VALUE
+<!--
+%%
+Description:
+    This fragment includes a Monitor which checks for the existence of a registry VALUE
 	RegValuePath - needs to be in the format of "SOFTWARE\Microsoft\CCM\HttpPort" or "SYSTEM\CurrentControlSet\Services\CcmExec\Start" as HKLM is assumed
-	RegValuePathSanitizeForUseInElementID - needs to be the actual Reg VALUE name or your description of it (NO SPACES or special characters allowed) such as "HttpPort"
--->
-	
-<!-- This fragment depends on references:
-	RequiredReference: Alias="System", ID="System.Library"
-	RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
-	RequiredReference: Alias="Health", ID="System.Health.Library"	
+	RegValueName - needs to be the actual Reg VALUE name or your description of it (NO SPACES or special characters allowed) such as "HttpPort"
+Version: 1.1
+LastModified: 29-May-2017
+%%
+
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName##
+  ##ClassID##
+  ##RegValuePath##
+  ##RegValueName##
+
+This fragment depends on references:
+  RequiredReference: Alias="System", ID="System.Library"
+  RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+  RequiredReference: Alias="Health", ID="System.Health.Library"	
 --> 
   <TypeDefinitions>
     <MonitorTypes>
-      <UnitMonitorType ID="##CompanyID##.##AppName##.RegValueExists.##RegValuePathSanitizeForUseInElementID##.MonitorType" Accessibility="Internal">
+      <UnitMonitorType ID="##CompanyID##.##AppName##.RegValueExists.##RegValueName##.MonitorType" Accessibility="Internal">
         <MonitorTypeStates>
           <MonitorTypeState ID="RegValueExists" NoDetection="false" />
           <MonitorTypeState ID="RegValueMissing" NoDetection="false" />
@@ -31,7 +35,7 @@
               <ComputerName>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/NetworkName$</ComputerName>
               <RegistryAttributeDefinitions>
                 <RegistryAttributeDefinition>
-                  <AttributeName>##RegValuePathSanitizeForUseInElementID##</AttributeName>
+                  <AttributeName>##RegValueName##</AttributeName>
                   <Path>##RegValuePath##</Path>
                   <PathType>1</PathType>  <!-- 0=regKey 1=regValue -->
                   <AttributeType>0</AttributeType>  <!-- 0=CheckIfExists (Boolean) 1=treat data as (String) 2=treat data as (Integer) -->
@@ -43,7 +47,7 @@
               <Expression>
                 <SimpleExpression>
                   <ValueExpression>
-                    <XPathQuery Type="Boolean">Values/##RegValuePathSanitizeForUseInElementID##</XPathQuery>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
+                    <XPathQuery Type="Boolean">Values/##RegValueName##</XPathQuery>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
                   </ValueExpression>
                   <Operator>Equal</Operator>  <!-- Common options for SimpleExpression Operator are "Equal" "NotEqual" "Greater" "Less" "GreaterEqual" "LessEqual" "Like" "NotLike" -->
                   <ValueExpression>
@@ -56,7 +60,7 @@
               <Expression>
                 <SimpleExpression>
                   <ValueExpression>
-                    <XPathQuery Type="Boolean">Values/##RegValuePathSanitizeForUseInElementID##</XPathQuery>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
+                    <XPathQuery Type="Boolean">Values/##RegValueName##</XPathQuery>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
                   </ValueExpression>
                   <Operator>Equal</Operator>  <!-- Common options for SimpleExpression Operator are "Equal" "NotEqual" "Greater" "Less" "GreaterEqual" "LessEqual" "Like" "NotLike" -->
                   <ValueExpression>
@@ -84,9 +88,9 @@
   </TypeDefinitions>
   <Monitoring>
     <Monitors>
-      <UnitMonitor ID="##CompanyID##.##AppName##.RegValueExists.##RegValuePathSanitizeForUseInElementID##.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.ConfigurationState" Remotable="true" Priority="Normal" TypeID="##CompanyID##.##AppName##.RegValueExists.##RegValuePathSanitizeForUseInElementID##.MonitorType" ConfirmDelivery="true">
+      <UnitMonitor ID="##CompanyID##.##AppName##.RegValueExists.##RegValueName##.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.ConfigurationState" Remotable="true" Priority="Normal" TypeID="##CompanyID##.##AppName##.RegValueExists.##RegValueName##.MonitorType" ConfirmDelivery="true">
         <Category>Custom</Category>
-        <AlertSettings AlertMessage="##CompanyID##.##AppName##.RegValueExists.##RegValuePathSanitizeForUseInElementID##.Monitor.Alert.Message">
+        <AlertSettings AlertMessage="##CompanyID##.##AppName##.RegValueExists.##RegValueName##.Monitor.Alert.Message">
           <AlertOnState>Warning</AlertOnState>  <!-- Warning or Error should match OperationalStates below  -->
           <AutoResolve>true</AutoResolve>
           <AlertPriority>Normal</AlertPriority>
@@ -102,29 +106,29 @@
   </Monitoring>
   <Presentation>
     <StringResources>
-      <StringResource ID="##CompanyID##.##AppName##.RegValueExists.##RegValuePathSanitizeForUseInElementID##.Monitor.Alert.Message" />
+      <StringResource ID="##CompanyID##.##AppName##.RegValueExists.##RegValueName##.Monitor.Alert.Message" />
     </StringResources>
   </Presentation>
   <LanguagePacks>
     <LanguagePack ID="ENU" IsDefault="true">
       <DisplayStrings>
-        <DisplayString ElementID="##CompanyID##.##AppName##.RegValueExists.##RegValuePathSanitizeForUseInElementID##.MonitorType">
-          <Name>##CompanyID## ##AppName## RegValueExists ##RegValuePathSanitizeForUseInElementID## MonitorType</Name>
+        <DisplayString ElementID="##CompanyID##.##AppName##.RegValueExists.##RegValueName##.MonitorType">
+          <Name>##CompanyID## ##AppName## RegValueExists ##RegValueName## MonitorType</Name>
           <Description>Monitor Type to check a registry key existence</Description>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.RegValueExists.##RegValuePathSanitizeForUseInElementID##.Monitor">
-          <Name>##CompanyID## ##AppName## RegValueExists ##RegValuePathSanitizeForUseInElementID## Monitor</Name>
+        <DisplayString ElementID="##CompanyID##.##AppName##.RegValueExists.##RegValueName##.Monitor">
+          <Name>##CompanyID## ##AppName## RegValueExists ##RegValueName## Monitor</Name>
           <Description></Description>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.RegValueExists.##RegValuePathSanitizeForUseInElementID##.Monitor" SubElementID="Success">
+        <DisplayString ElementID="##CompanyID##.##AppName##.RegValueExists.##RegValueName##.Monitor" SubElementID="Success">
           <Name>RegValueExists</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.RegValueExists.##RegValuePathSanitizeForUseInElementID##.Monitor" SubElementID="Warning">
+        <DisplayString ElementID="##CompanyID##.##AppName##.RegValueExists.##RegValueName##.Monitor" SubElementID="Warning">
           <Name>RegValueMissing</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.RegValueExists.##RegValuePathSanitizeForUseInElementID##.Monitor.Alert.Message">
-          <Name>##CompanyID## ##AppName## RegValueExists ##RegValuePathSanitizeForUseInElementID## Monitor Alert</Name>
-          <Description>##CompanyID## ##AppName## RegValueExists ##RegValuePathSanitizeForUseInElementID## Monitor detected the registry path ##RegValuePath## is missing</Description>
+        <DisplayString ElementID="##CompanyID##.##AppName##.RegValueExists.##RegValueName##.Monitor.Alert.Message">
+          <Name>##CompanyID## ##AppName## RegValueExists ##RegValueName## Monitor Alert</Name>
+          <Description>##CompanyID## ##AppName## RegValueExists ##RegValueName## Monitor detected the registry path ##RegValuePath## is missing</Description>
         </DisplayString>		
       </DisplayStrings>
     </LanguagePack>

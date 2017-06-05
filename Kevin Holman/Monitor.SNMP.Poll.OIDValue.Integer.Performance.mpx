@@ -1,20 +1,24 @@
 ﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-<!-- In this fragment you need to replace:
+<!--
+%%
+Description:
+  This fragment includes a MONITOR to query a SNMP device's OID value as an integer, and has two expressions to evaluate
+  A monitor state change will occur if the INTEGER value is above or below a set threshold.  You will have to modify this example if your OID returns a string
+Version: 1.1
+LastModified: 29-May-2017
+%%
 
-##CompanyID##
-##AppName##
-##ClassID##
-##OID##
-##ThresholdIntegerAboveBad##
-##ThresholdIntegerBelowGood##
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName##
+  ##ClassID##
+  ##OID##
+  ##ThresholdIntegerAboveBad##
+  ##ThresholdIntegerBelowGood##
 
-	This fragment includes a MONITOR to query a SNMP device's OID value as an integer, and has two expressions to evaluate
-	A monitor state change will occur if the INTEGER value is above or below a set threshold.  You will have to modify this example if your OID returns a string
--->
-
-<!-- This fragment depends on references:
-	RequiredReference: Alias="Health", ID="System.Health.Library"
-	RequiredReference: Alias="SNL", ID="System.NetworkManagement.Library"
+This fragment depends on references:
+  RequiredReference: Alias="Health", ID="System.Health.Library"
+  RequiredReference: Alias="SNL", ID="System.NetworkManagement.Library"
 --> 
   <Monitoring>
     <Monitors>

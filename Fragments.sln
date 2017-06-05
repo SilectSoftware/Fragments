@@ -1,12 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.26430.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{27D4D423-33FC-4422-88BD-2FA934332076}"
 	ProjectSection(SolutionItems) = preProject
 		Fragments.zip = Fragments.zip
-		Index.xml = Index.xml
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
@@ -32,7 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kevin Holman", "Kevin Holma
 		Kevin Holman\Monitor.Performance.ConsecSamples.TwoState.mpx = Kevin Holman\Monitor.Performance.ConsecSamples.TwoState.mpx
 		Kevin Holman\Monitor.Process.mpx = Kevin Holman\Monitor.Process.mpx
 		Kevin Holman\Monitor.RegistryKey.Exists.mpx = Kevin Holman\Monitor.RegistryKey.Exists.mpx
-		Kevin Holman\Monitor.RegistryValue.Content.mpx = Kevin Holman\Monitor.RegistryValue.Content.mpx
+		Kevin Holman\Monitor.RegistryValue.Content.Regex.mpx = Kevin Holman\Monitor.RegistryValue.Content.Regex.mpx
+		Kevin Holman\Monitor.RegistryValue.Content.Simple.mpx = Kevin Holman\Monitor.RegistryValue.Content.Simple.mpx
 		Kevin Holman\Monitor.RegistryValue.Exists.mpx = Kevin Holman\Monitor.RegistryValue.Exists.mpx
 		Kevin Holman\Monitor.Service.NoAlert.mpx = Kevin Holman\Monitor.Service.NoAlert.mpx
 		Kevin Holman\Monitor.Service.WithAlert.IgnoreDisabled.mpx = Kevin Holman\Monitor.Service.WithAlert.IgnoreDisabled.mpx
@@ -53,11 +53,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kevin Holman", "Kevin Holma
 		Kevin Holman\Rule.Performance.Collection.Perfmon.mpx = Kevin Holman\Rule.Performance.Collection.Perfmon.mpx
 		Kevin Holman\Rule.Performance.Collection.PowerShellScript.mpx = Kevin Holman\Rule.Performance.Collection.PowerShellScript.mpx
 		Kevin Holman\Rule.TimedScript.PowerShell.mpx = Kevin Holman\Rule.TimedScript.PowerShell.mpx
+		Kevin Holman\Task.Agent.Command.mpx = Kevin Holman\Task.Agent.Command.mpx
+		Kevin Holman\Task.Agent.PowerShell.NoParams.mpx = Kevin Holman\Task.Agent.PowerShell.NoParams.mpx
+		Kevin Holman\Task.Agent.PowerShell.WithParams.mpx = Kevin Holman\Task.Agent.PowerShell.WithParams.mpx
+		Kevin Holman\Task.Agent.VBScript.mpx = Kevin Holman\Task.Agent.VBScript.mpx
+		Kevin Holman\Task.Console.mpx = Kevin Holman\Task.Console.mpx
 		Kevin Holman\version info.txt = Kevin Holman\version info.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Silect", "Silect", "{09D41F4F-1FF3-42E7-A7DE-918B448841AD}"
 	ProjectSection(SolutionItems) = preProject
+		Silect\MonitorProcessWithDiscoveryAndStateAndAlertView.mpx = Silect\MonitorProcessWithDiscoveryAndStateAndAlertView.mpx
 		Silect\MonitorSNMP.Poll.OIDValue.PowerShell.mpx = Silect\MonitorSNMP.Poll.OIDValue.PowerShell.mpx
 		Silect\ReadMe.txt = Silect\ReadMe.txt
 	EndProjectSection

@@ -1,18 +1,22 @@
 ﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-<!-- In this fragment you need to replace:
-
-##CompanyID##
-##AppName##
-##ClassID##
-##ServiceName## 
-
+<!--
+%%
+Description:
 	This fragment includes a monitor for a service that will ONLY issue state changes and NO ALERTS
 	ServiceName - must be the short name of the service as seen in the registry and can not contain spaces or special characters by default
--->
+Version: 1.1
+LastModified: 29-May-2017
+%%
 
-<!-- This fragment depends on references:
-	RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
-	RequiredReference: Alias="Health", ID="System.Health.Library"
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName##
+  ##ClassID##
+  ##ServiceName## 
+
+This fragment depends on references:
+  RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+  RequiredReference: Alias="Health", ID="System.Health.Library"
 --> 
   <Monitoring>
     <Monitors>

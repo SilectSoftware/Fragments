@@ -1,21 +1,24 @@
 ﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-<!-- In this fragment you need to replace:
-(ADD OR REMOVE THESE AS NEEDED)
-##CompanyID##
-##AppName##
-##ClassID##
-##ShellCommand##
-
+<!--
+%%
+Description:
 	This fragment includes a MONITOR to run a Shell Command and compare the ouput of the command
 	In this example we compare the output based on whether it will return a "0" or a "1" but this can be changed
 	My sample shell command looks for a file in a directory such as:  "ls /opt/myapp|wc -l"
--->
-	
-<!-- This fragment depends on references:
-(REMOVE ANY THAT DONT BELONG)
-	RequiredReference: Alias="Health", ID="System.Health.Library"
-	RequiredReference: Alias="MUL", ID="Microsoft.Unix.Library"
-	RequiredReference: Alias="MUSL", ID="Microsoft.Unix.ShellCommand.Library"
+Version: 1.1
+LastModified: 29-May-2017
+%%
+
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName##
+  ##ClassID##
+  ##ShellCommand##
+
+This fragment depends on references:
+  RequiredReference: Alias="Health", ID="System.Health.Library"
+  RequiredReference: Alias="MUL", ID="Microsoft.Unix.Library"
+  RequiredReference: Alias="MUSL", ID="Microsoft.Unix.ShellCommand.Library"
 --> 
   <Monitoring>
     <Monitors>

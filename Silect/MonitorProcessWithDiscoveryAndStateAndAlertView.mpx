@@ -1,0 +1,171 @@
+<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!--
+%%
+Description:
+Complete process monitor solution with alert and state views
+Version: 1.0
+LastModified: 05-Jun-2017
+%%
+
+
+
+
+In this fragment you need to replace:
+##CustomApplicationName##
+##CustomApplicationFriendlyName##
+##ProcessName##
+##MinInstanceCount##
+##MaxInstanceCount##
+##RegValuePath##
+
+This fragment depends on references:
+  RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library", Version="7.5.8501.0"
+  RequiredReference: Alias="Health", ID="System.Health.Library", Version="7.0.8437.0"
+  RequiredReference: Alias="ProcessMonitoringLibrary", ID="Microsoft.SystemCenter.ProcessMonitoring.Library", Version="7.2.11719.0"
+  RequiredReference: Alias="System", ID="System.Library", Version="7.5.8501.0"
+  RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library", Version="7.0.8437.0"
+
+@@Author=Paul Chehowski@@
+@@Author=Silect Software, Inc.@@
+@@Workflow=Process Monitor@@
+@@Workflow=Registry Discovery@@
+-->
+  <TypeDefinitions>
+    <EntityTypes>
+      <ClassTypes>
+        <ClassType ID="##CustomApplicationName##.Registry.Class" Accessibility="Public" Abstract="false" Base="Windows!Microsoft.Windows.LocalApplication" Hosted="true" Singleton="false" Extension="false" />
+      </ClassTypes>
+    </EntityTypes>
+  </TypeDefinitions>
+  <Monitoring>
+    <Discoveries>
+      <Discovery ID="##CustomApplicationName##.Registry.Class.Discovery" Enabled="true" Target="Windows!Microsoft.Windows.Computer" ConfirmDelivery="false" Remotable="true" Priority="Normal">
+        <Category>Discovery</Category>
+        <DiscoveryTypes>
+          <DiscoveryClass TypeID="##CustomApplicationName##.Registry.Class">
+            <Property TypeID="System!System.ConfigItem" PropertyID="ObjectStatus" />
+            <Property TypeID="System!System.ConfigItem" PropertyID="AssetStatus" />
+            <Property TypeID="System!System.ConfigItem" PropertyID="Notes" />
+            <Property TypeID="System!System.Entity" PropertyID="DisplayName" />
+          </DiscoveryClass>
+        </DiscoveryTypes>
+        <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.FilteredRegistryDiscoveryProvider">
+          <ComputerName>$Target/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$</ComputerName>
+          <RegistryAttributeDefinitions>
+            <RegistryAttributeDefinition>
+              <AttributeName>InstallPath</AttributeName>
+              <Path>##RegValuePath##</Path>
+              <PathType>1</PathType>
+              <AttributeType>0</AttributeType>
+            </RegistryAttributeDefinition>
+          </RegistryAttributeDefinitions>
+          <Frequency>86400</Frequency>
+          <ClassId>$MPElement[Name="##CustomApplicationName##.Registry.Class"]$</ClassId>
+          <InstanceSettings>
+            <Settings>
+              <Setting>
+                <Name>$MPElement[Name="Windows!Microsoft.Windows.Computer"]/PrincipalName$</Name>
+                <Value>$Target/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$</Value>
+              </Setting>
+            </Settings>
+          </InstanceSettings>
+          <Expression>
+            <SimpleExpression>
+              <ValueExpression>
+                <XPathQuery Type="Boolean">Values/InstallPath</XPathQuery>
+              </ValueExpression>
+              <Operator>Equal</Operator>
+              <ValueExpression>
+                <Value Type="Boolean">true</Value>
+              </ValueExpression>
+            </SimpleExpression>
+          </Expression>
+        </DataSource>
+      </Discovery>
+    </Discoveries>
+    <Monitors>
+      <UnitMonitor ID="##CustomApplicationName##.Process.Monitor" Accessibility="Public" Enabled="false" Target="##CustomApplicationName##.Registry.Class" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="ProcessMonitoringLibrary!Microsoft.SystemCenter.Process.ProcessInstanceCountMonitorType" ConfirmDelivery="false">
+        <Category>AvailabilityHealth</Category>
+        <AlertSettings AlertMessage="##CustomApplicationName##.Process.Monitor.Alert.Message">
+          <AlertOnState>Warning</AlertOnState>
+          <AutoResolve>true</AutoResolve>
+          <AlertPriority>Normal</AlertPriority>
+          <AlertSeverity>MatchMonitorHealth</AlertSeverity>
+        </AlertSettings>
+        <OperationalStates>
+          <OperationalState ID="Success" MonitorTypeStateID="InsideRangeState" HealthState="Success" />
+          <OperationalState ID="Error" MonitorTypeStateID="OutsideRangeState" HealthState="Warning" />
+        </OperationalStates>
+        <Configuration>
+          <ProcessName>##ProcessName##</ProcessName>
+          <Frequency>60</Frequency>
+          <MinInstanceCount>##MinInstanceCount##</MinInstanceCount>
+          <MaxInstanceCount>##MaxInstanceCount##</MaxInstanceCount>
+          <InstanceCountOutOfRangeTimeThresholdInSeconds>300</InstanceCountOutOfRangeTimeThresholdInSeconds>
+        </Configuration>
+      </UnitMonitor>
+    </Monitors>
+  </Monitoring>
+  <Presentation>
+    <Views>
+      <View ID="##CustomApplicationName##.Alert.View" Accessibility="Public" Enabled="true" Target="##CustomApplicationName##.Registry.Class" TypeID="SC!Microsoft.SystemCenter.AlertViewType" Visible="true">
+        <Category>Operations</Category>
+        <Criteria>
+          <ResolutionState>
+            <StateRange Operator="NotEquals">255</StateRange>
+          </ResolutionState>
+        </Criteria>
+      </View>
+      <View ID="##CustomApplicationName##.State.View" Accessibility="Public" Enabled="true" Target="##CustomApplicationName##.Registry.Class" TypeID="SC!Microsoft.SystemCenter.StateViewType" Visible="true">
+        <Category>Operations</Category>
+        <Criteria>
+          <SeverityList>
+            <Severity>Red</Severity>
+            <Severity>Yellow</Severity>
+            <Severity>Green</Severity>
+            <Severity>Unknown</Severity>
+          </SeverityList>
+        </Criteria>
+      </View>
+    </Views>
+    <StringResources>
+      <StringResource ID="##CustomApplicationName##.Process.Monitor.Alert.Message" />
+    </StringResources>
+  </Presentation>
+  <LanguagePacks>
+    <LanguagePack ID="ENU">
+      <DisplayStrings>
+        <DisplayString ElementID="##CustomApplicationName##.Registry.Class">
+          <Name>##CustomApplicationFriendlyName## Registry Class</Name>
+          <Description>Class for ##CustomApplicationFriendlyName##</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CustomApplicationName##.Process.Monitor">
+          <Name>##CustomApplicationFriendlyName## Process Monitor</Name>
+          <Description>Monitor for ##CustomApplicationFriendlyName##</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CustomApplicationName##.Process.Monitor.Alert.Message">
+          <Name>##CustomApplicationFriendlyName## Process Monitor: Failure</Name>
+          <Description>Please see the alert context for details.</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CustomApplicationName##.Process.Monitor" SubElementID="Error">
+          <Name>Outside Range State</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CustomApplicationName##.Process.Monitor" SubElementID="Success">
+          <Name>Inside Range State</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CustomApplicationName##.Registry.Class.Discovery">
+          <Name>##CustomApplicationFriendlyName##. Registry Class Discovery</Name>
+          <Description>Discovery for ##CustomApplicationFriendlyName##</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CustomApplicationName##.Alert.View">
+          <Name>##CustomApplicationFriendlyName## Alert View</Name>
+          <Description>Alert View for ##CustomApplicationFriendlyName##</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CustomApplicationName##.State.View">
+          <Name>##CustomApplicationFriendlyName## State View</Name>
+          <Description>State View for ##CustomApplicationFriendlyName##</Description>
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>

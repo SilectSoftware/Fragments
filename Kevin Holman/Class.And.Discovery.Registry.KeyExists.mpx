@@ -1,17 +1,23 @@
 ﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-<!-- In this fragment you need to replace:
+<!-- 
+%%
+Description:
+  This fragment will discover a class instance (or instances) based on existence of a registry KEY 
+  RegKeyPath - needs to be in the format of "SOFTWARE\Microsoft\CCM" or "SYSTEM\CurrentControlSet\Services\CcmExec" as HKLM is assumed
+Version: 1.1
+LastModified: 29-May-2017
+%%
 
-##CompanyID##
-##AppName##
-##RegKeyPath##
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName##
+  ##RegKeyPath##
 
-	This fragment will discover a class instance (or instances) based on existence of a registry KEY 
-	RegKeyPath - needs to be in the format of "SOFTWARE\Microsoft\CCM" or "SYSTEM\CurrentControlSet\Services\CcmExec" as HKLM is assumed 
--->
-
-<!-- This fragment depends on references:
+This fragment depends on references:
 	RequiredReference: Alias="System", ID="System.Library"
 	RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+	
+@@Author=Kevin Holman@@
 -->
   <TypeDefinitions>
     <EntityTypes>

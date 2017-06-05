@@ -1,4 +1,4 @@
 Silect Software Fragments
 -------------------------
 
-TBD (something)
+Fragments in this folder were created by Silect Software.

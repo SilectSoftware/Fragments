@@ -1,0 +1,58 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--
+%%
+Description:
+  This fragment includes an AGENT TASK that will run a VBSCRIPT
+  ClassID is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem
+  TaskName is a short name for the task with no spaces or special characters allowed
+Version: 1.0
+LastModified: 29-May-2017
+%%
+
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName##
+  ##ClassID##
+  ##TaskName##
+
+This fragment depends on references:
+  RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+--> 
+  <Monitoring>
+	<Tasks>
+      <Task ID="##CompanyID##.##AppName##.##TaskName##.Task" Accessibility="Public" Enabled="true" Target="##ClassID##" Timeout="120" Remotable="true">
+        <Category>Custom</Category>
+        <WriteAction ID="WA" TypeID="Windows!Microsoft.Windows.ScriptWriteAction">
+          <ScriptName>##CompanyID##.##AppName##.##TaskName##.Task.vbs</ScriptName>
+          <Arguments />
+          <ScriptBody>
+            Option Explicit
+            On Error Resume Next
+            Dim ScriptName, oAPI
+
+            ScriptName = "##CompanyID##.##AppName##.##TaskName##.Task.vbs"
+
+            'Load momscript API
+            Set oAPI = CreateObject("MOM.ScriptAPI")
+            'Log script event that we are starting
+            Call oAPI.LogScriptEvent(ScriptName, 6666, 2, "A custom script task is being executed.")
+
+            'Echo for output
+            WScript.echo "Script Executed"
+          </ScriptBody>
+          <TimeoutSeconds>60</TimeoutSeconds>
+        </WriteAction>
+      </Task>	
+	</Tasks>
+  </Monitoring>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##TaskName##.Task">
+          <Name>##TaskName## Task</Name>
+        </DisplayString>	  
+      </DisplayStrings>
+      <KnowledgeArticles></KnowledgeArticles>
+    </LanguagePack>
+  </LanguagePacks>   
+</ManagementPackFragment>

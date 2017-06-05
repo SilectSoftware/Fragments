@@ -1,19 +1,22 @@
 ﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-<!-- In this fragment you need to replace:
+<!--
+%%
+Description:
+  This fragment includes a class and discovery for a Unix/Linux application based on existence of a directory and conf file existing
+  AppFilePath - is the directory path to your application conf file, such as: /opt/myapp/myapp.conf
+Version: 1.1
+LastModified: 29-May-2017
+%%
 
-##CompanyID##
-##AppName##
-##AppFilePath##
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName##
+  ##AppFilePath##
 
-	This fragment includes a class and discovery for a Unix/Linux application based on existence of a directory and conf file existing
-	AppFilePath - is the directory path to your application conf file, such as: /opt/myapp/myapp.conf
--->
-	
-<!-- This fragment depends on references:
-
-	RequiredReference: Alias="System", ID="System.Library"
-	RequiredReference: Alias="MUL", ID="Microsoft.Unix.Library"
-	RequiredReference: Alias="MSWL", ID="Microsoft.SystemCenter.WSManagement.Library"	
+This fragment depends on references:
+  RequiredReference: Alias="System", ID="System.Library"
+  RequiredReference: Alias="MUL", ID="Microsoft.Unix.Library"
+  RequiredReference: Alias="MSWL", ID="Microsoft.SystemCenter.WSManagement.Library"	
 --> 
   <TypeDefinitions>
     <EntityTypes>

@@ -45,6 +45,19 @@
 		Monitor.Unix.ShellCommand.mpx
 1.8 - (3-22-2017)
 	Minor bug fixes
-	Added new frages:
+	Added new frags:
 		Rule.AlertGenerating.SNMPTrap.AlertOnOIDandVarbind.mpx
 	Changed LanguagePack ENU IsDefault=true for all fragments
+1.9 - (5-29-2017)
+	Changed comment section to a new standard format to better support Silect MP Author Pro
+	Changed Monitor.RegistryValue.Content.mpx to Monitor.RegistryValue.Content.Regex.mpx
+	Added new frags:
+		Monitor.RegistryValue.Content.Simple.mpx
+		Task.Agent.Command.mpx
+		Task.Agent.PowerShell.NoParams.mpx
+		Task.Agent.PowerShell.WithParams.mpx
+		Task.Agent.VBScript.mpx
+		Task.Console.mpx
+2.0 - (6-5-2017)
+	Updated 4 Registry Monitors to work correctly with MPAuthor
+	
