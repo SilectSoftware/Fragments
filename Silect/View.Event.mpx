@@ -1,0 +1,47 @@
+<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!--
+%%
+Description:
+This fragment defines an event view scoped to your custom class.
+Version: 1.0
+LastModified: 07-Jul-2017
+%%
+
+In this fragment you need to replace:
+##CompanyId##
+##AppName##
+##ClassID##
+##Category##
+##PublisherName##
+##EventNumber##
+
+This fragment depends on references:
+  RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library", Version="7.0.8437.0"
+
+@@Author=Ian Jackson@@
+@@Author=Silect Software, Inc.@@
+-->
+  <Presentation>
+    <Views>
+      <View ID="##CompanyId##.##AppName##.##Category##.##PublisherName##.##EventNumber##.Event.View" Accessibility="Public" Enabled="true" Target="##ClassID##" TypeID="SC!Microsoft.SystemCenter.EventViewType" Visible="true">
+        <Category>##Category##</Category>
+        <Criteria>
+          <EventNumberList>
+            <EventNumber>##EventNumber##</EventNumber>
+          </EventNumberList>
+          <PublisherName>##PublisherName##</PublisherName>
+        </Criteria>
+      </View>
+    </Views>
+  </Presentation>
+  <LanguagePacks>
+    <LanguagePack ID="ENU">
+      <DisplayStrings>
+        <DisplayString ElementID="##CompanyId##.##AppName##.##Category##.##PublisherName##.##EventNumber##.Event.View">
+          <Name>##Category## ##PublisherName## ##EventNumber## Event View</Name>
+          <Description>Created using MP Author Professional</Description>
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>
