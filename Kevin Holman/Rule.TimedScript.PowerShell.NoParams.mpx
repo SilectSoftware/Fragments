@@ -2,9 +2,9 @@
 <!--
 %%
 Description:
-  This fragment includes a rule that runs a PowerShell script on a timer
-Version: 1.1
-LastModified: 29-May-2017
+  A rule that runs a PowerShell script on a timer with no parameters
+Version: 1.2
+LastModified: 12-Aug-2017
 %%
 
 In this fragment you need to replace:
@@ -33,7 +33,8 @@ This fragment depends on references:
         <WriteActions>
           <WriteAction ID="PSWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
             <ScriptName>##CompanyID##.##AppName##.TimedPowerShell.Rule.ps1</ScriptName>
-            <ScriptBody>#=================================================================================
+            <ScriptBody>
+#=================================================================================
 #  Description of Script here
 #=================================================================================
 
@@ -54,46 +55,7 @@ $whoami = whoami
 $momapi = New-Object -comObject MOM.ScriptAPI
 
 # Log an event for the script starting			  
-$momapi.LogScriptEvent($ScriptName,1234,0, "Script is starting. Running, as ($whoami).")
-
-$MServer = ""
-
-# Clear any previous errors
-if($Error)
-  {
-  $Error.Clear()
-  }
-
-
-#=================================================================================
-# Import the OperationsManager module and connect to the management group
-# THIS SECTION IS OPTIONAL - delete if you dont need to get data from SCOM SDK
-Try   
-  {
-  $SCOMPowerShellKey = "HKLM:\SOFTWARE\Microsoft\System Center Operations Manager\12\Setup\Powershell\V2"
-  $SCOMModulePath = Join-Path (Get-ItemProperty $SCOMPowerShellKey).InstallDirectory "OperationsManager"
-  Import-module $SCOMModulePath
-  }
-Catch 
-  { 
-  $momapi.LogScriptEvent($ScriptName,1234,2, "Unable to load the OperationsManager module, Error is: $error") 
-  }
-Try   
-  {
-  New-DefaultManagementGroupConnection $MServer
-  }
-Catch 
-  {
-  $momapi.LogScriptEvent($ScriptName,1234,2, "Unable to connect to the management server: $MServer.  Error when calling New-DefaultManagementGroupConnection.  Error is: $error")
-  }	
-#=================================================================================
-
-
-# Clear any previous errors
-if($Error)
-  {
-  $Error.Clear()
-  }
+$momapi.LogScriptEvent($ScriptName,1234,0, "`n Script is starting. `n Running, as ($whoami).")
 
 #=================================================================================
 # MAIN body of your script
@@ -105,8 +67,8 @@ if($Error)
 #Log an event for script ending and total execution time.
 $EndTime = Get-Date
 $ScriptTime = ($EndTime - $StartTime).TotalSeconds
-$momapi.LogScriptEvent($ScriptName,1234,0,"Script has completed.  Runtime was ($ScriptTime) seconds.")
-</ScriptBody>
+$momapi.LogScriptEvent($ScriptName,1234,0,"`n Script has completed. `n Runtime was ($ScriptTime) seconds.")			
+            </ScriptBody>
             <TimeoutSeconds>120</TimeoutSeconds>
           </WriteAction>
         </WriteActions>

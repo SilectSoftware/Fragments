@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment includes an AGENT TASK that will run a VBSCRIPT
+  A CONSOLE task that will run a command such as Ping.exe
   ClassID is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem
   TaskName is a short name for the task with no spaces or special characters allowed
   You will need to customize Application and Argument and add additional arguments as needed.  Ping is provided as an example only

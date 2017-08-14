@@ -2,10 +2,10 @@
 <!--
 %%
 Description:
-  This fragment includes a Monitor which checks for the content of a registry VALUE and compares it as a STRING to an expected value expression in Regex
+  A MONITOR which checks for the content of a registry VALUE and compares it as a STRING to equal or not equal an expected string
   RegValuePath - needs to be in the format of "SOFTWARE\Microsoft\CCM\HttpPort" or "SYSTEM\CurrentControlSet\Services\CcmExec\Start" as HKLM is assumed
   RegValueName - needs to be the actual Reg VALUE name or your description of it (NO SPACES or special characters allowed) such as "HttpPort"
-  RegValueExpression - can be a direct match or any regex.  ^()$ will be hard coded in this example but you can change this
+  RegValueExpression - Should be a direct match of what you are looking for
 Version: 1.1
 LastModified: 29-May-2017
 %%

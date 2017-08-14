@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-	This fragment includes a Monitor which runs a timed VBScript to drive the state with alert, and accepts a list of arguments as params to the script
+	A MONITOR which runs a timed VBScript to drive monitor state with ALERT, and accepts a list of arguments as params to the script
 Version: 1.1
 LastModified: 29-May-2017
 %%

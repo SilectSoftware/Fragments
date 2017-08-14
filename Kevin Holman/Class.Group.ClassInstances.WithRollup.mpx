@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  In this fragment we create a group of instances of your custom class with health rollup to the group object
+  A GROUP of instances of your custom class with state health rollup to the group object
   This group type should ONLY be used if having health state reflected at the group level is a requirement
 Version: 1.1
 LastModified: 29-May-2017

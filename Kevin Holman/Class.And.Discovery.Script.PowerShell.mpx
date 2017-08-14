@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment includes a class definition and discovery based on a PowerShell Script
+  A CLASS and DISCOVERY using a PowerShell Script to create class instances
   In this example we added a a couple additional class properties to demo that capability 
 Version: 1.1
 LastModified: 29-May-2017

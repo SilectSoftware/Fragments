@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-	This fragment includes a Monitor which runs a timed VBScript to drive the state with alert 
+	A MONITOR which runs a timed VBScript (no parameters) to drive monitor state with ALERT 
 Version: 1.1
 LastModified: 29-May-2017
 %%

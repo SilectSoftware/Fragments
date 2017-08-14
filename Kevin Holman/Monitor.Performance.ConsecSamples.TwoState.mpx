@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment includes a monitor for performance data which uses consecutive samples and two states and alert on unhealthy statechange
+  A MONITOR for performance data which uses consecutive samples and two states and alert on unhealthy statechange
   CounterNameSanitizeForUseInElementID - needs to be your perf counter name, but cleaned up without special characters or 
   spaces.  For instance, "% Processor Time" would be cleaned up to "PercentProcessorTime"
 Version: 1.1

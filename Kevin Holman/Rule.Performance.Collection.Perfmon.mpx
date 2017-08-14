@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment includes a RULE to collect performance data from perfmon.  Optimization can be set but the default is non-optimized
+  A RULE to collect performance data from native perfmon.  Optimization can be set but the default is non-optimized
   CounterNameSanitizeForUseInElementID - needs to be your perf counter name, but cleaned up without special characters or 
   spaces.  For instance, "% Processor Time" would be cleaned up to "PercentProcessorTime"
 Version: 1.1

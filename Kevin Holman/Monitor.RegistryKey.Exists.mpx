@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment includes a Monitor which checks for the existence of a registry Key
+  A MONITOR which checks for the existence of a registry Key
   RegKeyPath - needs to be in the format of "SOFTWARE\Microsoft\CCM" or "SYSTEM\CurrentControlSet\Services\CcmExec" as HKLM is assumed
   RegKeyName - needs to be the actual key name or your description of it (NO SPACES or special characters allowed) such as "CcmExec"
 Version: 1.1

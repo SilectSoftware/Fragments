@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment includes a Class definition and a discovery for a custom SNMP device type based on an OID
+  A CLASS and DISCOVERY for a custom SNMP device type based on an SNMP GET OID query
   See example at: https://blogs.technet.microsoft.com/kevinholman/2016/04/20/writing-a-custom-class-for-your-network-devices/
 Version: 1.1
 LastModified: 29-May-2017

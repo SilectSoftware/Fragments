@@ -2,7 +2,7 @@
 <!-- 
 %%
 Description:
-  This fragment will discover a class instance (or instances) based on a reg key matching a pattern in a script.  
+  A CLASS and DISCOVERY based on a reg key matching a pattern in a PowerShell script.  
   In this example we added a class property to discover the "servicename" based on what was found in the registry
 Version: 1.1
 LastModified: 29-May-2017

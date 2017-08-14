@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment includes a monitor for performance data which uses consecutive samples and two states and alert on unhealthy statechange
+  A custom MONITORTYPE and MONITOR for performance data which checks a threshold first using native modules then runs a script to gather additional output.
   In the event the monitor threshold is met, a script will be executed to gather additional propertybag data for the monitor context and alert description
   CounterNameSanitizeForUseInElementID - needs to be your perf counter name, but cleaned up without special characters or 
   spaces.  For instance, "% Processor Time" would be cleaned up to "PercentProcessorTime"

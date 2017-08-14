@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment includes a MONITOR to query a SNMP device's OID value as an integer, and has two expressions to evaluate
+  A MONITOR to query a SNMP devices OID value as an integer, and has two expressions to evaluate and drive monitor state
   A monitor state change will occur if the INTEGER value is above or below a set threshold.  You will have to modify this example if your OID returns a string
 Version: 1.1
 LastModified: 29-May-2017

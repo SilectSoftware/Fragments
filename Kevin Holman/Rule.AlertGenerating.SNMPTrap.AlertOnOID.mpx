@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment includes RULE for SNMP traps which will generate a trap based on a receipt from a specific OID
+  A RULE for SNMP TRAPS to Alert on a TRAP from a specific OID
   See example use here:  https://blogs.technet.microsoft.com/kevinholman/2015/02/03/snmp-trap-monitoring-with-scom-2012-r2/
 Version: 1.1
 LastModified: 29-May-2017

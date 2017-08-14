@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  In this fragment we create a group of Windows Computers that CONTAIN an instance of your custom class AND Health Service Watcher objects related to the Windows Computers in the group
+  A GROUP of Windows Computers that CONTAIN an instance of your custom class AND Health Service Watcher objects related to the Windows Computers in the group
 Version: 1.1
 LastModified: 29-May-2017
 %%

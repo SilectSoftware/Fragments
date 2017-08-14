@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment includes a monitor for a service that will generate a state change and Alert based on the monitor state change
+  A MONITOR for a service that will generate a state change and Alert
   ServiceName - must be the short name of the service as seen in the registry and can not contain spaces or special characters by default
 Version: 1.1
 LastModified: 29-May-2017

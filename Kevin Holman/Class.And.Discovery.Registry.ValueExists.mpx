@@ -2,7 +2,7 @@
 <!-- 
 %%
 Description:
-  This fragment will discover a class instance (or instances) based on existence of a registry VALUE within a KEY
+  A CLASS and DISCOVERY based on existence of a registry VALUE within a KEY
   RegValuePath - needs to be in the format of "SOFTWARE\KeyName\ValueName" or "SYSTEM\KeyName\ValueName" as HKLM is assumed 
 Version: 1.1
 LastModified: 29-May-2017

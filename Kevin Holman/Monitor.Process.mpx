@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment includes a Monitor for number of processes and will generate an alert when outside the set range
+  A MONITOR for existence or number of processes and will generate an alert when outside the set range
 Version: 1.1
 LastModified: 29-May-2017
 %%

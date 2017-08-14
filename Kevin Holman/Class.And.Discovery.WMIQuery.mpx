@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment will discover a class instance (or instances) based on boolean output of a WMI query.
+  A CLASS and DISCOVERY to discover instances based on boolean output of a WMI query.
   As long as the query returns SOMETHING we will populate an instance of the class.
 Version: 1.1
 LastModified: 29-May-2017

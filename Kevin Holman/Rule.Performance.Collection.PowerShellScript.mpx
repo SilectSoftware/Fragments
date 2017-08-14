@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment includes a RULE that uses a PowerShell script to collect data and output/map it to Performance data for collection
+  A RULE that uses a PowerShell script to collect data and output/map it to Performance data for collection
   ObjectName, CounterName, and InstanceName you can make up in this case, as we are mapping the data from PowerShell to a made up Performance Counter
 Version: 1.1
 LastModified: 29-May-2017

@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment includes an AGENT TASK that will execute a command on the existing filesystem
+  An AGENT TASK that will execute a single line command on the agent system using CMD.EXE
   ClassID is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem
   TaskName is a short name for the task with no spaces or special characters allowed
   You will need to customize your ApplicationName and CommandLine as needed.  EventCreate included for example only

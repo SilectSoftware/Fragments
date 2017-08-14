@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-	This fragment includes a MONITOR to run a Shell Command and compare the ouput of the command
+	A MONITOR to run a SHELL COMMAND and compare the ouput of the command to expression criteria
 	In this example we compare the output based on whether it will return a "0" or a "1" but this can be changed
 	My sample shell command looks for a file in a directory such as:  "ls /opt/myapp|wc -l"
 Version: 1.1

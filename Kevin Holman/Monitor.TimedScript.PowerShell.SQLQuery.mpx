@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment includes a Monitor which runs a timed PowerShell script as the DataSource
+  A MONITOR which runs a timed PowerShell script as the DataSource and queries a SQL server for output to drive monitor state and ALERT.
   The script calls a SQL query against a database and the output submitted by the script in a propertybag.
 Version: 1.1
 LastModified: 29-May-2017

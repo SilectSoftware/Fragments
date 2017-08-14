@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment includes RULE for SNMP traps which will generate a trap based on a receipt from a specific OID
+  A RULE for SNMP TRAPS to ALERT on a TRAP with a specific OID and match on SNMP Varbind criteria
   See example use here:  https://blogs.technet.microsoft.com/kevinholman/2015/02/03/snmp-trap-monitoring-with-scom-2012-r2/
   VarbindData - is by default a string, you can change this as needed.  This uses a regular expression pattern match in this example
 Version: 1.1

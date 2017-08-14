@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment includes a Rule to generate an alert on a specific EventID and Event Source
+  A RULE to ALERT on a specific EventID and Event Source
 Version: 1.1
 LastModified: 29-May-2017
 %%

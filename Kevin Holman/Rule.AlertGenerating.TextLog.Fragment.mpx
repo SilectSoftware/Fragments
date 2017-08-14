@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment includes a Rule to generate an alert on a specific String inside a new line on a Text Log
+  A Rule to alert on a specific string on a new line in an ASCII Text Log file
   LogFileDirectory is the folder path that contains the log files.  Example:  C:\logs
   LogFilePattern is the filename of the log file or a wildcard to match multiple files.  Example:  MyAppLog.txt or *.txt
   StringToMatch is the string you want to find in a new line added to the log.  Example:  error

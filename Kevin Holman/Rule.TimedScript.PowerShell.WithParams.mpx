@@ -1,0 +1,107 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--
+%%
+Description:
+  A rule that runs a PowerShell script on a timer with examples for sending parameters to the script
+Version: 1.0
+LastModified: 12-Aug-2017
+%%
+
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName##
+  ##ClassID##
+
+This fragment depends on references:
+  RequiredReference: Alias="System", ID="System.Library"
+  RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+--> 
+  <Monitoring>
+    <Rules>
+      <Rule ID="##CompanyID##.##AppName##.TimedPowerShell.Rule" Enabled="true" Target="##ClassID##" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>Custom</Category>
+        <DataSources>
+          <DataSource ID="Scheduler" TypeID="System!System.Scheduler">
+            <Scheduler>
+              <SimpleReccuringSchedule>
+                <Interval Unit="Seconds">3600</Interval>
+              </SimpleReccuringSchedule>
+              <ExcludeDates />
+            </Scheduler>
+          </DataSource>		  
+        </DataSources>
+        <WriteActions>
+          <WriteAction ID="PSWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
+            <ScriptName>##CompanyID##.##AppName##.TimedPowerShell.Rule.ps1</ScriptName>
+            <ScriptBody>
+#=================================================================================
+#  Description of Script here
+#=================================================================================
+param($ComputerName,$MGName,$YourStaticParam)
+
+#=================================================================================
+# Constants section - modify stuff here:
+
+# Assign script name variable for use in event logging
+$ScriptName = "##CompanyID##.##AppName##.TimedPowerShell.Rule.ps1"
+#=================================================================================
+
+# Gather script start time
+$StartTime = Get-Date             
+
+# Gather who the script is running as
+$whoami = whoami
+
+# Load MOMScript API
+$momapi = New-Object -comObject MOM.ScriptAPI
+
+# Log an event for the script starting			  
+$momapi.LogScriptEvent($ScriptName,1234,0, "`n Script is starting. `n Running, as ($whoami).")
+
+# Log an event for the Params			  
+$momapi.LogScriptEvent($ScriptName,1234,0, "`n These are the parameters passed from script: `n ComputerName: ($ComputerName). `n ManagementGroup Name: ($MGName) `n YourStaticParam: ($YourStaticParam).")
+
+
+#=================================================================================
+# MAIN body of your script
+
+
+
+#=================================================================================
+
+#Log an event for script ending and total execution time.
+$EndTime = Get-Date
+$ScriptTime = ($EndTime - $StartTime).TotalSeconds
+$momapi.LogScriptEvent($ScriptName,1234,0,"`n Script has completed. `n Runtime was ($ScriptTime) seconds.")
+            </ScriptBody>
+            <Parameters>
+              <Parameter>
+                <Name>ComputerName</Name>
+                <Value>$Target/Host/Property[Type='Windows!Microsoft.Windows.Computer']/PrincipalName$</Value>
+              </Parameter>
+			  <Parameter>
+                <Name>MGName</Name>
+                <Value>$Target/ManagementGroup/Name$</Value>
+              </Parameter>
+			  <Parameter>
+                <Name>YourStaticParam</Name>
+                <Value>YourStaticValue</Value>
+              </Parameter>			  
+            </Parameters>
+            <TimeoutSeconds>120</TimeoutSeconds>
+          </WriteAction>
+        </WriteActions>
+      </Rule>
+    </Rules>
+  </Monitoring>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="true">
+      <DisplayStrings>
+        <DisplayString ElementID="##CompanyID##.##AppName##.TimedPowerShell.Rule">
+          <Name>##CompanyID## ##AppName## TimedPowerShell Rule</Name>
+          <Description />
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks> 
+</ManagementPackFragment>

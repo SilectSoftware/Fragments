@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment will discover a class instance (or instances) based on a REGEX EXPRESSION criteria match of the data within a registry VALUE
+  A CLASS and DISCOVERY based on a REGEX EXPRESSION criteria match of the data within a registry VALUE
   RegValuePath - needs to be in the format of "SOFTWARE\Microsoft\CCM\HttpPort" or "SYSTEM\CurrentControlSet\Services\CcmExec\Start" as HKLM is assumed
 Version: 1.1
 LastModified: 29-May-2017

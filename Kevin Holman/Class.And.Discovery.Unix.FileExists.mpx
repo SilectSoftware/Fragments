@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment includes a class and discovery for a Unix/Linux application based on existence of a directory and conf file existing
+  A CLASS and DISCOVERY for a Unix/Linux application based on existence of a directory and conf file existing
   AppFilePath - is the directory path to your application conf file, such as: /opt/myapp/myapp.conf
 Version: 1.1
 LastModified: 29-May-2017

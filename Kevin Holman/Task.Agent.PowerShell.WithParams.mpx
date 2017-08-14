@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment includes an AGENT TASK that will run a PowerShell Script
+  An AGENT TASK that will run a PowerShell Script with Parameters passed to the script
   ClassID is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem
   TaskName is a short name for the task with no spaces or special characters allowed
   You will need to customize your parameters in this example and add or remove as needed

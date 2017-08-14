@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-    This fragment includes a Monitor which checks for the existence of a registry VALUE
+    A MONITOR which checks for the existence of a registry VALUE
 	RegValuePath - needs to be in the format of "SOFTWARE\Microsoft\CCM\HttpPort" or "SYSTEM\CurrentControlSet\Services\CcmExec\Start" as HKLM is assumed
 	RegValueName - needs to be the actual Reg VALUE name or your description of it (NO SPACES or special characters allowed) such as "HttpPort"
 Version: 1.1

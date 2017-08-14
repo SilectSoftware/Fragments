@@ -60,4 +60,17 @@
 		Task.Console.mpx
 2.0 - (6-5-2017)
 	Updated 4 Registry Monitors to work correctly with MPAuthor
+2.1 - (8-12-2017)
+	Added new frags:
+		Monitor.Service.WithAlert.FreqAndSamples.mpx for service monitoring example with overrides for frequency and samples
+2.2 - (8-13-2017)
+	Changed Rule.TimedScript.PowerShell.mpx to Rule.TimedScript.PowerShell.NoParams.mpx
+	Updated default example script in Rule.TimedScript.PowerShell.NoParams.mpx
+	Added new frags:
+		Rule Rule.TimedScript.PowerShell.WithParams.mpx
+2.3 - (8-13-2017)
+	Updated comments to streamline for reading in MP Author pro in all frags
+	Added new frags:
+		Rule.AlertGenerating.TimedScript.Powershell.NoParams.mpx
+		Rule.AlertGenerating.TimedScript.Powershell.WithParams.mpx
 	

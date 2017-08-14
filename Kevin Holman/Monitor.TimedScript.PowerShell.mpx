@@ -2,7 +2,7 @@
 <!--
 %%
 Description:
-  This fragment includes a Monitor which runs a timed PowerShell script as the DataSource and outputs a propertybag as GOOD or BAD 
+  A MONITOR which runs a timed PowerShell script as the DataSource and outputs a propertybag as GOOD or BAD to drive Monitor state and ALERT
 Version: 1.1
 LastModified: 29-May-2017
 %%

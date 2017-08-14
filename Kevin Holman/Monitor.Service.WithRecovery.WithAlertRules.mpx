@@ -2,9 +2,9 @@
 <!--
 %%
 Description:
-  This fragment includes a monitor for a service that will ONLY issue state changes and NO ALERTS on the monitor itself.  
-  It also includes a recovery script to recover the service.  The recovery is enabled by default.
-  It also includes alert rules based on events from the success or failure of the recovery script
+  A MONITOR for a service that will ONLY issue state changes and NO ALERTS on the monitor itself.  
+  Includes a recovery script to recover the service.  The recovery is enabled by default.
+  Also includes alert rules based on events from the success or failure of the recovery script
   ServiceName - must be the short name of the service as seen in the registry and can not contain spaces or special characters by default
 Version: 1.1
 LastModified: 29-May-2017
