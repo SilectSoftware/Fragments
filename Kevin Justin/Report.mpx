@@ -1,0 +1,178 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--
+%%
+Description:
+  In this fragment we create a group of Windows Computers used in a report with a custom Monitoring view beneath folder
+  Ultimately this will create a load test MP and report to gather performance data from SCOM to use to compare storage (disk), 
+	memory, processor and network
+Version: 1.0
+LastModified: 22-June-2017
+%%
+
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName## - LoadTesting
+  ##ClassID## - WindowsServer
+  ##RuleGUID## - Grab from specific PowerShell for each performance counter per OS
+		Example: 
+			get-scomrule | ? { $_.DisplayName -like "Performance Rule Name*" } | fl ID,DisplayName,Name
+  ##TargetGroupNumber## - Group ID from OpsMgrDW query
+	    Example:
+			select [ManagedEntityDefaultName],[ManagedEntityRowId]
+			FROM [vManagedEntity]
+			where [ManagedEntityDefaultName] like '%load%'
+			order by displayname
+  
+This fragment depends on references:
+  RequiredReference: Alias="MSDRL", ID="Microsoft.SystemCenter.DataWarehouse.Report.Library"
+  
+-->
+  <Reporting>
+    <LinkedReports>
+      <LinkedReport ID="##CompanyID##.##AppName##.##ClassID##.Report" Accessibility="Internal" Base="MSDRL!Microsoft.SystemCenter.DataWarehouse.Report.Performance" Visible="true">
+        <ParameterBlock columns="6" xmlns="http://schemas.microsoft.com/mom/reporting/2007/ReportParameterSettings">
+          <Controls xmlns="http://schemas.microsoft.com/mom/reporting/2007/ReportParameterSettings">
+            <Control type="Microsoft.SystemCenter.DataWarehouse.Report.ParameterControl.ComboBox" columnSpan="2">
+              <ReportParameters>
+                <ReportParameter name="DataAggregation">
+                  <Prompt>Microsoft.SystemCenter.DataWarehouse.Report.Library!Microsoft.SystemCenter.DataWarehouse.Report.ParameterPrompt.DataAggregation</Prompt>
+                </ReportParameter>
+              </ReportParameters>
+            </Control>
+            <Control type="Microsoft.SystemCenter.DataWarehouse.Report.ParameterControl.PerformanceChartObjectPicker" columnSpan="4" rowSpan="3">
+              <ReportParameters>
+                <ReportParameter name="ObjectList">
+                  <Prompt>Microsoft.SystemCenter.DataWarehouse.Report.Library!Microsoft.SystemCenter.DataWarehouse.Report.ParameterPrompt.ObjectList</Prompt>
+                </ReportParameter>
+                <ReportParameter name="ManagementGroupId" binding="GroupList" />
+              </ReportParameters>
+            </Control>
+            <Control type="Microsoft.SystemCenter.DataWarehouse.Report.ParameterControl.BusinessRelativeDateTimePicker" columnSpan="2">
+              <ReportParameters>
+                <ReportParameter name="TimeZone" binding="TimeZone">
+                  <Prompt>Microsoft.SystemCenter.DataWarehouse.Report.Library!Microsoft.SystemCenter.DataWarehouse.Report.ParameterPrompt.TimeZone</Prompt>
+                </ReportParameter>
+                <ReportParameter name="TimeZoneName" binding="TimeZoneName" />
+                <ReportParameter name="StartDate_BaseType" binding="StartDate_BaseType" />
+                <ReportParameter name="StartDate_BaseValue" binding="StartDate_BaseValue">
+                  <Prompt>Microsoft.SystemCenter.DataWarehouse.Report.Library!Microsoft.SystemCenter.DataWarehouse.Report.ParameterPrompt.StartDateTime</Prompt>
+                </ReportParameter>
+                <ReportParameter name="StartDate_OffsetType" binding="StartDate_OffsetType" />
+                <ReportParameter name="StartDate_OffsetValue" binding="StartDate_OffsetValue" />
+                <ReportParameter name="EndDate_BaseType" binding="EndDate_BaseType" />
+                <ReportParameter name="EndDate_BaseValue" binding="EndDate_BaseValue">
+                  <Prompt>Microsoft.SystemCenter.DataWarehouse.Report.Library!Microsoft.SystemCenter.DataWarehouse.Report.ParameterPrompt.EndDateTime</Prompt>
+                </ReportParameter>
+                <ReportParameter name="EndDate_OffsetType" binding="EndDate_OffsetType" />
+                <ReportParameter name="EndDate_OffsetValue" binding="EndDate_OffsetValue" />
+                <ReportParameter name="TimeType" binding="TimeType" />
+                <ReportParameter name="TimeWeekMap" binding="TimeWeekMap" />
+              </ReportParameters>
+            </Control>
+            <Control type="Microsoft.SystemCenter.DataWarehouse.Report.ParameterControl.ComboBox">
+              <ReportParameters>
+                <ReportParameter name="AggregationType">
+                  <Prompt>Microsoft.SystemCenter.DataWarehouse.Report.Library!Microsoft.SystemCenter.DataWarehouse.Report.ParameterPrompt.Histogram</Prompt>
+                </ReportParameter>
+              </ReportParameters>
+            </Control>
+            <Control type="Microsoft.SystemCenter.DataWarehouse.Report.ParameterControl.BooleanPicker">
+              <ReportParameters>
+                <ReportParameter name="Enable3D">
+                  <Prompt>Microsoft.SystemCenter.DataWarehouse.Report.Library!Microsoft.SystemCenter.DataWarehouse.Report.ParameterPrompt.Chart3D</Prompt>
+                </ReportParameter>
+              </ReportParameters>
+            </Control>
+            <!-- TEST -->
+            <Control type="Microsoft.SystemCenter.DataWarehouse.Report.ParameterControl.CheckedListBox" rowSpan="2" columnSpan="1">
+              <ReportParameters>
+                <ReportParameter name="ManagementGroupId" />
+              </ReportParameters>
+            </Control>
+            <!-- END TEST -->
+          </Controls>
+        </ParameterBlock>
+        <Parameters>
+          <Parameter Name="Enable3D">
+            <Value>False</Value>
+          </Parameter>
+          <Parameter Name="DataAggregation">
+            <Value>0</Value>
+          </Parameter>
+          <Parameter Name="AggregationType">
+            <Value>0</Value>
+          </Parameter>
+          <Parameter Name="StartDate_BaseType">
+            <Value>Today</Value>
+          </Parameter>
+          <Parameter Name="StartDate_BaseValue">
+            <Value>2017-04-26T00:01:00</Value>
+          </Parameter>
+          <Parameter Name="StartDate_OffsetType">
+            <Value>Day</Value>
+          </Parameter>
+          <Parameter Name="StartDate_OffsetValue">
+            <Value>-1</Value>
+          </Parameter>
+          <Parameter Name="EndDate_BaseType">
+            <Value>Today</Value>
+          </Parameter>
+          <Parameter Name="EndDate_BaseValue">
+            <Value>2017-04-26T23:59:00</Value>
+          </Parameter>
+          <Parameter Name="EndDate_OffsetType">
+            <Value>None</Value>
+          </Parameter>
+          <Parameter Name="EndDate_OffsetValue">
+            <Value>0</Value>
+          </Parameter>
+          <Parameter Name="TimeType">
+            <Value>Regular</Value>
+          </Parameter>
+          <Parameter Name="TimeWeekMap">
+            <Value>Sunday</Value>
+            <Value>Monday</Value>
+            <Value>Tuesday</Value>
+            <Value>Wednesday</Value>
+            <Value>Thursday</Value>
+            <Value>Friday</Value>
+            <Value>Saturday</Value>
+          </Parameter>
+          <Parameter Name="TimeZone">
+            <Value>6801000000000000C4FFFFFF00000B0000000100020000000000000000000300000002000200000000000000|Central Standard Time</Value>
+          </Parameter>
+          <Parameter Name="TimeZoneName">
+            <Value>(UTC-06:00) Central Time (US &amp; Canada)</Value>
+          </Parameter>
+          <Parameter Name="Interactive">
+            <Value>False</Value>
+          </Parameter>
+          <Parameter Name="ObjectList">
+            <Value>
+							&lt;Data&gt;
+								&lt;Values Title="Average Disk Seconds Per Transfer Windows Server 2012"&gt;
+									&lt;Value&gt;
+										&lt;Object Use="Containment"&gt;##TargetGroupNumber##&lt;/Object&gt;
+										&lt;Rule&gt;##RuleGUID##&lt;/Rule&gt;
+										&lt;Color&gt;63,63,255&lt;/Color&gt;
+										&lt;Type&gt;SplineArea&lt;/Type&gt;
+										&lt;Scale&gt;1&lt;/Scale&gt;
+									&lt;/Value&gt;
+								&lt;/Values&gt;							
+			</Value>
+          </Parameter>
+        </Parameters>
+      </LinkedReport>
+    </LinkedReports>
+  </Reporting>
+  <LanguagePacks>
+    <LanguagePack ID="ENU">
+      <DisplayStrings>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##ClassID##.Report">
+          <Name>##CompanyID## ##AppName## ##ClassID## Report</Name>
+          <Description>The ##CompanyID## ##AppName## ##ClassID## Group must be populated with Windows Servers for at least the previous 1 full days for the report to be meaningful. </Description>
+        </DisplayString>
+	  </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>

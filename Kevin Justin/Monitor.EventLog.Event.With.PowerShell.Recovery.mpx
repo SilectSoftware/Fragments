@@ -1,0 +1,184 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!-- In this fragment you need to replace:
+
+##CompanyID##
+##AppName##
+##ClassID##
+##EventID##
+##EventSource##
+##EventDescription##
+##ServiceName##
+
+	This fragment includes a monitor for an event (ID, Source, and Description criteria).  It also includes a recovery script framework.
+		The example looks for an event, and runs restart-Service to resolve (substitute accordingly).  
+			The Recovery is enabled by default
+	Recalculate health is also enabled, and is noted below.
+	ServiceName - must be the short name of the service as seen in the registry and can not contain spaces or special characters by default
+	Add references for ##ClassID## if class NOT contained in your authored management pack.
+-->
+
+<!-- This fragment depends on references:
+	RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+	RequiredReference: Alias="Health", ID="System.Health.Library"
+	  
+--> 
+  <Monitoring>
+    <Monitors>
+      <UnitMonitor ID="##CompanyID##.##AppName##.AlertOnEvent.MonitorType" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.SingleEventLogTimer2StateMonitorType" ConfirmDelivery="true">
+        <Category>Custom</Category>
+        <AlertSettings AlertMessage="##CompanyID##.##AppName##.AlertOnEvent.##EventID##.Monitor.AlertMessage">
+          <AlertOnState>Warning</AlertOnState>
+          <AutoResolve>true</AutoResolve>
+          <AlertPriority>Normal</AlertPriority>
+          <AlertSeverity>Warning</AlertSeverity>
+          <AlertParameters>
+            <AlertParameter1>$Data/Context/EventDescription$</AlertParameter1>
+          </AlertParameters>
+        </AlertSettings>
+        <OperationalStates>
+          <OperationalState ID="Success" MonitorTypeStateID="TimerEventRaised" HealthState="Success" />
+          <OperationalState ID="Warning" MonitorTypeStateID="EventRaised" HealthState="Warning" />
+        </OperationalStates>
+        <Configuration>
+          <ComputerName>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/NetworkName$</ComputerName>
+          <LogName>Application</LogName>
+          <Expression>
+            <And>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="UnsignedInteger">EventDisplayNumber</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="UnsignedInteger">##EventID##</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">PublisherName</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="String">##EventSource##</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+              <Expression>
+                <RegExExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">EventDescription</XPathQuery>
+                  </ValueExpression>
+                  <Operator>ContainsSubstring</Operator>
+                  <Pattern>##EventDescription##</Pattern>
+                </RegExExpression>
+              </Expression>
+            </And>
+          </Expression>
+          <TimerWaitInSeconds>3600</TimerWaitInSeconds>
+        </Configuration>
+      </UnitMonitor>
+    </Monitors>
+    <Recoveries>
+      <Recovery ID="##CompanyID##.##AppName##.##ServiceName##.Monitor.Recovery" Accessibility="Public" Enabled="true" Target="##ClassID##" Monitor="##CompanyID##.##AppName##.AlertOnEvent.MonitorType" ResetMonitor="true" ExecuteOnState="Warning" Remotable="true" Timeout="300"> 
+		<!-- ResetMonitor = "true" will reset after recovery runs -->
+		<!-- ExecuteOnState assumes state equals "Warning" to trigger the recovery -->
+        <Category>Custom</Category>
+        <WriteAction ID="PowerShellWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
+          <ScriptName>##CompanyID##.##AppName##.PowerShell.Recovery.WriteAction.ps1</ScriptName>
+          <ScriptBody>
+#=================================================================================
+#  Description of Script here
+#=================================================================================
+
+#=================================================================================
+# Constants section - modify stuff here:
+
+# Assign script name variable for use in event logging
+$ScriptName = "##CompanyID##.##AppName##.PowerShell.Recovery.WriteAction.ps1"
+#=================================================================================
+
+# Gather script start time
+$StartTime = Get-Date             
+
+# Gather who the script is running as
+$WhoAmI = whoami
+
+# Load MomScript API and PropertyBag function 
+$momapi = new-object -comObject 'MOM.ScriptAPI'
+$bag = $momapi.CreatePropertyBag()
+
+#Log script event that we are starting task
+$momapi.LogScriptEvent($ScriptName,105,0, "Starting script")
+
+#Set the condition = bad.  This represents your script finding something wrong
+
+$SPEvent = (Get-EventLog "Application" -message "*##EventDescription##*" -Newest 1 | Where-Object {$_.EventID -eq ##EventID##} )
+
+if $SPEvent -gt 0 )
+  {
+  $strCondition = "Bad"
+  }
+else
+  {
+  $strCondition = "Good"
+  }
+
+#Check the value of $strCondition
+if ($strCondition -eq "Good")
+  {
+  $momapi.LogScriptEvent($ScriptName,106,0, "Good Condition Found")
+  $bag.AddValue('Result','GoodCondition')
+  }
+else
+  {
+  ## Recovery Action Here
+  Restart-Service ##ServiceName##
+  $momapi.LogScriptEvent($ScriptName,107,0, "Bad Condition Found")
+  $bag.AddValue('Result','BadCondition')
+  }
+
+#Log an event for script ending and total execution time.
+$EndTime = Get-Date
+$ScriptTime = ($EndTime - $StartTime).TotalSeconds
+$momapi.LogScriptEvent($ScriptName,108,0,"Script has completed.  Runtime was ($ScriptTime) seconds.")
+
+#Output the propertybag  
+$bag
+          </ScriptBody>
+          <TimeoutSeconds>300</TimeoutSeconds>
+        </WriteAction>
+      </Recovery>
+    </Recoveries>
+  </Monitoring>
+  <Presentation>
+    <StringResources>
+      <StringResource ID="##CompanyID##.##AppName##.AlertOnEvent.##EventID##.Monitor.AlertMessage" />
+    </StringResources>
+  </Presentation>
+  <LanguagePacks>
+    <LanguagePack ID="ENU">
+      <DisplayStrings>
+        <DisplayString ElementID="##CompanyID##.##AppName##.AlertOnEvent.MonitorType">
+          <Name>##CompanyID## ##AppName## AlertOnEvent ##EventID## Monitor</Name>
+          <Description />
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.AlertOnEvent.MonitorType" SubElementID="Warning">
+          <Name>Event Raised</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.AlertOnEvent.MonitorType" SubElementID="Success">
+          <Name>Timer Event Raised</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.AlertOnEvent.##EventID##.Monitor.AlertMessage">
+          <Name>##CompanyID## ##AppName## Alert on Event ##EventID##</Name>
+          <Description>Event Description: {0}</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##ServiceName##.Monitor.Recovery">
+          <Name>##CompanyID## ##AppName## ##ServiceName## Service Recovery</Name>
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>   
+ </ManagementPackFragment>

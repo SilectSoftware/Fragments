@@ -1,0 +1,277 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!-- In this fragment you need to replace:
+
+##CompanyID##
+##AppName##
+##ClassID##
+##RunAsProfile##
+##Run As Profile##	With Spaces if it reads differently in the Run As Accounts display in SCOM Console
+##EventID##
+##EventDescription##
+
+	This fragment sets up a RunAs Account.
+	The monitor runs a Probe Action PowerShell script, outputs a propertybag as GOOD or BAD.
+	Add references for ##ClassID## if class NOT contained in your authored management pack.
+-->
+
+<!-- This fragment depends on references:
+	RequiredReference: Alias="System", ID="System.Library"
+	RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+	RequiredReference: Alias="Health", ID="System.Health.Library"	
+
+--> 
+  <TypeDefinitions>
+    <SecureReferences>
+      <SecureReference ID="##RunAsProfile##" Accessibility="Public" Context="System!System.Entity" />
+    </SecureReferences>
+    <ModuleTypes>
+      <DataSourceModuleType ID="##CompanyID##.##AppName##.TimedScript.PowerShell.Monitor.DataSourceModuleType" Accessibility="Internal" Batching="false">
+        <Configuration>
+          <xsd:element type="xsd:integer" name="TimeoutSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element type="xsd:integer" name="IntervalSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+          <OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <DataSource ID="Scheduler" TypeID="System!System.Scheduler">
+                <Scheduler>
+                  <SimpleReccuringSchedule>
+                    <Interval Unit="Seconds">$Config/IntervalSeconds$</Interval>
+                  </SimpleReccuringSchedule>
+                  <ExcludeDates />
+                </Scheduler>
+              </DataSource>
+              <ProbeAction ID="Probe" TypeID="##CompanyID##.##AppName##.TimedScript.PowerShell.Monitor.ProbeActionModuleType">
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              </ProbeAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="Probe">
+                <Node ID="Scheduler" />
+              </Node>
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.PropertyBagData</OutputType>
+      </DataSourceModuleType>
+      <ProbeActionModuleType ID="##CompanyID##.##AppName##.TimedScript.PowerShell.Monitor.ProbeActionModuleType" RunAs="##RunAsProfile##" Accessibility="Internal" Batching="false" PassThrough="false">
+        <Configuration>
+          <xsd:element type="xsd:integer" name="TimeoutSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <ProbeAction ID="Probe" TypeID="Windows!Microsoft.Windows.PowerShellPropertyBagTriggerOnlyProbe">
+                <ScriptName>##CompanyID##.##AppName##.TimedScript.PowerShell.Monitor.DataSourceModuleType.ps1</ScriptName>
+                <ScriptBody>#=================================================================================
+#  Description of Script here
+#=================================================================================
+
+#=================================================================================
+# Constants section - modify stuff here:
+
+# Assign script name variable for use in event logging
+$ScriptName = "##CompanyID##.##AppName##.TimedScript.PowerShell.Monitor.DataSourceModuleType.ps1"
+#=================================================================================
+
+# Gather script start time
+$StartTime = Get-Date             
+
+# Gather who the script is running as
+$WhoAmI = whoami
+
+# Load MomScript API and PropertyBag function 
+$momapi = new-object -comObject 'MOM.ScriptAPI'
+$bag = $momapi.CreatePropertyBag()
+
+#Log script event that we are starting task
+$momapi.LogScriptEvent($ScriptName,105,0, "Starting script")
+
+#Set the condition = bad.  This represents your script finding something wrong
+
+$SPEvent = (Get-EventLog "Application" -message "*##EventDescription##*" -Newest 1 | Where-Object {$_.EventID -eq ##EventID##} )
+
+if $SPEvent -gt 0 )
+  {
+  $strCondition = "Bad"
+  }
+else
+  {
+  $strCondition = "Good"
+  }
+
+#Check the value of $strCondition
+if ($strCondition -eq "Good")
+  {
+  $momapi.LogScriptEvent($ScriptName,106,0, "Good Condition Found")
+  $bag.AddValue('Result','GoodCondition')
+  }
+else
+  {
+	# Do something here to evaluate symptoms
+  $momapi.LogScriptEvent($ScriptName,107,0, "Bad Condition Found")
+  $bag.AddValue('Result','BadCondition')
+  }
+
+#Log an event for script ending and total execution time.
+$EndTime = Get-Date
+$ScriptTime = ($EndTime - $StartTime).TotalSeconds
+$momapi.LogScriptEvent($ScriptName,108,0,"Script has completed.  Runtime was ($ScriptTime) seconds.")
+
+#Output the propertybag  
+$bag
+</ScriptBody>
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              </ProbeAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="Probe" />
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.PropertyBagData</OutputType>
+        <TriggerOnly>true</TriggerOnly>
+      </ProbeActionModuleType>
+    </ModuleTypes>
+    <MonitorTypes>
+      <UnitMonitorType ID="##CompanyID##.##AppName##.TimedScript.PowerShell.Monitor.UnitMonitorType" Accessibility="Internal">
+        <MonitorTypeStates>
+          <MonitorTypeState ID="GoodCondition" NoDetection="false" />
+          <MonitorTypeState ID="BadCondition" NoDetection="false" />
+        </MonitorTypeStates>
+        <Configuration>
+          <xsd:element type="xsd:integer" name="TimeoutSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element type="xsd:integer" name="IntervalSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+          <OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
+        </OverrideableParameters>
+        <MonitorImplementation>
+          <MemberModules>
+            <DataSource ID="DataSource" TypeID="##CompanyID##.##AppName##.TimedScript.PowerShell.Monitor.DataSourceModuleType">
+              <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              <IntervalSeconds>$Config/IntervalSeconds$</IntervalSeconds>
+            </DataSource>
+            <ProbeAction ID="Probe" TypeID="##CompanyID##.##AppName##.TimedScript.PowerShell.Monitor.ProbeActionModuleType">
+              <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+            </ProbeAction>
+            <ConditionDetection ID="GoodConditionFilter" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">Property[@Name='Result']</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="String">GoodCondition</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </ConditionDetection>
+            <ConditionDetection ID="BadConditionFilter" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">Property[@Name='Result']</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="String">BadCondition</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </ConditionDetection>
+          </MemberModules>
+          <RegularDetections>
+            <RegularDetection MonitorTypeStateID="GoodCondition">
+              <Node ID="GoodConditionFilter">
+                <Node ID="DataSource" />
+              </Node>
+            </RegularDetection>
+            <RegularDetection MonitorTypeStateID="BadCondition">
+              <Node ID="BadConditionFilter">
+                <Node ID="DataSource" />
+              </Node>
+            </RegularDetection>
+          </RegularDetections>
+          <OnDemandDetections>
+            <OnDemandDetection MonitorTypeStateID="GoodCondition">
+              <Node ID="GoodConditionFilter">
+                <Node ID="DataSource" />
+              </Node>
+            </OnDemandDetection>
+            <OnDemandDetection MonitorTypeStateID="BadCondition">
+              <Node ID="BadConditionFilter">
+                <Node ID="DataSource" />
+              </Node>
+            </OnDemandDetection>
+          </OnDemandDetections>
+        </MonitorImplementation>
+      </UnitMonitorType>
+    </MonitorTypes>
+  </TypeDefinitions>
+  <Monitoring>
+    <Monitors>
+      <UnitMonitor ID="##CompanyID##.##AppName##.TimedScript.PowerShell.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="##CompanyID##.##AppName##.TimedScript.PowerShell.Monitor.UnitMonitorType" ConfirmDelivery="false">
+        <Category>AvailabilityHealth</Category>
+        <AlertSettings AlertMessage="##CompanyID##.##AppName##.TimedScript.PowerShell.Monitor.Alert.Message">
+          <AlertOnState>Warning</AlertOnState>  <!-- Warning or Error should match OperationalStates below  -->
+          <AutoResolve>true</AutoResolve>
+          <AlertPriority>Normal</AlertPriority>
+          <AlertSeverity>MatchMonitorHealth</AlertSeverity>  <!-- Common options for AlertSeverity are MatchMonitorHealth, Information, Warning, Error -->
+        </AlertSettings>
+        <OperationalStates>
+          <OperationalState ID="GoodCondition" MonitorTypeStateID="GoodCondition" HealthState="Success" />
+          <OperationalState ID="BadCondition" MonitorTypeStateID="BadCondition" HealthState="Warning" />  <!-- HealthState = Warning or Error -->
+        </OperationalStates>
+        <Configuration>
+          <TimeoutSeconds>120</TimeoutSeconds>
+          <IntervalSeconds>3600</IntervalSeconds>
+        </Configuration>
+      </UnitMonitor>
+    </Monitors>
+  </Monitoring>
+  <Presentation>
+    <StringResources>
+      <StringResource ID="##CompanyID##.##AppName##.TimedScript.PowerShell.Monitor.Alert.Message" />
+    </StringResources>
+  </Presentation>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" >
+      <DisplayStrings>
+        <DisplayString ElementID="##RunAsProfile##">
+          <Name>##Run As Profile##</Name>
+          <Description>This is the account to run Discovery and Monitoring scripts. 
+		  The ##RunAsProfile## should have access permission.
+		  </Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.TimedScript.PowerShell.Monitor">
+          <Name>##CompanyID## ##AppName## TimedScript PowerShell Monitor</Name>
+          <Description></Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.TimedScript.PowerShell.Monitor" SubElementID="GoodCondition">
+          <Name>Good Condition</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.TimedScript.PowerShell.Monitor" SubElementID="BadCondition">
+          <Name>Bad Condition</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.TimedScript.PowerShell.Monitor.Alert.Message">
+          <Name>##CompanyID## ##AppName## TimedScript PowerShell Monitor: Failure</Name>
+          <Description>##CompanyID## ##AppName## TimedScript PowerShell Monitor: detected a bad condition</Description>
+        </DisplayString>		
+        <DisplayString ElementID="Microsoft.SharePoint.AdminAccount">
+          <Name>SharePoint Discovery/Monitoring Account</Name>
+          <Description>This is the account to run Discovery and Monitoring scripts for SharePoint Foundation Management Pack. It should have access permission to SharePoint Foundation Object Model and databases.</Description>
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>

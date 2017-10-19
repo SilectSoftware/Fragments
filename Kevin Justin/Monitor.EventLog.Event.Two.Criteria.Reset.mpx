@@ -1,0 +1,192 @@
+<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!-- In this fragment you need to replace
+
+##COMPANY##
+##PRODUCTNAME##
+##APPNAME##
+##LOCATION##
+##BADEVENTID##
+##GOODEVENTID##
+##SENSORTYPE##
+##SERVERNAME##
+	If you want the event to cut on the server that is running, substitute this target
+	$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/NetbiosComputerName$
+	
+##CREATEDBY##
+##CREATIONDATE##
+
+<!-- This fragment includes a monitor for Event Log data which uses 2 criteria in event description and two states -->
+
+<!-- This fragment depends on references:
+	RequiredReference: Alias="Health", ID="System.Health.Library"
+	RequiredReference: Alias="Perf", ID="System.Performance.Library"
+	RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+
+For 2016 discovery
+	RequiredReference: Alias="MWSL", ID="Microsoft.Windows.Server.Library"
+
+For Groups
+	RequiredReference: Alias="MSIL", ID="Microsoft.SystemCenter.InstanceGroup.Library
+	RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library
+-->
+  <TypeDefinitions>
+    <EntityTypes>
+      <ClassTypes>
+      </ClassTypes>
+    </EntityTypes>
+  </TypeDefinitions>
+  <Monitoring>
+    <Discoveries>
+    </Discoveries>
+    <Rules>	
+    </Rules>
+    <Monitors>
+	<UnitMonitor ID="##COMPANY##.##APPNAME##.##LOCATION##.##SENSORTYPE##.2State.Monitor" Accessibility="Public" Enabled="false" Target="MWSL!Microsoft.Windows.Server.10.0.OperatingSystem" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.2SingleEventLog2StateMonitorType" ConfirmDelivery="true">
+        <Category>Custom</Category>
+        <AlertSettings AlertMessage="##COMPANY##.##APPNAME##.##LOCATION##.##SENSORTYPE##.2State.Monitor.AlertMessageResourceID">
+          <AlertOnState>Warning</AlertOnState>
+          <AutoResolve>true</AutoResolve>
+          <AlertPriority>Normal</AlertPriority>
+          <AlertSeverity>Error</AlertSeverity>
+          <AlertParameters>
+            <AlertParameter1>$Data[Default='']/Context/EventDescription$</AlertParameter1>
+          </AlertParameters>
+        </AlertSettings>
+        <OperationalStates>
+          <OperationalState ID="GOOD" MonitorTypeStateID="SecondEventRaised" HealthState="Success" />
+          <OperationalState ID="WARNING" MonitorTypeStateID="FirstEventRaised" HealthState="Warning" />
+        </OperationalStates>
+        <Configuration>
+          <FirstComputerName>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/NetworkName$</FirstComputerName>
+          <FirstLogName>Application</FirstLogName>
+          <FirstExpression>
+            <And>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="UnsignedInteger">EventDisplayNumber</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="UnsignedInteger">##BADEVENTID##</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">PublisherName</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="String">##PRODUCTNAME##</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+              <Expression>
+                <RegExExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">EventDescription</XPathQuery>
+                  </ValueExpression>
+                  <Operator>ContainsSubstring</Operator>
+                  <Pattern>##SENSORTYPE##</Pattern>
+                </RegExExpression>
+              </Expression>
+              <Expression>
+                <RegExExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">EventDescription</XPathQuery>
+                  </ValueExpression>
+                  <Operator>ContainsSubstring</Operator>
+                  <Pattern>##SERVERNAME##</Pattern>
+                </RegExExpression>
+              </Expression>
+            </And>
+          </FirstExpression>
+          <SecondComputerName>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/NetworkName$</SecondComputerName>
+          <SecondLogName>Application</SecondLogName>
+          <SecondExpression>
+            <And>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="UnsignedInteger">EventDisplayNumber</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="UnsignedInteger">##GOODEVENTID##</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">PublisherName</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="String">##PRODUCTNAME##</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+              <Expression>
+                <RegExExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">EventDescription</XPathQuery>
+                  </ValueExpression>
+                  <Operator>ContainsSubstring</Operator>
+                  <Pattern>##SENSORTYPE##</Pattern>
+                </RegExExpression>
+              </Expression>
+              <Expression>
+                <RegExExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">EventDescription</XPathQuery>
+                  </ValueExpression>
+                  <Operator>ContainsSubstring</Operator>
+                  <Pattern>##SERVERNAME##</Pattern>
+                </RegExExpression>
+              </Expression>
+            </And>
+          </SecondExpression>
+        </Configuration>
+      </UnitMonitor>
+    </Monitors>
+    <Recoveries>
+    </Recoveries>	
+  </Monitoring>
+  <Presentation>
+    <Views>
+    </Views>
+    <Folders>
+    </Folders>
+    <FolderItems>
+    </FolderItems>
+    <StringResources>
+	<StringResource ID="##COMPANY##.##APPNAME##.##LOCATION##.##SENSORTYPE##.2State.Monitor.AlertMessageResourceID" />
+    </StringResources>	
+  </Presentation>
+  <LanguagePacks>
+    <LanguagePack ID="ENU">
+      <DisplayStrings>
+	<DisplayString ElementID="##COMPANY##.##APPNAME##.##LOCATION##.##SENSORTYPE##.2State.Monitor">
+          <Name>_##COMPANY##_##APPNAME##_##LOCATION##_##SENSORTYPE##_2State_Monitor</Name>
+          <Description>This monitor was created to pull in events from specific devices and only alert when the event is from the server that originated the event.
+		
+		Created By:  ##CREATEDBY##
+		Creation Date:  ##CREATIONDATE##</Description>
+        </DisplayString>
+        <DisplayString ElementID="##COMPANY##.##APPNAME##.##LOCATION##.##SENSORTYPE##.2State.Monitor" SubElementID="WARNING">
+          <Name>First Event Raised</Name>
+        </DisplayString>
+        <DisplayString ElementID="##COMPANY##.##APPNAME##.##LOCATION##.##SENSORTYPE##.2State.Monitor" SubElementID="GOOD">
+          <Name>Second Event Raised</Name>
+        </DisplayString>
+        <DisplayString ElementID="##COMPANY##.##APPNAME##.##LOCATION##.##SENSORTYPE##.2State.Monitor.AlertMessageResourceID">
+          <Name>_##COMPANY##_##APPNAME##_##LOCATION##_##SENSORTYPE##</Name>
+          <Description>Event Description: {0}</Description>
+        </DisplayString>
+      </DisplayStrings>
+     </LanguagePack>
+  </LanguagePacks>   
+</ManagementPackFragment>

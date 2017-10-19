@@ -73,4 +73,11 @@
 	Added new frags:
 		Rule.AlertGenerating.TimedScript.Powershell.NoParams.mpx
 		Rule.AlertGenerating.TimedScript.Powershell.WithParams.mpx
-	
+2.4 - (8-26-2017)
+	Added new frags:
+		Class.Group.ADGroupWindowsComputers.mpx
+2.5 - (9-5-2017)
+	Improved error handling and logging for Class.Group.ADGroupWindowsComputers.mpx for when a DNS name is not found for a computer object
+2.6 - (10-10-2017)
+	Fixed timeout issues with Class.Group.ADGroupWindowsComputers.mpx and Class.Group.SQLQueryBasedGroupWindowsComputers.mpx making them run much faster with improved logging
+	Fixed bug in double quotes around script name in Rule.Performance.Collection.PowerShellScript.mpx

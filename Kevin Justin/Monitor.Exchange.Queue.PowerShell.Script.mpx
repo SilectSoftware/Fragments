@@ -1,0 +1,596 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--
+%%
+Description:
+  In this fragment we reference a group of Exchange Windows Computers to monitor specific message queues
+	PowerShell rule executes to run the script, with Events being logged for queue problems
+Version: 1.0
+LastModified: 23-June-2017
+%%
+
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName## - Edge.Exchange
+  ##RegularExpression## 
+	Example:
+		Use case insensitive (?i) with attribute (example is windows computer)
+		(?i)Exchange|Server|Naming|Convention|here[1-9]
+		
+
+This fragment depends on references:
+  RequiredReference: Alias="Health", ID="System.Health.Library"	
+  RequiredReference: Alias="ME1", ID="Microsoft.Exchange.15"
+  RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library"
+  RequiredReference: Alias="System", ID="System.Library"
+  RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+  RequiredReference: Alias="MSIL", ID="Microsoft.SystemCenter.InstanceGroup.Library"
+
+-->
+  <TypeDefinitions>
+    <EntityTypes>
+      <ClassTypes>
+        <ClassType ID="##CompanyID##.##AppName##.Servers.Group" Accessibility="Public" Abstract="false" Base="MSIL!Microsoft.SystemCenter.InstanceGroup" Hosted="false" Singleton="true" Extension="false" />
+      </ClassTypes>
+    </EntityTypes>
+  </TypeDefinitions>
+  <Monitoring>
+    <Discoveries>
+      <Discovery ID="##CompanyID##.##AppName##.Servers.Group.DiscoveryRule" Enabled="true" Target="##CompanyID##.##AppName##.Servers.Group" ConfirmDelivery="false" Remotable="true" Priority="Normal">
+        <Category>Discovery</Category>
+        <DiscoveryTypes>
+          <DiscoveryRelationship TypeID="MSIL!Microsoft.SystemCenter.InstanceGroupContainsEntities" />
+        </DiscoveryTypes>
+        <DataSource ID="GroupPopulationDataSource" TypeID="SC!Microsoft.SystemCenter.GroupPopulator">
+          <RuleId>$MPElement$</RuleId>
+          <GroupInstanceId>$MPElement[Name="##CompanyID##.##AppName##.Servers.Group"]$</GroupInstanceId>
+          <MembershipRules>
+            <MembershipRule>
+              <MonitoringClass>$MPElement[Name="ME1!Microsoft.Exchange.15.Server"]$</MonitoringClass>
+              <RelationshipClass>$MPElement[Name="MSIL!Microsoft.SystemCenter.InstanceGroupContainsEntities"]$</RelationshipClass>
+              <Expression>
+                <RegExExpression>
+                  <ValueExpression>
+                    <HostProperty>
+                      <MonitoringClass>$MPElement[Name="Windows!Microsoft.Windows.Computer"]$</MonitoringClass>
+                      <Property>$MPElement[Name="Windows!Microsoft.Windows.Computer"]/PrincipalName$</Property>
+                    </HostProperty>
+                  </ValueExpression>
+                  <Operator>MatchesRegularExpression</Operator>
+                  <Pattern>##RegularExpression##</Pattern>
+                </RegExExpression>
+              </Expression>
+            </MembershipRule>
+          </MembershipRules>
+        </DataSource>
+      </Discovery>
+    </Discoveries>
+    <Rules>
+      <Rule ID="##CompanyID##.##AppName##.TimedPowerShell.Rule" Enabled="false" Target="ME1!Microsoft.Exchange.15.Server" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>Custom</Category>
+        <DataSources>
+          <DataSource ID="Scheduler" TypeID="System!System.Scheduler">
+            <Scheduler>
+              <SimpleReccuringSchedule>
+                <Interval Unit="Seconds">300</Interval>
+              </SimpleReccuringSchedule>
+              <ExcludeDates />
+            </Scheduler>
+          </DataSource>
+        </DataSources>
+        <WriteActions>
+          <WriteAction ID="PSWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
+            <ScriptName>##CompanyID##.##AppName##.TimedPowerShell.Rule.ps1</ScriptName>
+            <ScriptBody>
+              #=================================================================================
+              #  Description of Script here
+              #=================================================================================
+
+              #=================================================================================
+              # Constants section - modify stuff here:
+
+              # Assign script name variable for use in event logging
+              $ScriptName = "##CompanyID##.##AppName##.TimedPowerShell.Rule.ps1"
+              #=================================================================================
+
+              # Gather script start time
+              $StartTime = Get-Date
+
+              # Gather who the script is running as
+              $whoami = whoami
+
+              # Load MOMScript API
+              $momapi = New-Object -comObject MOM.ScriptAPI
+
+              # Log an event for the script starting
+              $momapi.LogScriptEvent($ScriptName,101,0, "Script is starting. Running, as ($whoami).")
+
+              # Set up SnapIn
+              Get-PSSnapin *exch* -Registered | Add-PSSnapin -ErrorAction SilentlyContinue
+              #=================================================================================
+              # Queues
+              # 	##CompanyID##365-mail-onmicrosoft-com.mail.protection.outlook.com
+              #	              #
+              # Test Queues
+
+              #$queue1 = "Submission"
+              #$queue2 = "Submission2"
+
+              $queue1 = "##CompanyID##365-mail-onmicrosoft-com.mail.protection.outlook.com"
+
+              ##################################################################
+              # 1. How to monitor the status of the queues below (when the status is "retry" they need alert)
+
+              $SPEvent = ( get-queue | where { $_.NextHopDomain -like "$queue1" } | where { $_.Status -like "Retry" } | measure-object )
+
+              #
+              # 2. To get an alert when a message in any of these queues is stuck for &gt; 5minutes
+              # 
+
+              $SPEventStuck = ( get-queue | where { $_.NextHopDomain -like $queue1 } | where { $_.Status -like "Suspended" } | measure-object )
+
+              # 3. Also need alert and exact count when the message count in the above queue goes beyond 1000
+
+              $SPEventMC = ( get-queue | where { $_.NextHopDomain -like $queue1 } | where { $_.MessageCount -gt 1000 } | measure-object )
+			  $MCQ1 = ( get-queue | where { $_.NextHopDomain -like $queue1 } )
+			  $MQ1 = ($MCQ1.MessageCount)
+			  
+
+              ##################################################################
+              if ( $SPEvent.count -gt 0 )
+              {
+              $strCondition = "Bad"
+              }
+              else
+              {
+              $strCondition = "Good"
+              }
+
+              #Check the value of $strCondition
+              if ( $strCondition -eq "Good" )
+              {
+              $momapi.LogScriptEvent($ScriptName,106,0, "##CompanyID## Queue NOT in retry state for $queue1")
+              }
+              else
+              {
+              # Do something here to evaluate symptoms
+              $momapi.LogScriptEvent($ScriptName,107,0, "##CompanyID## Queue in retry state for $queue1")
+              }
+
+              ##################################################################
+              if ( $SPEventStuck.count -gt 0 )
+              {
+              $strCondition = "Bad"
+              }
+              else
+              {
+              $strCondition = "Good"
+              }
+
+              #Check the value of $strCondition
+              if ( $strCondition -eq "Good")
+              {
+              $momapi.LogScriptEvent($ScriptName,106,0, "##CompanyID## Queue NOT Suspended for $queue1")
+              }
+              else
+              {
+              # Do something here to evaluate symptoms
+              $momapi.LogScriptEvent($ScriptName,107,0, "##CompanyID## Suspended Queue for $queue1")
+              }
+
+              ##################################################################
+              if ( $SPEventMC.count -gt 0 )
+              {
+              $strCondition = "Bad"
+              }
+              else
+              {
+              $strCondition = "Good"
+              }
+
+              #Check the value of $strCondition
+              if ( $strCondition -eq "Good")
+              {
+              $momapi.LogScriptEvent($ScriptName,106,0, "##CompanyID## MessageCount NOT greater than 1000 for $queue1
+			  Message Count = $MQ1 ")
+              }
+              else
+              {
+              # Do something here to evaluate symptoms
+              $momapi.LogScriptEvent($ScriptName,107,0, "##CompanyID## MessageCount greater than 1000 for $queue1
+			  Message Count = $MQ1 ")
+              }
+
+              #=================================================================================
+
+              #Log an event for script ending and total execution time.
+              $EndTime = Get-Date
+              $ScriptTime = ($EndTime - $StartTime).TotalSeconds
+              $momapi.LogScriptEvent($ScriptName,101,0,"Script has completed.  Runtime was ($ScriptTime) seconds.")
+            </ScriptBody>
+            <TimeoutSeconds>120</TimeoutSeconds>
+          </WriteAction>
+        </WriteActions>
+      </Rule>
+    </Rules>
+    <Monitors>
+      <UnitMonitor ID="##CompanyID##.##AppName##.Queue.Retry.State" Accessibility="Public" Enabled="false" Target="ME1!Microsoft.Exchange.15.Server" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.2SingleEventLog2StateMonitorType" ConfirmDelivery="true">
+        <Category>Custom</Category>
+        <AlertSettings AlertMessage="##CompanyID##.##AppName##.Queue.Retry.State_AlertMessageResourceID">
+          <AlertOnState>Error</AlertOnState>
+          <AutoResolve>true</AutoResolve>
+          <AlertPriority>Normal</AlertPriority>
+          <AlertSeverity>Error</AlertSeverity>
+          <AlertParameters>
+            <AlertParameter1>$Data/Context/EventDescription$</AlertParameter1>
+          </AlertParameters>
+        </AlertSettings>
+        <OperationalStates>
+          <OperationalState ID="Good" MonitorTypeStateID="SecondEventRaised" HealthState="Success" />
+          <OperationalState ID="Bad" MonitorTypeStateID="FirstEventRaised" HealthState="Error" />
+        </OperationalStates>
+        <Configuration>
+          <FirstComputerName>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/NetworkName$</FirstComputerName>
+          <FirstLogName>Operations Manager</FirstLogName>
+          <FirstExpression>
+            <And>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="UnsignedInteger">EventDisplayNumber</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="UnsignedInteger">107</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">PublisherName</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="String">Health Service Script</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+              <Expression>
+                <RegExExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">EventDescription</XPathQuery>
+                  </ValueExpression>
+                  <Operator>ContainsSubstring</Operator>
+                  <Pattern>##CompanyID## Queue in Retry state for </Pattern>
+                </RegExExpression>
+              </Expression>
+            </And>
+          </FirstExpression>
+          <SecondComputerName>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/NetworkName$</SecondComputerName>
+          <SecondLogName>Operations Manager</SecondLogName>
+          <SecondExpression>
+            <And>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="UnsignedInteger">EventDisplayNumber</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="UnsignedInteger">106</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">PublisherName</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="String">Health Service Script</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+              <Expression>
+                <RegExExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">EventDescription</XPathQuery>
+                  </ValueExpression>
+                  <Operator>ContainsSubstring</Operator>
+                  <Pattern>##CompanyID## Queue NOT in Retry state for</Pattern>
+                </RegExExpression>
+              </Expression>
+            </And>
+          </SecondExpression>
+        </Configuration>
+      </UnitMonitor>
+      <UnitMonitor ID="##CompanyID##.##AppName##.Queue.Suspended.State" Accessibility="Public" Enabled="false" Target="ME1!Microsoft.Exchange.15.Server" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.2SingleEventLog2StateMonitorType" ConfirmDelivery="true">
+        <Category>Custom</Category>
+        <AlertSettings AlertMessage="##CompanyID##.##AppName##.Queue.Suspended.State_AlertMessageResourceID">
+          <AlertOnState>Error</AlertOnState>
+          <AutoResolve>true</AutoResolve>
+          <AlertPriority>Normal</AlertPriority>
+          <AlertSeverity>Error</AlertSeverity>
+          <AlertParameters>
+            <AlertParameter1>$Data/Context/EventDescription$</AlertParameter1>
+          </AlertParameters>
+        </AlertSettings>
+        <OperationalStates>
+          <OperationalState ID="Good" MonitorTypeStateID="SecondEventRaised" HealthState="Success" />
+          <OperationalState ID="Bad" MonitorTypeStateID="FirstEventRaised" HealthState="Error" />
+        </OperationalStates>
+        <Configuration>
+          <FirstComputerName>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/NetworkName$</FirstComputerName>
+          <FirstLogName>Operations Manager</FirstLogName>
+          <FirstExpression>
+            <And>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="UnsignedInteger">EventDisplayNumber</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="UnsignedInteger">107</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">PublisherName</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="String">Health Service Script</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+              <Expression>
+                <RegExExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">EventDescription</XPathQuery>
+                  </ValueExpression>
+                  <Operator>ContainsSubstring</Operator>
+                  <Pattern>##CompanyID## Queue in Suspended state for </Pattern>
+                </RegExExpression>
+              </Expression>
+            </And>
+          </FirstExpression>
+          <SecondComputerName>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/NetworkName$</SecondComputerName>
+          <SecondLogName>Operations Manager</SecondLogName>
+          <SecondExpression>
+            <And>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="UnsignedInteger">EventDisplayNumber</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="UnsignedInteger">106</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">PublisherName</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="String">Health Service Script</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+              <Expression>
+                <RegExExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">EventDescription</XPathQuery>
+                  </ValueExpression>
+                  <Operator>ContainsSubstring</Operator>
+                  <Pattern>##CompanyID## Queue NOT in Suspended state for</Pattern>
+                </RegExExpression>
+              </Expression>
+            </And>
+          </SecondExpression>
+        </Configuration>
+      </UnitMonitor>
+      <UnitMonitor ID="##CompanyID##.##AppName##.Queue.MessageCount.State" Accessibility="Public" Enabled="false" Target="ME1!Microsoft.Exchange.15.Server" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.2SingleEventLog2StateMonitorType" ConfirmDelivery="true">
+        <Category>Custom</Category>
+        <AlertSettings AlertMessage="##CompanyID##.##AppName##.Queue.MessageCount.State_AlertMessageResourceID">
+          <AlertOnState>Error</AlertOnState>
+          <AutoResolve>true</AutoResolve>
+          <AlertPriority>Normal</AlertPriority>
+          <AlertSeverity>Error</AlertSeverity>
+          <AlertParameters>
+            <AlertParameter1>$Data/Context/EventDescription$</AlertParameter1>
+          </AlertParameters>
+        </AlertSettings>
+        <OperationalStates>
+          <OperationalState ID="Good" MonitorTypeStateID="SecondEventRaised" HealthState="Success" />
+          <OperationalState ID="Bad" MonitorTypeStateID="FirstEventRaised" HealthState="Error" />
+        </OperationalStates>
+        <Configuration>
+          <FirstComputerName>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/NetworkName$</FirstComputerName>
+          <FirstLogName>Operations Manager</FirstLogName>
+          <FirstExpression>
+            <And>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="UnsignedInteger">EventDisplayNumber</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="UnsignedInteger">107</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">PublisherName</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="String">Health Service Script</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+              <Expression>
+                <RegExExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">EventDescription</XPathQuery>
+                  </ValueExpression>
+                  <Operator>ContainsSubstring</Operator>
+                  <Pattern>##CompanyID## MessageCount greater than 1000 for </Pattern>
+                </RegExExpression>
+              </Expression>
+            </And>
+          </FirstExpression>
+          <SecondComputerName>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/NetworkName$</SecondComputerName>
+          <SecondLogName>Operations Manager</SecondLogName>
+          <SecondExpression>
+            <And>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="UnsignedInteger">EventDisplayNumber</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="UnsignedInteger">106</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">PublisherName</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value Type="String">Health Service Script</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+              <Expression>
+                <RegExExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">EventDescription</XPathQuery>
+                  </ValueExpression>
+                  <Operator>ContainsSubstring</Operator>
+                  <Pattern>##CompanyID## MessageCount NOT greater than 1000 for </Pattern>
+                </RegExExpression>
+              </Expression>
+            </And>
+          </SecondExpression>
+        </Configuration>
+      </UnitMonitor>
+    </Monitors>
+    <Overrides>
+      <RulePropertyOverride ID="Override.Rule.Enable.##CompanyID####AppName##ServersGroup" Context="##CompanyID##.##AppName##.Servers.Group" ContextInstance="79c2ccc7-4979-8248-9e1f-4a5daed0ffce" Enforced="false" Rule="##CompanyID##.##AppName##.TimedPowerShell.Rule" Property="Enabled">
+        <Value>true</Value>
+      </RulePropertyOverride>
+      <MonitorPropertyOverride ID="Override.Retry.Monitor.Enable.##CompanyID####AppName##ServersGroup" Context="##CompanyID##.##AppName##.Servers.Group" ContextInstance="79c2ccc7-4979-8248-9e1f-4a5daed0ffce" Enforced="false" Monitor="##CompanyID##.##AppName##.Queue.Retry.State" Property="Enabled">
+        <Value>true</Value>
+      </MonitorPropertyOverride>
+      <MonitorPropertyOverride ID="Override.Suspended.Monitor.Enable.##CompanyID####AppName##ServersGroup" Context="##CompanyID##.##AppName##.Servers.Group" ContextInstance="79c2ccc7-4979-8248-9e1f-4a5daed0ffce" Enforced="false" Monitor="##CompanyID##.##AppName##.Queue.Suspended.State" Property="Enabled">
+        <Value>true</Value>
+      </MonitorPropertyOverride>
+      <MonitorPropertyOverride ID="Override.MessageCount.Monitor.Enable.##CompanyID####AppName##ServersGroup" Context="##CompanyID##.##AppName##.Servers.Group" ContextInstance="79c2ccc7-4979-8248-9e1f-4a5daed0ffce" Enforced="false" Monitor="##CompanyID##.##AppName##.Queue.MessageCount.State" Property="Enabled">
+        <Value>true</Value>
+      </MonitorPropertyOverride>
+    </Overrides>
+  </Monitoring>
+  <Presentation>
+    <StringResources>
+      <StringResource ID="##CompanyID##.##AppName##.Queue.Retry.State_AlertMessageResourceID" />
+      <StringResource ID="##CompanyID##.##AppName##.Queue.Suspended.State_AlertMessageResourceID" />
+      <StringResource ID="##CompanyID##.##AppName##.Queue.MessageCount.State_AlertMessageResourceID" />
+    </StringResources>
+  </Presentation>
+  <LanguagePacks>
+    <LanguagePack ID="ENU">
+      <DisplayStrings>
+        <DisplayString ElementID="##CompanyID##.##AppName##.TimedPowerShell.Rule">
+          <Name>##CompanyID## ##AppName## TimedPowerShell Rule</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Servers.Group">
+          <Name>##CompanyID## Edge Exchange Computers Group</Name>
+          <Description>Created for Custom MP</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Servers.Group.DiscoveryRule">
+          <Name>Populate ##CompanyID## Edge Exchange Computers Group</Name>
+          <Description>This discovery rule populates the group '##CompanyID## Edge Exchange Computers Group'</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Queue.MessageCount.State">
+          <Name>##CompanyID## MessageCount greater than 1000</Name>
+          <Description>Created 2017-06-06 for customer engagement</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Queue.MessageCount.State" SubElementID="Bad">
+          <Name>First Event Raised</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Queue.MessageCount.State" SubElementID="Good">
+          <Name>Second Event Raised</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Queue.MessageCount.State_AlertMessageResourceID">
+          <Name>##CompanyID## MessageCount greater than 1000</Name>
+          <Description>C##CompanyID## MessageCount greater than 1000
+
+Event Description: {0}</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Queue.Retry.State">
+          <Name>##CompanyID## Queue in Retry state</Name>
+          <Description>Created 2017-06-06 for customer engagement</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Queue.Retry.State" SubElementID="Bad">
+          <Name>First Event Raised</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Queue.Retry.State" SubElementID="Good">
+          <Name>Second Event Raised</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Queue.Retry.State_AlertMessageResourceID">
+          <Name>##CompanyID## Queue in Retry state</Name>
+          <Description>##CompanyID## Queue in Retry state
+
+Event Description: {0}</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Queue.Suspended.State">
+          <Name>##CompanyID## Queue in Suspended state</Name>
+          <Description>Created 2017-06-06 for customer engagement</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Queue.Suspended.State" SubElementID="Bad">
+          <Name>First Event Raised</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Queue.Suspended.State" SubElementID="Good">
+          <Name>Second Event Raised</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Queue.Suspended.State_AlertMessageResourceID">
+          <Name>##CompanyID## Queue in Suspended state</Name>
+          <Description>##CompanyID## Queue in Suspended state
+
+Event Description: {0}</Description>
+        </DisplayString>
+        <DisplayString ElementID="Override.Retry.Monitor.Enable.##CompanyID####AppName##ServersGroup">
+          <Name>NotUsed</Name>
+          <Description>Enable for ##CompanyID## Edge Servers</Description>
+        </DisplayString>
+        <DisplayString ElementID="Override.Rule.Enable.##CompanyID####AppName##ServersGroup">
+          <Name>NotUsed</Name>
+          <Description>Enable for ##CompanyID## Edge Servers</Description>
+        </DisplayString>
+        <DisplayString ElementID="Override.Suspended.Monitor.Enable.##CompanyID####AppName##ServersGroup">
+          <Name>NotUsed</Name>
+          <Description>Enable for ##CompanyID## Edge Servers</Description>
+        </DisplayString>
+        <DisplayString ElementID="Override.MessageCount.Monitor.Enable.##CompanyID####AppName##ServersGroup">
+          <Name>NotUsed</Name>
+          <Description>Enable for ##CompanyID## Edge Servers</Description>
+        </DisplayString>
+      </DisplayStrings>
+	</LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>

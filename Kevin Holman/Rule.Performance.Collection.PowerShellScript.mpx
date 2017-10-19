@@ -78,7 +78,7 @@ This fragment depends on references:
 # Constants section - modify stuff here:
 
 # Assign script name variable for use in event logging
-$ScriptName = ""##CompanyID##.##AppName##.PowerShell.Script.Perf.PA.ps1""
+$ScriptName = "##CompanyID##.##AppName##.PowerShell.Script.Perf.PA.ps1"
 #=================================================================================
 
 # Gather script start time

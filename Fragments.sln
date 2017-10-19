@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.15
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{27D4D423-33FC-4422-88BD-2FA934332076}"
 	ProjectSection(SolutionItems) = preProject
@@ -79,8 +79,24 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "My Fragments", "My Fragment
 		My Fragments\ReadMe.txt = My Fragments\ReadMe.txt
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kevin Justin", "Kevin Justin", "{26F30BC6-ACA7-4D33-BE47-FFD138419BD9}"
+	ProjectSection(SolutionItems) = preProject
+		Kevin Justin\Class.Group.WindowsComputers.Group.Report.View.Folder.mpx = Kevin Justin\Class.Group.WindowsComputers.Group.Report.View.Folder.mpx
+		Kevin Justin\Folder.Perf.Group.View.mpx = Kevin Justin\Folder.Perf.Group.View.mpx
+		Kevin Justin\Monitor.EventLog.Event.Three.Criteria.Reset.mpx = Kevin Justin\Monitor.EventLog.Event.Three.Criteria.Reset.mpx
+		Kevin Justin\Monitor.EventLog.Event.Two.Criteria.Reset.mpx = Kevin Justin\Monitor.EventLog.Event.Two.Criteria.Reset.mpx
+		Kevin Justin\Monitor.EventLog.Event.With.PowerShell.Recovery.mpx = Kevin Justin\Monitor.EventLog.Event.With.PowerShell.Recovery.mpx
+		Kevin Justin\Monitor.Exchange.Queue.PowerShell.Script.mpx = Kevin Justin\Monitor.Exchange.Queue.PowerShell.Script.mpx
+		Kevin Justin\Monitor.TimedScript.RunAs.PowerShell.mpx = Kevin Justin\Monitor.TimedScript.RunAs.PowerShell.mpx
+		Kevin Justin\Report.mpx = Kevin Justin\Report.mpx
+		Kevin Justin\Version.Info.txt = Kevin Justin\Version.Info.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A8E7E689-CDAC-4998-80B3-8EE2DF46E669}
 	EndGlobalSection
 EndGlobal

@@ -1,0 +1,102 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--
+%%
+Description:
+  In this fragment we reference a group of Windows Computers to display performance counter data, 
+  inside a custom Monitoring view beneath folder.
+Version: 1.0
+LastModified: 22-June-2017
+%%
+
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName##
+  ##ClassID##
+  ##TargetGroupID## - GUID ID field from PowerShell output
+		Example:
+			get-scomGroup | ? { $_.DisplayName -like "*Load Testing Group*" } | fl ID,DisplayName
+  
+This fragment depends on references:
+  RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library"
+  RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+
+-->
+  <Presentation>
+    <Views>
+      <View ID="##CompanyID##.##AppName##.##ClassID##.View" Accessibility="Public" Enabled="true" Target="Windows!Microsoft.Windows.Computer" TypeID="SC!Microsoft.SystemCenter.PerformanceViewType" Visible="true">
+        <Category>Operations</Category>
+        <Criteria />
+        <Presentation>
+          <SortedColumnIndex>0</SortedColumnIndex>
+          <SortOrder>0</SortOrder>
+          <StartTime>2017-04-24T13:21:33.6632194-05:00</StartTime>
+          <EndTime>2017-04-25T13:21:33.6632194-05:00</EndTime>
+          <DynamicTimeTicks>864000000000</DynamicTimeTicks>
+          <IsDynamic>true</IsDynamic>
+          <Is3DMode>false</Is3DMode>
+          <ShowAlerts>false</ShowAlerts>
+          <ShowMaintenanceMode>false</ShowMaintenanceMode>
+          <BaselineMode>false</BaselineMode>
+          <ShowPointLabels>false</ShowPointLabels>
+          <EnableSmartLabels>true</EnableSmartLabels>
+          <RightAngleAxes>false</RightAngleAxes>
+          <ClusterSeries>false</ClusterSeries>
+          <Title>THIS IS A TEST TITLE</Title>
+          <TitleFont>Microsoft Sans Serif,12,Regular</TitleFont>
+          <ChartFont>Microsoft Sans Serif,8.25,Regular</ChartFont>
+          <ShowBands>false</ShowBands>
+          <BandColor>-1579033</BandColor>
+          <ChartType>Line</ChartType>
+          <Depth>100</Depth>
+          <GapDepth>100</GapDepth>
+          <Perspective>10</Perspective>
+          <GraphXRotation>0</GraphXRotation>
+          <GraphYRotation>0</GraphYRotation>
+          <XLabelAngle>0</XLabelAngle>
+          <LabelColor>-16777216</LabelColor>
+          <LabelFont>Microsoft Sans Serif,8.25,Regular</LabelFont>
+          <XAxisVisible>True</XAxisVisible>
+          <XShowMajorGridlines>false</XShowMajorGridlines>
+          <XShowMinorGridlines>false</XShowMinorGridlines>
+          <ShowInterlaceStrips>false</ShowInterlaceStrips>
+          <XInterlaceColor>16777215</XInterlaceColor>
+          <XShowSideMargin>true</XShowSideMargin>
+          <XAxisFont>Microsoft Sans Serif,8.25,Regular</XAxisFont>
+          <AutoAxis>true</AutoAxis>
+          <AxisMax>100</AxisMax>
+          <AxisMin>0</AxisMin>
+          <YAxisVisible>True</YAxisVisible>
+          <YShowMajorGridlines>true</YShowMajorGridlines>
+          <YShowMinorGridlines>false</YShowMinorGridlines>
+          <YShowInterlaceStrips>false</YShowInterlaceStrips>
+          <YShowSideMargin>true</YShowSideMargin>
+          <YAxisFont>Microsoft Sans Serif,8.25,Regular</YAxisFont>
+          <BackgroundColor1>-1</BackgroundColor1>
+          <BackgroundColor2>-1</BackgroundColor2>
+          <GradientType>None</GradientType>
+          <Series />
+        </Presentation>
+        <Target>##TargetGroupID##</Target>
+		<!-- Needed for ID of created group from SQL SSMS query on SCOMDW -->
+      </View>
+    </Views>
+    <Folders>
+      <Folder ID="##CompanyID##.##AppName##.##ClassID##.Folder" Accessibility="Public" ParentFolder="SC!Microsoft.SystemCenter.Monitoring.ViewFolder.Root" />
+    </Folders>
+    <FolderItems>
+      <FolderItem ElementID="##CompanyID##.##AppName##.##ClassID##.View" ID="##CompanyID##.##AppName##.##ClassID##.Folder" Folder="##CompanyID##.##AppName##.##ClassID##.Folder" />
+    </FolderItems>
+  </Presentation>  
+  <LanguagePacks>
+    <LanguagePack ID="ENU">
+      <DisplayStrings>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##ClassID##.Folder">
+          <Name>##CompanyID## ##ClassID## ##AppName## Performance</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##ClassID##.View">
+          <Name>##CompanyID## ##ClassID## ##AppName## Server Performance</Name>
+        </DisplayString>
+	  </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>

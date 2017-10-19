@@ -1,0 +1,448 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--
+%%
+Description:
+  In this fragment we create a group of Windows Computers used in a report with a custom Monitoring view beneath folder
+  Ultimately this will create a load test MP and report to gather performance data from SCOM to use to compare storage (disk), 
+	memory, processor and network
+Version: 1.0
+LastModified: 21-June-2017
+%%
+
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName## - LoadTesting
+  ##ClassID## - WindowsServer
+  ##OSVersion##
+		Example:
+			2012 = 6.2, 2012R2 = 2012.R2, 2016 = 100
+  ##MPReferenceID##
+		MWS2M for 2012, MWS2RM for 2012R2
+  ##RuleGUID## - Grab from specific PowerShell for each performance counter per OS
+		Example: 
+			get-scomrule | ? { $_.DisplayName -like "Performance Rule Name*" } | fl ID,DisplayName,Name
+  ##TargetGroupID## - GUID ID field from PowerShell output
+		Example:
+			get-scomGroup | ? { $_.DisplayName -like "*Load Testing Group*" } | fl ID,DisplayName
+  ##TargetGroupNumber## - Group ID from OpsMgrDW query
+	    Example:
+			select [ManagedEntityDefaultName],[ManagedEntityRowId]
+			FROM [vManagedEntity]
+			where [ManagedEntityDefaultName] like '%load%'
+			order by displayname
+  
+This fragment depends on references:
+  RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library"
+  RequiredReference: Alias="System", ID="System.Library"
+  RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+  RequiredReference: Alias="MSIL", ID="Microsoft.SystemCenter.InstanceGroup.Library"
+  RequiredReference: Alias="MSDRL", ID="Microsoft.SystemCenter.DataWarehouse.Report.Library"
+
+Provide specific OS MP monitoring pack and version
+  RequiredReference: Alias="MWS2M", ID="Microsoft.Windows.Server.2012.Monitoring"
+  RequiredReference: Alias="MWS2RM", ID="Microsoft.Windows.Server.2012.R2.Monitoring"
+-->
+  <TypeDefinitions>
+    <EntityTypes>
+      <ClassTypes>
+        <ClassType ID="##CompanyID##.##AppName##.##ClassID##.##OSVersion##.Group" Accessibility="Public" Abstract="false" Base="MSIL!Microsoft.SystemCenter.InstanceGroup" Hosted="false" Singleton="true" Extension="false" />
+      </ClassTypes>
+    </EntityTypes>
+  </TypeDefinitions>
+  <Monitoring>
+    <Discoveries>
+      <Discovery ID="##CompanyID##.##AppName##.##ClassID##.##OSVersion##.Group.DiscoveryRule" Enabled="true" Target="##CompanyID##.##AppName##.##ClassID##.##OSVersion##.Group" ConfirmDelivery="false" Remotable="true" Priority="Normal">
+        <Category>Discovery</Category>
+        <DiscoveryTypes>
+          <DiscoveryRelationship TypeID="MSIL!Microsoft.SystemCenter.InstanceGroupContainsEntities" />
+        </DiscoveryTypes>
+        <DataSource ID="GroupPopulationDataSource" TypeID="SC!Microsoft.SystemCenter.GroupPopulator">
+          <RuleId>$MPElement$</RuleId>
+          <GroupInstanceId>$MPElement[Name="##CompanyID##.##AppName##.##ClassID##.##OSVersion##.Group"]$</GroupInstanceId>
+          <MembershipRules>
+            <MembershipRule Comment="EMPTY_RULE_8eadaced-59c8-4ebc-a4e4-b8428a374442">
+              <MonitoringClass>$MPElement[Name="SL!System.Entity"]$</MonitoringClass>
+              <RelationshipClass>$MPElement[Name="MSIL!Microsoft.SystemCenter.InstanceGroupContainsEntities"]$</RelationshipClass>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <Value>True</Value>
+                  </ValueExpression>
+                  <Operator>Equal</Operator>
+                  <ValueExpression>
+                    <Value>False</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </MembershipRule>
+          </MembershipRules>
+        </DataSource>
+      </Discovery>
+    </Discoveries>
+    <Overrides>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##LogicalDiskCurrentDiskQueueLengthCollectionFrequency" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.LogicalDisk.CurrentDiskQueueLength.Collection" Parameter="Frequency" Module="PerformanceDS">
+        <Value>60</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##LogicalDiskCurrentDiskQueueLengthCollectionMaxSampleSeparation" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.LogicalDisk.CurrentDiskQueueLength.Collection" Parameter="MaximumSampleSeparation" Module="PerformanceDS">
+        <Value>2</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##LogicalDiskCurrentDiskQueueLengthCollectionTolerance" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.LogicalDisk.CurrentDiskQueueLength.Collection" Parameter="Tolerance" Module="PerformanceDS">
+        <Value>1</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##OperatingSystemMemoryPagesPerSecCollectionFrequency" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.OperatingSystem.MemoryPagesPerSec.Collection" Parameter="Frequency" Module="PerformanceDS">
+        <Value>60</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##OperatingSystemMemoryPagesPerSecCollectionMaxSampleSeparation" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.OperatingSystem.MemoryPagesPerSec.Collection" Parameter="MaximumSampleSeparation" Module="PerformanceDS">
+        <Value>2</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##OperatingSystemMemoryPagesPerSecCollectionTolerance" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.OperatingSystem.MemoryPagesPerSec.Collection" Parameter="Tolerance" Module="PerformanceDS">
+        <Value>1</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##OperatingSystemMemoryAvailableMBytesCollectionFrequency" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.OperatingSystem.MemoryAvailableMBytes.Collection" Parameter="Frequency" Module="PerformanceDS">
+        <Value>60</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##OperatingSystemMemoryAvailableMBytesCollectionMaximumSampleSeparation" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.OperatingSystem.MemoryAvailableMBytes.Collection" Parameter="MaximumSampleSeparation" Module="PerformanceDS">
+        <Value>2</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##OperatingSystemMemoryAvailableMBytesCollectionTolerance" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.OperatingSystem.MemoryAvailableMBytes.Collection" Parameter="Tolerance" Module="PerformanceDS">
+        <Value>1</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##NetworkAdapterBytesTotalPerSecCollectionFrequency" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.NetworkAdapter.BytesTotalPerSec.Collection" Parameter="Frequency" Module="PerformanceDS">
+        <Value>60</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##NetworkAdapterBytesTotalPerSecCollectionMaximumSampleSeparation" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.NetworkAdapter.BytesTotalPerSec.Collection" Parameter="MaximumSampleSeparation" Module="PerformanceDS">
+        <Value>2</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##NetworkAdapterBytesTotalPerSecCollectionTolerance" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.NetworkAdapter.BytesTotalPerSec.Collection" Parameter="Tolerance" Module="PerformanceDS">
+        <Value>1</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##OperatingSystemTotalPercentProcessorTimeCollectionFrequency" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.OperatingSystem.TotalPercentProcessorTime.Collection" Parameter="Frequency" Module="PerformanceDS">
+        <Value>60</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##OperatingSystemTotalPercentProcessorTimeCollectionMaximumSampleSeparation" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.OperatingSystem.TotalPercentProcessorTime.Collection" Parameter="MaximumSampleSeparation" Module="PerformanceDS">
+        <Value>2</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##OperatingSystemTotalPercentProcessorTimeCollectionTolerance" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.OperatingSystem.TotalPercentProcessorTime.Collection" Parameter="Tolerance" Module="PerformanceDS">
+        <Value>1</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##OperatingSystemSystemProcessorQueueLengthCollectionFrequency" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.OperatingSystem.SystemProcessorQueueLength.Collection" Parameter="Frequency" Module="PerformanceDS">
+        <Value>60</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##OperatingSystemSystemProcessorQueueLengthCollectionMaximumSampleSeparation" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.OperatingSystem.SystemProcessorQueueLength.Collection" Parameter="MaximumSampleSeparation" Module="PerformanceDS">
+        <Value>2</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##OperatingSystemSystemProcessorQueueLengthCollectionTolerance" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.OperatingSystem.SystemProcessorQueueLength.Collection" Parameter="Tolerance" Module="PerformanceDS">
+        <Value>1</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##LogicalDiskPercentIdleCollectionFrequency" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.LogicalDisk.PercentIdle.Collection" Parameter="Frequency" Module="PerformanceDS">
+        <Value>60</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##LogicalDiskPercentIdleCollectionMaximumSampleSeparation" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.LogicalDisk.PercentIdle.Collection" Parameter="MaximumSampleSeparation" Module="PerformanceDS">
+        <Value>2</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##LogicalDiskPercentIdleCollectionTolerance" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.LogicalDisk.PercentIdle.Collection" Parameter="Tolerance" Module="PerformanceDS">
+        <Value>1</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##LogicalDiskAvgDiskSecPerTransferCollectionFrequency" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.LogicalDisk.AvgDiskSecPerTransfer.Collection" Parameter="Frequency" Module="PerformanceDS">
+        <Value>60</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##LogicalDiskAvgDiskSecPerTransferCollectionMaximumSampleSeparation" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.LogicalDisk.AvgDiskSecPerTransfer.Collection" Parameter="MaximumSampleSeparation" Module="PerformanceDS">
+        <Value>2</Value>
+      </RuleConfigurationOverride>
+      <RuleConfigurationOverride ID="OverrideForRuleMicrosoft##ClassID##.##OSVersion##LogicalDiskAvgDiskSecPerTransferCollectionTolerance" Context="LoadTestingWindowsServer2012R2.Group" ContextInstance="dcb41a36-5c94-ae24-8c4e-2b16bc282e7b" Enforced="false" Rule="##MPReferenceID##!Microsoft.Windows.Server.##OSVersion##.LogicalDisk.AvgDiskSecPerTransfer.Collection" Parameter="Tolerance" Module="PerformanceDS">
+        <Value>0.01</Value>
+      </RuleConfigurationOverride>
+    </Overrides>
+  </Monitoring>
+  <Presentation>
+    <Views>
+      <View ID="##CompanyID##.##AppName##.##ClassID##.##OSVersion##.View" Accessibility="Public" Enabled="true" Target="Windows!Microsoft.Windows.Computer" TypeID="SC!Microsoft.SystemCenter.PerformanceViewType" Visible="true">
+        <Category>Operations</Category>
+        <Criteria />
+        <Presentation>
+          <SortedColumnIndex>0</SortedColumnIndex>
+          <SortOrder>0</SortOrder>
+          <StartTime>2017-04-24T13:21:33.6632194-05:00</StartTime>
+          <EndTime>2017-04-25T13:21:33.6632194-05:00</EndTime>
+          <DynamicTimeTicks>864000000000</DynamicTimeTicks>
+          <IsDynamic>true</IsDynamic>
+          <Is3DMode>false</Is3DMode>
+          <ShowAlerts>false</ShowAlerts>
+          <ShowMaintenanceMode>false</ShowMaintenanceMode>
+          <BaselineMode>false</BaselineMode>
+          <ShowPointLabels>false</ShowPointLabels>
+          <EnableSmartLabels>true</EnableSmartLabels>
+          <RightAngleAxes>false</RightAngleAxes>
+          <ClusterSeries>false</ClusterSeries>
+          <Title>THIS IS A TEST TITLE</Title>
+          <TitleFont>Microsoft Sans Serif,12,Regular</TitleFont>
+          <ChartFont>Microsoft Sans Serif,8.25,Regular</ChartFont>
+          <ShowBands>false</ShowBands>
+          <BandColor>-1579033</BandColor>
+          <ChartType>Line</ChartType>
+          <Depth>100</Depth>
+          <GapDepth>100</GapDepth>
+          <Perspective>10</Perspective>
+          <GraphXRotation>0</GraphXRotation>
+          <GraphYRotation>0</GraphYRotation>
+          <XLabelAngle>0</XLabelAngle>
+          <LabelColor>-16777216</LabelColor>
+          <LabelFont>Microsoft Sans Serif,8.25,Regular</LabelFont>
+          <XAxisVisible>True</XAxisVisible>
+          <XShowMajorGridlines>false</XShowMajorGridlines>
+          <XShowMinorGridlines>false</XShowMinorGridlines>
+          <ShowInterlaceStrips>false</ShowInterlaceStrips>
+          <XInterlaceColor>16777215</XInterlaceColor>
+          <XShowSideMargin>true</XShowSideMargin>
+          <XAxisFont>Microsoft Sans Serif,8.25,Regular</XAxisFont>
+          <AutoAxis>true</AutoAxis>
+          <AxisMax>100</AxisMax>
+          <AxisMin>0</AxisMin>
+          <YAxisVisible>True</YAxisVisible>
+          <YShowMajorGridlines>true</YShowMajorGridlines>
+          <YShowMinorGridlines>false</YShowMinorGridlines>
+          <YShowInterlaceStrips>false</YShowInterlaceStrips>
+          <YShowSideMargin>true</YShowSideMargin>
+          <YAxisFont>Microsoft Sans Serif,8.25,Regular</YAxisFont>
+          <BackgroundColor1>-1</BackgroundColor1>
+          <BackgroundColor2>-1</BackgroundColor2>
+          <GradientType>None</GradientType>
+          <Series />
+        </Presentation>
+        <Target>##TargetGroupID##</Target><!-- Needed for ID of created group -->
+      </View>
+    </Views>
+    <Folders>
+      <Folder ID="##CompanyID##.##AppName##.##ClassID##.Folder" Accessibility="Public" ParentFolder="SC!Microsoft.SystemCenter.Monitoring.ViewFolder.Root" />
+    </Folders>
+    <FolderItems>
+      <FolderItem ElementID="##CompanyID##.##AppName##.##ClassID##.##OSVersion##.View" ID="##CompanyID##.##AppName##.##ClassID##.##OSVersion##.Folder" Folder="##CompanyID##.##AppName##.##ClassID##.Folder" />
+    </FolderItems>
+  </Presentation>  
+  <Reporting>
+    <LinkedReports>
+      <LinkedReport ID="##ClassID##.##OSVersion##.##AppName##.Report" Accessibility="Internal" Base="MSDRL!Microsoft.SystemCenter.DataWarehouse.Report.Performance" Visible="true">
+        <ParameterBlock columns="6" xmlns="http://schemas.microsoft.com/mom/reporting/2007/ReportParameterSettings">
+          <Controls xmlns="http://schemas.microsoft.com/mom/reporting/2007/ReportParameterSettings">
+            <Control type="Microsoft.SystemCenter.DataWarehouse.Report.ParameterControl.ComboBox" columnSpan="2">
+              <ReportParameters>
+                <ReportParameter name="DataAggregation">
+                  <Prompt>Microsoft.SystemCenter.DataWarehouse.Report.Library!Microsoft.SystemCenter.DataWarehouse.Report.ParameterPrompt.DataAggregation</Prompt>
+                </ReportParameter>
+              </ReportParameters>
+            </Control>
+            <Control type="Microsoft.SystemCenter.DataWarehouse.Report.ParameterControl.PerformanceChartObjectPicker" columnSpan="4" rowSpan="3">
+              <ReportParameters>
+                <ReportParameter name="ObjectList">
+                  <Prompt>Microsoft.SystemCenter.DataWarehouse.Report.Library!Microsoft.SystemCenter.DataWarehouse.Report.ParameterPrompt.ObjectList</Prompt>
+                </ReportParameter>
+                <ReportParameter name="ManagementGroupId" binding="GroupList" />
+              </ReportParameters>
+            </Control>
+            <Control type="Microsoft.SystemCenter.DataWarehouse.Report.ParameterControl.BusinessRelativeDateTimePicker" columnSpan="2">
+              <ReportParameters>
+                <ReportParameter name="TimeZone" binding="TimeZone">
+                  <Prompt>Microsoft.SystemCenter.DataWarehouse.Report.Library!Microsoft.SystemCenter.DataWarehouse.Report.ParameterPrompt.TimeZone</Prompt>
+                </ReportParameter>
+                <ReportParameter name="TimeZoneName" binding="TimeZoneName" />
+                <ReportParameter name="StartDate_BaseType" binding="StartDate_BaseType" />
+                <ReportParameter name="StartDate_BaseValue" binding="StartDate_BaseValue">
+                  <Prompt>Microsoft.SystemCenter.DataWarehouse.Report.Library!Microsoft.SystemCenter.DataWarehouse.Report.ParameterPrompt.StartDateTime</Prompt>
+                </ReportParameter>
+                <ReportParameter name="StartDate_OffsetType" binding="StartDate_OffsetType" />
+                <ReportParameter name="StartDate_OffsetValue" binding="StartDate_OffsetValue" />
+                <ReportParameter name="EndDate_BaseType" binding="EndDate_BaseType" />
+                <ReportParameter name="EndDate_BaseValue" binding="EndDate_BaseValue">
+                  <Prompt>Microsoft.SystemCenter.DataWarehouse.Report.Library!Microsoft.SystemCenter.DataWarehouse.Report.ParameterPrompt.EndDateTime</Prompt>
+                </ReportParameter>
+                <ReportParameter name="EndDate_OffsetType" binding="EndDate_OffsetType" />
+                <ReportParameter name="EndDate_OffsetValue" binding="EndDate_OffsetValue" />
+                <ReportParameter name="TimeType" binding="TimeType" />
+                <ReportParameter name="TimeWeekMap" binding="TimeWeekMap" />
+              </ReportParameters>
+            </Control>
+            <Control type="Microsoft.SystemCenter.DataWarehouse.Report.ParameterControl.ComboBox">
+              <ReportParameters>
+                <ReportParameter name="AggregationType">
+                  <Prompt>Microsoft.SystemCenter.DataWarehouse.Report.Library!Microsoft.SystemCenter.DataWarehouse.Report.ParameterPrompt.Histogram</Prompt>
+                </ReportParameter>
+              </ReportParameters>
+            </Control>
+            <Control type="Microsoft.SystemCenter.DataWarehouse.Report.ParameterControl.BooleanPicker">
+              <ReportParameters>
+                <ReportParameter name="Enable3D">
+                  <Prompt>Microsoft.SystemCenter.DataWarehouse.Report.Library!Microsoft.SystemCenter.DataWarehouse.Report.ParameterPrompt.Chart3D</Prompt>
+                </ReportParameter>
+              </ReportParameters>
+            </Control>
+            <!-- TEST -->
+            <Control type="Microsoft.SystemCenter.DataWarehouse.Report.ParameterControl.CheckedListBox" rowSpan="2" columnSpan="1">
+              <ReportParameters>
+                <ReportParameter name="ManagementGroupId" />
+              </ReportParameters>
+            </Control>
+            <!-- END TEST -->
+          </Controls>
+        </ParameterBlock>
+        <Parameters>
+          <Parameter Name="Enable3D">
+            <Value>False</Value>
+          </Parameter>
+          <Parameter Name="DataAggregation">
+            <Value>0</Value>
+          </Parameter>
+          <Parameter Name="AggregationType">
+            <Value>0</Value>
+          </Parameter>
+          <Parameter Name="StartDate_BaseType">
+            <Value>Today</Value>
+          </Parameter>
+          <Parameter Name="StartDate_BaseValue">
+            <Value>2017-04-26T00:01:00</Value>
+          </Parameter>
+          <Parameter Name="StartDate_OffsetType">
+            <Value>Day</Value>
+          </Parameter>
+          <Parameter Name="StartDate_OffsetValue">
+            <Value>-1</Value>
+          </Parameter>
+          <Parameter Name="EndDate_BaseType">
+            <Value>Today</Value>
+          </Parameter>
+          <Parameter Name="EndDate_BaseValue">
+            <Value>2017-04-26T23:59:00</Value>
+          </Parameter>
+          <Parameter Name="EndDate_OffsetType">
+            <Value>None</Value>
+          </Parameter>
+          <Parameter Name="EndDate_OffsetValue">
+            <Value>0</Value>
+          </Parameter>
+          <Parameter Name="TimeType">
+            <Value>Regular</Value>
+          </Parameter>
+          <Parameter Name="TimeWeekMap">
+            <Value>Sunday</Value>
+            <Value>Monday</Value>
+            <Value>Tuesday</Value>
+            <Value>Wednesday</Value>
+            <Value>Thursday</Value>
+            <Value>Friday</Value>
+            <Value>Saturday</Value>
+          </Parameter>
+          <Parameter Name="TimeZone">
+            <Value>6801000000000000C4FFFFFF00000B0000000100020000000000000000000300000002000200000000000000|Central Standard Time</Value>
+          </Parameter>
+          <Parameter Name="TimeZoneName">
+            <Value>(UTC-06:00) Central Time (US &amp; Canada)</Value>
+          </Parameter>
+          <Parameter Name="Interactive">
+            <Value>False</Value>
+          </Parameter>
+          <Parameter Name="ObjectList">
+            <Value>
+							&lt;Data&gt;
+								&lt;Values Title="Average Disk Seconds Per Transfer Windows Server 2012"&gt;
+									&lt;Value&gt;
+										&lt;Object Use="Containment"&gt;##TargetGroupNumber##&lt;/Object&gt;
+										&lt;Rule&gt;##RuleGUID##&lt;/Rule&gt;
+										&lt;Color&gt;63,63,255&lt;/Color&gt;
+										&lt;Type&gt;SplineArea&lt;/Type&gt;
+										&lt;Scale&gt;1&lt;/Scale&gt;
+									&lt;/Value&gt;
+								&lt;/Values&gt;
+								&lt;Values Title="Current Disk Queue Length Windows Server 2012"&gt;
+									&lt;Value&gt;
+										&lt;Object Use="Containment"&gt;##TargetGroupNumber##&lt;/Object&gt;
+										&lt;Rule&gt;##RuleGUID##&lt;/Rule&gt;
+										&lt;Color&gt;255,127,63&lt;/Color&gt;
+										&lt;Type&gt;SplineArea&lt;/Type&gt;
+										&lt;Scale&gt;1&lt;/Scale&gt;
+									&lt;/Value&gt;
+								&lt;/Values&gt;
+								&lt;Values Title="% Logical Disk Idle Time Windows Server 2012"&gt;
+									&lt;Value&gt;
+										&lt;Object Use="Containment"&gt;##TargetGroupNumber##&lt;/Object&gt;
+										&lt;Rule&gt;##RuleGUID##&lt;/Rule&gt;
+										&lt;Color&gt;0,159,0&lt;/Color&gt;
+										&lt;Type&gt;Column&lt;/Type&gt;
+										&lt;Scale&gt;1&lt;/Scale&gt;
+									&lt;/Value&gt;
+								&lt;/Values&gt;
+								&lt;Values Title="% Processor Time Total Windows Server 2012 R2"&gt;
+									&lt;Value&gt;
+										&lt;Object Use="Containment"&gt;##TargetGroupNumber##&lt;/Object&gt;
+										&lt;Rule&gt;##RuleGUID##&lt;/Rule&gt;
+										&lt;Color&gt;255,31,31&lt;/Color&gt;
+										&lt;Type&gt;SplineArea&lt;/Type&gt;
+										&lt;Scale&gt;1&lt;/Scale&gt;
+									&lt;/Value&gt;
+								&lt;/Values&gt;
+								&lt;Values Title="Memory Available Megabytes Windows Server 2012 R2"&gt;
+									&lt;Value&gt;
+										&lt;Object Use="Containment"&gt;##TargetGroupNumber##&lt;/Object&gt;
+										&lt;Rule&gt;##RuleGUID##&lt;/Rule&gt;
+										&lt;Color&gt;63,255,63&lt;/Color&gt;
+										&lt;Type&gt;SplineArea&lt;/Type&gt;
+										&lt;Scale&gt;1&lt;/Scale&gt;
+									&lt;/Value&gt;
+								&lt;/Values&gt;
+								&lt;Values Title="Network Adapter Bytes Total per Second Windows Server 2012"&gt;
+									&lt;Value&gt;
+										&lt;Object Use="Containment"&gt;##TargetGroupID##&lt;/Object&gt;
+										&lt;Rule&gt;##RuleGUID##&lt;/Rule&gt;
+										&lt;Color&gt;0,0,0&lt;/Color&gt;
+										&lt;Type&gt;Column&lt;/Type&gt;
+										&lt;Scale&gt;1&lt;/Scale&gt;
+									&lt;/Value&gt;
+								&lt;/Values&gt;
+								&lt;Values Title="Memory Pages per Second Windows Server 2012 R2"&gt;
+									&lt;Value&gt;
+										&lt;Object Use="Containment"&gt;##TargetGroupNumber##&lt;/Object&gt;
+										&lt;Rule&gt;##RuleGUID##&lt;/Rule&gt;
+										&lt;Color&gt;191,191,255&lt;/Color&gt;
+										&lt;Type&gt;SplineArea&lt;/Type&gt;
+										&lt;Scale&gt;1&lt;/Scale&gt;
+									&lt;/Value&gt;
+								&lt;/Values&gt;
+								&lt;Values Title="System Processor Queue Length Windows Server 2012 R2"&gt;
+									&lt;Value&gt;
+										&lt;Object Use="Containment"&gt;##TargetGroupNumber##&lt;/Object&gt;
+										&lt;Rule&gt;##RuleGUID##&lt;/Rule&gt;
+										&lt;Color&gt;191,111,47&lt;/Color&gt;
+										&lt;Type&gt;Column&lt;/Type&gt;
+										&lt;Scale&gt;1&lt;/Scale&gt;
+									&lt;/Value&gt;
+								&lt;/Values&gt;
+							&lt;/Data&gt;
+						</Value>
+          </Parameter>
+        </Parameters>
+      </LinkedReport>
+    </LinkedReports>
+  </Reporting>
+  <LanguagePacks>
+    <LanguagePack ID="ENU">
+      <DisplayStrings>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##ClassID##.##OSVersion##.Group">
+          <Name>##CompanyID## ##ClassID## ##OSVersion## ##AppName## Group</Name>
+          <Description>Performance collection rules will be overridden for members of this group. Probably the "Test" SQL server(s) will be explicitly added to this group. </Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##ClassID##.##OSVersion##.Group.DiscoveryRule">
+          <Name>Populate ##ClassID## ##OSVersion## ##AppName## Group Discovery</Name>
+          <Description>This discovery rule populates the group '##ClassID## ##OSVersion## ##AppName## Group'</Description>
+        </DisplayString>
+        <DisplayString ElementID="##ClassID##.##OSVersion##.##AppName##.Report">
+          <Name>##ClassID## ##OSVersion## ##AppName## Report</Name>
+          <Description>The ##ClassID## ##OSVersion## ##AppName## Group must be populated with Windows ##OSVersion## Servers for at least the previous 1 full days for the report to be meaningful. </Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##ClassID##.Folder">
+          <Name>##CompanyID## ##ClassID## ##OSVersion## ##AppName##</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##ClassID##.##OSVersion##.View">
+          <Name>##CompanyID## ##ClassID## ##OSVersion## ##AppName## Servers</Name>
+        </DisplayString>
+	  </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>

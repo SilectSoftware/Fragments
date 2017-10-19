@@ -1,0 +1,16 @@
+1.0 - (3-21-2017)
+	original release
+1.1 - (4-28-2017)
+	Major updates, added comments, new frags, bug fixes
+	Added new frags:
+		Monitor.TimedScript.RunAs.PowerShell.mpx
+		Monitor.EventLog.Event.With.PowerShell.Recovery.mpx
+1.2 - (6-22-2017)
+	Updated new fragments to work correctly with MPAuthor
+	Added new frags:
+		Class.Group.WindowsComputers.Group.Report.View.Folder.mpx
+		Folder.Perf.Group.View.mpx
+		Report.mpx
+1.2 - (6-23-2017)
+	Added new frag:
+		Monitor.Exchange.Queue.PowerShell.Script.mpx
