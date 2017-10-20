@@ -117,7 +117,7 @@ This fragment depends on references:
 
               $queue1 = "##CompanyID##365-mail-onmicrosoft-com.mail.protection.outlook.com"
 
-              ##################################################################
+              #=================================================================================
               # 1. How to monitor the status of the queues below (when the status is "retry" they need alert)
 
               $SPEvent = ( get-queue | where { $_.NextHopDomain -like "$queue1" } | where { $_.Status -like "Retry" } | measure-object )
@@ -131,11 +131,11 @@ This fragment depends on references:
               # 3. Also need alert and exact count when the message count in the above queue goes beyond 1000
 
               $SPEventMC = ( get-queue | where { $_.NextHopDomain -like $queue1 } | where { $_.MessageCount -gt 1000 } | measure-object )
-			  $MCQ1 = ( get-queue | where { $_.NextHopDomain -like $queue1 } )
-			  $MQ1 = ($MCQ1.MessageCount)
-			  
+              $MCQ1 = ( get-queue | where { $_.NextHopDomain -like $queue1 } )
+              $MQ1 = ($MCQ1.MessageCount)
 
-              ##################################################################
+
+              #=================================================================================
               if ( $SPEvent.count -gt 0 )
               {
               $strCondition = "Bad"
@@ -156,7 +156,7 @@ This fragment depends on references:
               $momapi.LogScriptEvent($ScriptName,107,0, "##CompanyID## Queue in retry state for $queue1")
               }
 
-              ##################################################################
+              #=================================================================================
               if ( $SPEventStuck.count -gt 0 )
               {
               $strCondition = "Bad"
@@ -177,7 +177,7 @@ This fragment depends on references:
               $momapi.LogScriptEvent($ScriptName,107,0, "##CompanyID## Suspended Queue for $queue1")
               }
 
-              ##################################################################
+              #=================================================================================
               if ( $SPEventMC.count -gt 0 )
               {
               $strCondition = "Bad"
@@ -191,13 +191,13 @@ This fragment depends on references:
               if ( $strCondition -eq "Good")
               {
               $momapi.LogScriptEvent($ScriptName,106,0, "##CompanyID## MessageCount NOT greater than 1000 for $queue1
-			  Message Count = $MQ1 ")
+              Message Count = $MQ1 ")
               }
               else
               {
               # Do something here to evaluate symptoms
               $momapi.LogScriptEvent($ScriptName,107,0, "##CompanyID## MessageCount greater than 1000 for $queue1
-			  Message Count = $MQ1 ")
+              Message Count = $MQ1 ")
               }
 
               #=================================================================================
