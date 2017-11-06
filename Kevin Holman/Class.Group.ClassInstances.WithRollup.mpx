@@ -3,9 +3,12 @@
 %%
 Description:
   A GROUP of instances of your custom class with state health rollup to the group object
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
+  ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem
   This group type should ONLY be used if having health state reflected at the group level is a requirement
-Version: 1.1
-LastModified: 29-May-2017
+Version: 1.2
+LastModified: 4-Oct-2017
 %%
 
 In this fragment you need to replace:
@@ -17,6 +20,8 @@ This fragment depends on references:
   RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library"
   RequiredReference: Alias="Health", ID="System.Health.Library"
   RequiredReference: Alias="MSIL", ID="Microsoft.SystemCenter.InstanceGroup.Library"
+
+@@Author=Kevin Holman@@  
 --> 
   <TypeDefinitions>
     <EntityTypes>

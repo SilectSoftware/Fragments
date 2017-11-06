@@ -3,20 +3,23 @@
 %%
 Description:
   A MONITOR for performance data which uses consecutive samples and two states and alert on unhealthy statechange
-  CounterNameSanitizeForUseInElementID - needs to be your perf counter name, but cleaned up without special characters or 
-  spaces.  For instance, "% Processor Time" would be cleaned up to "PercentProcessorTime"
-Version: 1.1
-LastModified: 29-May-2017
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
+  ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem
+  UniqueID - needs to be your perf counter name, with NO SPACES OR SPECIAL CHARACTERS ALLOWED.  For instance, "% Processor Time" would be cleaned up to "PercentProcessorTime"  
+
+Version: 1.2
+LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
   ##CompanyID##
   ##AppName##
   ##ClassID##
+  ##UniqueID##
   ##ObjectName##
-  ##InstanceName##
   ##CounterName##
-  ##CounterNameSanitizeForUseInElementID##
+  ##InstanceName##
   ##FrequencySeconds##
   ##Threshold##
   ##Samples##
@@ -25,12 +28,14 @@ This fragment depends on references:
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
   RequiredReference: Alias="Health", ID="System.Health.Library"
   RequiredReference: Alias="Perf", ID="System.Performance.Library"
+
+@@Author=Kevin Holman@@  
 --> 
   <Monitoring>
     <Monitors>
-      <UnitMonitor ID="##CompanyID##.##AppName##.##CounterNameSanitizeForUseInElementID##.Perf.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.PerformanceState" Remotable="true" Priority="Normal" TypeID="Perf!System.Performance.ConsecutiveSamplesThreshold" ConfirmDelivery="false">
+      <UnitMonitor ID="##CompanyID##.##AppName##.##UniqueID##.Perf.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.PerformanceState" Remotable="true" Priority="Normal" TypeID="Perf!System.Performance.ConsecutiveSamplesThreshold" ConfirmDelivery="false">
         <Category>PerformanceHealth</Category>
-        <AlertSettings AlertMessage="##CompanyID##.##AppName##.##CounterNameSanitizeForUseInElementID##.Perf.Monitor_AlertMessageResourceID">
+        <AlertSettings AlertMessage="##CompanyID##.##AppName##.##UniqueID##.Perf.Monitor.Alert.Message">
           <AlertOnState>Warning</AlertOnState>  <!-- Warning or Error should match OperationalStates below  -->
           <AutoResolve>true</AutoResolve>
           <AlertPriority>Normal</AlertPriority>
@@ -63,23 +68,23 @@ This fragment depends on references:
   </Monitoring>
   <Presentation>
     <StringResources>
-      <StringResource ID="##CompanyID##.##AppName##.##CounterNameSanitizeForUseInElementID##.Perf.Monitor_AlertMessageResourceID" />
+      <StringResource ID="##CompanyID##.##AppName##.##UniqueID##.Perf.Monitor.Alert.Message" />
     </StringResources>
   </Presentation>
   <LanguagePacks>
     <LanguagePack ID="ENU" IsDefault="true">
       <DisplayStrings>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##CounterNameSanitizeForUseInElementID##.Perf.Monitor">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Perf.Monitor">
           <Name>##CompanyID## ##AppName## ##CounterName## Perf Monitor</Name>
           <Description />
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##CounterNameSanitizeForUseInElementID##.Perf.Monitor" SubElementID="ConditionFalse">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Perf.Monitor" SubElementID="ConditionFalse">
           <Name>ConditionFalse</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##CounterNameSanitizeForUseInElementID##.Perf.Monitor" SubElementID="ConditionTrue">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Perf.Monitor" SubElementID="ConditionTrue">
           <Name>ConditionTrue</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##CounterNameSanitizeForUseInElementID##.Perf.Monitor_AlertMessageResourceID">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Perf.Monitor.Alert.Message">
           <Name>##CompanyID## ##AppName## ##CounterName## has breached a threshold</Name>
           <Description>The monitor breached a threshold
 

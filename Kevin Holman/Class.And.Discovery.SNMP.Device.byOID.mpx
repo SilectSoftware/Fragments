@@ -3,9 +3,12 @@
 %%
 Description:
   A CLASS and DISCOVERY for a custom SNMP device type based on an SNMP GET OID query
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  DeviceTypeName - is a short and unique description of your device with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  OID - is the system OID that we want to discover as our custom network device class
   See example at: https://blogs.technet.microsoft.com/kevinholman/2016/04/20/writing-a-custom-class-for-your-network-devices/
-Version: 1.1
-LastModified: 29-May-2017
+Version: 1.2
+LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
@@ -16,6 +19,8 @@ In this fragment you need to replace:
 This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"
   RequiredReference: Alias="SNL", ID="System.NetworkManagement.Library"
+  
+@@Author=Kevin Holman@@  
 --> 
   <TypeDefinitions>
     <EntityTypes>

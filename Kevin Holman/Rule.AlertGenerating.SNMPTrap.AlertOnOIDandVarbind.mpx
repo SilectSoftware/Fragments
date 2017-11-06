@@ -18,6 +18,8 @@ In this fragment you need to replace:
 This fragment depends on references:
   RequiredReference: Alias="Health", ID="System.Health.Library"
   RequiredReference: Alias="SNL", ID="System.NetworkManagement.Library"
+
+@@Author=Kevin Holman@@  
 --> 
   <Monitoring>
 	<Rules>

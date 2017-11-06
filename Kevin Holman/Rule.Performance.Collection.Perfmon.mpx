@@ -3,20 +3,25 @@
 %%
 Description:
   A RULE to collect performance data from native perfmon.  Optimization can be set but the default is non-optimized
-  CounterNameSanitizeForUseInElementID - needs to be your perf counter name, but cleaned up without special characters or 
-  spaces.  For instance, "% Processor Time" would be cleaned up to "PercentProcessorTime"
-Version: 1.1
-LastModified: 29-May-2017
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED 
+  ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem  
+  UniqueID - Is a unique short description of the workflow purpose (NO SPACES OR SPECIAL CHARACTERS ALLOWED) such as "PercentProcessorTime"  
+
+
+Version: 1.2
+LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
   ##CompanyID##
   ##AppName##
   ##ClassID##
+  ##UniqueID##
+  ##ClassID##
   ##ObjectName##
-  ##InstanceName##
   ##CounterName##
-  ##CounterNameSanitizeForUseInElementID##
+  ##InstanceName##
   ##FrequencySeconds##
 
 This fragment depends on references:
@@ -24,10 +29,12 @@ This fragment depends on references:
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
   RequiredReference: Alias="Perf", ID="System.Performance.Library"
   RequiredReference: Alias="MSDL", ID="Microsoft.SystemCenter.DataWarehouse.Library"
+
+@@Author=Kevin Holman@@  
 --> 
   <Monitoring>
     <Rules>
-      <Rule ID="##CompanyID##.##AppName##.##CounterNameSanitizeForUseInElementID##.PerformanceCollection.Rule" Enabled="true" Target="##ClassID##" ConfirmDelivery="false" Remotable="true" Priority="Normal" DiscardLevel="100">
+      <Rule ID="##CompanyID##.##AppName##.##UniqueID##.PerformanceCollection.Rule" Enabled="true" Target="##ClassID##" ConfirmDelivery="false" Remotable="true" Priority="Normal" DiscardLevel="100">
         <Category>PerformanceCollection</Category>
         <DataSources>
           <DataSource ID="DS" TypeID="Perf!System.Performance.OptimizedDataProvider">
@@ -52,7 +59,7 @@ This fragment depends on references:
   <LanguagePacks>
     <LanguagePack ID="ENU" IsDefault="true">
       <DisplayStrings>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##CounterNameSanitizeForUseInElementID##.PerformanceCollection.Rule">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.PerformanceCollection.Rule">
           <Name>##CompanyID## ##AppName## ##CounterName## Performance Collection Rule</Name>
         </DisplayString>
       </DisplayStrings>

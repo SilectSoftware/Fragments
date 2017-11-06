@@ -2,9 +2,13 @@
 <!--
 %%
 Description:
-  A FOLDER, State View, Alert View, and Perf View scoped to your custom class
-Version: 1.1
-LastModified: 29-May-2017
+  A FOLDER, STATE View, ALERT View, and PERFORMANCE View scoped to your custom class
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
+  ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem
+  
+Version: 1.2
+LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
@@ -14,6 +18,8 @@ In this fragment you need to replace:
 
 This fragment depends on references:
   RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library"
+  
+@@Author=Kevin Holman@@  
 -->
   <Presentation>
     <Views>

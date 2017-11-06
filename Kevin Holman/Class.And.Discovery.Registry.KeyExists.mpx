@@ -2,10 +2,12 @@
 <!-- 
 %%
 Description:
-  A CLASS and DISCOVERY based on existence of a registry KEY 
+  A CLASS and DISCOVERY based on existence of a registry KEY
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED
   RegKeyPath - needs to be in the format of "SOFTWARE\Microsoft\CCM" or "SYSTEM\CurrentControlSet\Services\CcmExec" as HKLM is assumed
-Version: 1.1
-LastModified: 29-May-2017
+Version: 1.2
+LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
@@ -14,8 +16,8 @@ In this fragment you need to replace:
   ##RegKeyPath##
 
 This fragment depends on references:
-	RequiredReference: Alias="System", ID="System.Library"
-	RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+  RequiredReference: Alias="System", ID="System.Library"
+  RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
 	
 @@Author=Kevin Holman@@
 -->

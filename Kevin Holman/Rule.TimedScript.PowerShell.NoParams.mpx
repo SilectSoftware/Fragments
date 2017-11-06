@@ -2,48 +2,64 @@
 <!--
 %%
 Description:
-  A rule that runs a PowerShell script on a timer with no parameters
-Version: 1.2
-LastModified: 12-Aug-2017
+  A rule that runs a PowerShell script on a timer with examples for sending parameters to the script
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED 
+  UniqueID - Is a unique short description of the workflow purpose (NO SPACES OR SPECIAL CHARACTERS ALLOWED) such as "MonitorFilesInFolder"  
+  ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem
+
+Version: 1.4
+LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
   ##CompanyID##
   ##AppName##
+  ##UniqueID##
   ##ClassID##
 
 This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+
+@@Author=Kevin Holman@@  
 --> 
   <Monitoring>
     <Rules>
-      <Rule ID="##CompanyID##.##AppName##.TimedPowerShell.Rule" Enabled="true" Target="##ClassID##" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+      <Rule ID="##CompanyID##.##AppName##.##UniqueID##.TimedPowerShell.Rule" Enabled="true" Target="##ClassID##" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
         <Category>Custom</Category>
         <DataSources>
           <DataSource ID="Scheduler" TypeID="System!System.Scheduler">
             <Scheduler>
               <SimpleReccuringSchedule>
                 <Interval Unit="Seconds">3600</Interval>
+				<SyncTime></SyncTime>				
               </SimpleReccuringSchedule>
               <ExcludeDates />
             </Scheduler>
           </DataSource>		  
         </DataSources>
         <WriteActions>
-          <WriteAction ID="PSWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
-            <ScriptName>##CompanyID##.##AppName##.TimedPowerShell.Rule.ps1</ScriptName>
+          <WriteAction ID="WA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
+            <ScriptName>##CompanyID##.##AppName##.##UniqueID##.TimedPowerShell.Rule.ps1</ScriptName>
             <ScriptBody>
 #=================================================================================
-#  Description of Script here
+#  Describe Script Here
+#
+#  Author: 
+#  v1.0
 #=================================================================================
 
-#=================================================================================
+
 # Constants section - modify stuff here:
-
-# Assign script name variable for use in event logging
-$ScriptName = "##CompanyID##.##AppName##.TimedPowerShell.Rule.ps1"
 #=================================================================================
+# Assign script name variable for use in event logging.  
+# ScriptName should be the same as the ID of the module that the script is contained in
+$ScriptName = "##CompanyID##.##AppName##.##UniqueID##.TimedPowerShell.Rule.ps1"
+$EventID = "1234"
+#=================================================================================
+
+
 
 # Gather script start time
 $StartTime = Get-Date             
@@ -78,8 +94,8 @@ $momapi.LogScriptEvent($ScriptName,1234,0,"`n Script has completed. `n Runtime w
   <LanguagePacks>
     <LanguagePack ID="ENU" IsDefault="true">
       <DisplayStrings>
-        <DisplayString ElementID="##CompanyID##.##AppName##.TimedPowerShell.Rule">
-          <Name>##CompanyID## ##AppName## TimedPowerShell Rule</Name>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.TimedPowerShell.Rule">
+          <Name>##CompanyID## ##AppName## ##UniqueID## TimedPowerShell Rule</Name>
           <Description />
         </DisplayString>
       </DisplayStrings>

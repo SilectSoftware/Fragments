@@ -2,10 +2,12 @@
 <!-- 
 %%
 Description:
-  A CLASS and DISCOVERY based on a reg key matching a pattern in a PowerShell script.  
+  A CLASS and DISCOVERY based on a reg key matching a pattern in a PowerShell script.
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
   In this example we added a class property to discover the "servicename" based on what was found in the registry
-Version: 1.1
-LastModified: 29-May-2017
+Version: 1.2
+LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
@@ -15,6 +17,8 @@ In this fragment you need to replace:
 This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+
+@@Author=Kevin Holman@@  
 --> 
   <TypeDefinitions>
     <EntityTypes>
@@ -39,7 +43,8 @@ This fragment depends on references:
           <IntervalSeconds>86403</IntervalSeconds>
           <SyncTime />
           <ScriptName>##CompanyID##.##AppName##.Class.Discovery.ps1</ScriptName>
-          <ScriptBody>#=================================================================================
+          <ScriptBody>
+#=================================================================================
 #  Description of Script here
 #=================================================================================
 param($SourceId,$ManagedEntityId,$ComputerName)

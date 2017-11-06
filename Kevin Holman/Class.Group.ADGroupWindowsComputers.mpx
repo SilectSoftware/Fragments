@@ -3,25 +3,31 @@
 %%
 Description:
   A GROUP of Windows Computers that are members of an Active Directory Group
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
+  GroupNameNoSpaces - needs to be a UNIQUE short name that describes your group with NO SPACES OR SPECIAL CHARACTERS ALLOWED.  
   ADGroupName - the display name of the group in Active Directory such as "TEST Computers Group"
   LDAPSearchPath - The path you want to search for the group - such as LDAP://DC=opsmgr,DC=net
-  GroupNameNoSpaces - needs to be the name the describes your group, NO SPACES OR SPECIAL CHARACTERS ALLOWED.
-Version: 1.4
-LastModified: 12-Oct-2017
+
+Version: 1.5
+LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
   ##CompanyID##
   ##AppName##
+  ##GroupNameNoSpaces##
   ##ADGroupName##
   ##LDAPSearchPath##
-  ##GroupNameNoSpaces##
+
 
 This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"  
   RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library"
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
   RequiredReference: Alias="MSIL", ID="Microsoft.SystemCenter.InstanceGroup.Library"
+  
+@@Author=Kevin Holman@@  
 --> 
   <TypeDefinitions>
     <EntityTypes>

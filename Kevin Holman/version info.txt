@@ -81,3 +81,10 @@
 2.6 - (10-10-2017)
 	Fixed timeout issues with Class.Group.ADGroupWindowsComputers.mpx and Class.Group.SQLQueryBasedGroupWindowsComputers.mpx making them run much faster with improved logging
 	Fixed bug in double quotes around script name in Rule.Performance.Collection.PowerShellScript.mpx
+3.0 - (11-5-2017)
+	New fragments:
+		Class.And.Discovery.Registry.KeyExists.With.Properties.mpx
+		Class.And.Discovery.Registry.ValueExists.With.Properties.mpx
+	Major update to comments section in all fragments.
+	Added ##UniqueID## to many fragments to allow for multiple reuse of the same fragment over and over in the same management pack
+	Updated several powershell script fragments to be more standardized.

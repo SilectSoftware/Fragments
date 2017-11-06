@@ -3,8 +3,12 @@
 %%
 Description:
   A GROUP of Windows Computers that CONTAIN an instance of your custom class AND Health Service Watcher objects related to the Windows Computers in the group
-Version: 1.1
-LastModified: 29-May-2017
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
+  ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem 
+
+Version: 1.2
+LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
@@ -16,6 +20,8 @@ This fragment depends on references:
   RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library"
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
   RequiredReference: Alias="MSIL", ID="Microsoft.SystemCenter.InstanceGroup.Library"
+
+@@Author=Kevin Holman@@  
 --> 
   <TypeDefinitions>
     <EntityTypes>

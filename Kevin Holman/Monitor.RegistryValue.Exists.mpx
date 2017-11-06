@@ -2,9 +2,13 @@
 <!--
 %%
 Description:
-    A MONITOR which checks for the existence of a registry VALUE
-	RegValuePath - needs to be in the format of "SOFTWARE\Microsoft\CCM\HttpPort" or "SYSTEM\CurrentControlSet\Services\CcmExec\Start" as HKLM is assumed
-	RegValueName - needs to be the actual Reg VALUE name or your description of it (NO SPACES or special characters allowed) such as "HttpPort"
+  A MONITOR which checks for the existence of a registry VALUE
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED 
+  ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem 	
+  RegValuePath - needs to be in the format of "SOFTWARE\Microsoft\CCM\HttpPort" or "SYSTEM\CurrentControlSet\Services\CcmExec\Start" as HKLM is assumed
+  RegValueName - needs to be a UNIQUE short name to describe your Reg VALUE with NO SPACES OR SPECIAL CHARACTERS ALLOWED such as "HttpPort"
+
 Version: 1.1
 LastModified: 29-May-2017
 %%
@@ -20,6 +24,8 @@ This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
   RequiredReference: Alias="Health", ID="System.Health.Library"	
+
+@@Author=Kevin Holman@@  
 --> 
   <TypeDefinitions>
     <MonitorTypes>

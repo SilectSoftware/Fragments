@@ -2,10 +2,13 @@
 <!--
 %%
 Description:
-	A custom MONITORTYPE and MONITOR for a service that will generate a state change and Alert based on the monitor state change
-	The MonitorType is like the default service monitor that will monitor ONLY automatic services by default unless CheckStartupType is set to false
-	This adds overrideable params for IntervalSeconds and number of Samples (service checks) before alerting
-	ServiceName - must be the short name of the service as seen in the registry and can not contain spaces or special characters by default
+  A custom MONITORTYPE and MONITOR for a service that will generate a state change and Alert based on the monitor state change
+  The MonitorType is like the default service monitor that will monitor ONLY automatic services by default unless CheckStartupType is set to false
+  This adds overrideable params for IntervalSeconds and number of Samples (service checks) before alerting
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED 
+  ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem   
+  ServiceName - must be the short name of the service as seen in the registry and can not contain spaces or special characters by default
 Version: 1.1
 LastModified: 12-Aug-2017
 %%
@@ -17,8 +20,11 @@ In this fragment you need to replace:
   ##ServiceName## 
 
 This fragment depends on references:
+  RequiredReference: Alias="System", ID="System.Library"
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
   RequiredReference: Alias="Health", ID="System.Health.Library"
+
+@@Author=Kevin Holman@@  
 --> 
   <TypeDefinitions>
     <MonitorTypes>

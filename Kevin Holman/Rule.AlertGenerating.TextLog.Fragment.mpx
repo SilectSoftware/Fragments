@@ -3,16 +3,22 @@
 %%
 Description:
   A Rule to alert on a specific string on a new line in an ASCII Text Log file
-  LogFileDirectory is the folder path that contains the log files.  Example:  C:\logs
-  LogFilePattern is the filename of the log file or a wildcard to match multiple files.  Example:  MyAppLog.txt or *.txt
-  StringToMatch is the string you want to find in a new line added to the log.  Example:  error
-Version: 1.1
-LastModified: 29-May-2017
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED 
+  UniqueID - Is a unique short description of the workflow purpose (NO SPACES OR SPECIAL CHARACTERS ALLOWED) such as "CountFilesInFolder"  
+  ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem     
+  LogFileDirectory - is the folder path that contains the log files.  Example:  C:\logs
+  LogFilePattern - is the filename of the log file or a wildcard to match multiple files.  Example:  MyAppLog.txt or *.txt
+  StringToMatch - is the string you want to find in a new line added to the log.  Example:  error
+
+Version: 1.2
+LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
   ##CompanyID##
   ##AppName##
+  ##UniqueID##  
   ##ClassID##
   ##LogFileDirectory##
   ##LogFilePattern##
@@ -21,13 +27,15 @@ In this fragment you need to replace:
 This fragment depends on references:
   RequiredReference: Alias="Health", ID="System.Health.Library"	
   RequiredReference: Alias="SAL", ID="System.ApplicationLog.Library"
+
+@@Author=Kevin Holman@@  
 --> 
   <Monitoring>
     <Rules>
-      <Rule ID="##CompanyID##.##AppName##.AlertOnLogfileStringMatch.##StringToMatch##.Rule" Enabled="true" Target="##ClassID##" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+      <Rule ID="##CompanyID##.##AppName##.##UniqueID##.LogFile.Alert.Rule" Enabled="true" Target="##ClassID##" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
         <Category>Alert</Category>
         <DataSources>
-          <DataSource ID="LogDS" TypeID="SAL!System.ApplicationLog.GenericLog.FilteredEventProvider">
+          <DataSource ID="DS" TypeID="SAL!System.ApplicationLog.GenericLog.FilteredEventProvider">
             <LogFileDirectory>##LogFileDirectory##</LogFileDirectory>
             <LogFilePattern>##LogFilePattern##</LogFilePattern>
             <LogIsUTF8>false</LogIsUTF8>
@@ -47,7 +55,7 @@ This fragment depends on references:
             <Priority>1</Priority>  <!--0=Low 1=Medium 2=High -->
             <Severity>1</Severity>  <!--0=Information 1=Warning 2=Critical -->
             <AlertOwner />
-            <AlertMessageId>$MPElement[Name="##CompanyID##.##AppName##.AlertOnLogfileStringMatch.##StringToMatch##.Rule.AlertMessage"]$</AlertMessageId>
+            <AlertMessageId>$MPElement[Name="##CompanyID##.##AppName##.##UniqueID##.LogFile.Alert.Rule.AlertMessage"]$</AlertMessageId>
             <AlertParameters>
               <AlertParameter1>$Data/EventData/DataItem/LogFileDirectory$</AlertParameter1>
               <AlertParameter2>$Data/EventData/DataItem/LogFileName$</AlertParameter2>
@@ -74,17 +82,17 @@ This fragment depends on references:
   </Monitoring>
   <Presentation>
     <StringResources>
-      <StringResource ID="##CompanyID##.##AppName##.AlertOnLogfileStringMatch.##StringToMatch##.Rule.AlertMessage" />
+      <StringResource ID="##CompanyID##.##AppName##.##UniqueID##.LogFile.Alert.Rule.AlertMessage" />
     </StringResources>
   </Presentation>
   <LanguagePacks>
     <LanguagePack ID="ENU" IsDefault="true">
       <DisplayStrings>
-        <DisplayString ElementID="##CompanyID##.##AppName##.AlertOnLogfileStringMatch.##StringToMatch##.Rule">
-          <Name>##CompanyID## ##AppName## Alert on Logfile String Match ##StringToMatch## Rule</Name>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.LogFile.Alert.Rule">
+          <Name>##CompanyID## ##AppName## ##UniqueID## Logfile Alert Rule</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.AlertOnLogfileStringMatch.##StringToMatch##.Rule.AlertMessage">
-          <Name>##CompanyID## ##AppName## Alert on Logfile String Match ##StringToMatch## Rule AlertMessage</Name>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.LogFile.Alert.Rule.AlertMessage">
+          <Name>##CompanyID## ##AppName## ##UniqueID## Logfile String Match</Name>
           <Description>A matching error string of - ##StringToMatch## - was found in the log file:
 Logfile Directory: {0} 
 Logfile Name: {1} 

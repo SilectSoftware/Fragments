@@ -3,9 +3,11 @@
 %%
 Description:
   A CLASS and DISCOVERY using a VBSCRIPT to create class instances
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
   In this example we added a a couple additional class properties to demo that capability 
-Version: 1.1
-LastModified: 29-May-2017
+Version: 1.2
+LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
@@ -15,6 +17,8 @@ In this fragment you need to replace:
 This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+
+@@Author=Kevin Holman@@  
 --> 
   <TypeDefinitions>
     <EntityTypes>

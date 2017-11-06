@@ -3,9 +3,11 @@
 %%
 Description:
   A CLASS and DISCOVERY for a Unix/Linux application based on existence of a directory and conf file existing
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
   AppFilePath - is the directory path to your application conf file, such as: /opt/myapp/myapp.conf
-Version: 1.1
-LastModified: 29-May-2017
+Version: 1.2
+LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
@@ -17,6 +19,8 @@ This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"
   RequiredReference: Alias="MUL", ID="Microsoft.Unix.Library"
   RequiredReference: Alias="MSWL", ID="Microsoft.SystemCenter.WSManagement.Library"	
+  
+@@Author=Kevin Holman@@  
 --> 
   <TypeDefinitions>
     <EntityTypes>

@@ -5,7 +5,11 @@ Description:
   A MONITOR for a service that will ONLY issue state changes and NO ALERTS on the monitor itself.  
   Includes a recovery script to recover the service.  The recovery is enabled by default.
   Also includes alert rules based on events from the success or failure of the recovery script
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED 
+  ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem   
   ServiceName - must be the short name of the service as seen in the registry and can not contain spaces or special characters by default
+
 Version: 1.1
 LastModified: 29-May-2017
 %%
@@ -19,6 +23,8 @@ In this fragment you need to replace:
 This fragment depends on references:
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
   RequiredReference: Alias="Health", ID="System.Health.Library"
+
+@@Author=Kevin Holman@@  
 --> 
   <Monitoring>
 	<Rules>

@@ -4,6 +4,9 @@
 Description:
   A RULE for SNMP TRAPS to Alert on a TRAP from a specific OID
   See example use here:  https://blogs.technet.microsoft.com/kevinholman/2015/02/03/snmp-trap-monitoring-with-scom-2012-r2/
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED 
+
 Version: 1.1
 LastModified: 29-May-2017
 %%
@@ -16,6 +19,8 @@ In this fragment you need to replace:
 This fragment depends on references:
   RequiredReference: Alias="Health", ID="System.Health.Library"
   RequiredReference: Alias="SNL", ID="System.NetworkManagement.Library"
+
+@@Author=Kevin Holman@@  
 --> 
   <Monitoring>
 	<Rules>

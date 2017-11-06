@@ -3,9 +3,11 @@
 %%
 Description:
   A CLASS and DISCOVERY based on existence of a registry VALUE within a KEY
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
   RegValuePath - needs to be in the format of "SOFTWARE\KeyName\ValueName" or "SYSTEM\KeyName\ValueName" as HKLM is assumed 
-Version: 1.1
-LastModified: 29-May-2017
+Version: 1.2
+LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
@@ -16,6 +18,8 @@ In this fragment you need to replace:
 This fragment depends on references:
 	RequiredReference: Alias="System", ID="System.Library"
 	RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+	
+@@Author=Kevin Holman@@	
 --> 
   <TypeDefinitions>
     <EntityTypes>
@@ -31,7 +35,7 @@ This fragment depends on references:
 	  <!-- We choose Microsoft.Windows.Server.OperatingSystem as the preferred target class to ensure this will run on all Windows Servers, but wont create duplicates on clusters -->
         <Category>Discovery</Category>
         <DiscoveryTypes>
-			<DiscoveryClass TypeID="##CompanyID##.##AppName##.Class" />
+		  <DiscoveryClass TypeID="##CompanyID##.##AppName##.Class" />
         </DiscoveryTypes>
         <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.FilteredRegistryDiscoveryProvider">
           <ComputerName>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$</ComputerName>

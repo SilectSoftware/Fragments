@@ -2,25 +2,33 @@
 <!--
 %%
 Description:
-	A MONITOR which runs a timed VBScript to drive monitor state with ALERT, and accepts a list of arguments as params to the script
+  A MONITOR which runs a timed VBScript to drive monitor state with ALERT, and accepts a list of arguments as params to the script
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
+  ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem  
+  UniqueID - Is a unique short description of the monitor purpose (NO SPACES OR SPECIAL CHARACTERS ALLOWED) such as "MonitorFilesInFolder"	
+
 Version: 1.1
-LastModified: 29-May-2017
+LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
   ##CompanyID##
   ##AppName##
   ##ClassID##
+  ##UniqueID##
 
 This fragment depends on references:
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
   RequiredReference: Alias="Health", ID="System.Health.Library"	
+
+@@Author=Kevin Holman@@  
 --> 
   <Monitoring>
     <Monitors>
-      <UnitMonitor ID="##CompanyID##.##AppName##.TimedVBScript.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.TimedScript.TwoStateMonitorType" ConfirmDelivery="false">
+      <UnitMonitor ID="##CompanyID##.##AppName##.##UniqueID##.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.TimedScript.TwoStateMonitorType" ConfirmDelivery="false">
         <Category>Custom</Category>
-        <AlertSettings AlertMessage="##CompanyID##.##AppName##.TimedVBScript.Monitor.AlertMessage">
+        <AlertSettings AlertMessage="##CompanyID##.##AppName##.##UniqueID##.Monitor.AlertMessage">
           <AlertOnState>Warning</AlertOnState>  <!-- Warning or Error should match OperationalStates below  -->
           <AutoResolve>true</AutoResolve>
           <AlertPriority>Normal</AlertPriority>
@@ -38,7 +46,7 @@ This fragment depends on references:
         <Configuration>
           <IntervalSeconds>86403</IntervalSeconds>
           <SyncTime />
-          <ScriptName>##CompanyID##.##AppName##.TimedVBScript.Monitor.vbs</ScriptName>
+          <ScriptName>##CompanyID##.##AppName##.##UniqueID##.Monitor.vbs</ScriptName>
           <Arguments>arg1 arg2</Arguments>
           <ScriptBody><![CDATA['
 '   Generic monitoring script
@@ -60,17 +68,17 @@ dim arg1, arg2, oAPI, oBag
   Set oBag = oAPI.CreatePropertyBag()
 
 'Log script event that we are starting task
-  Call oAPI.LogScriptEvent("##CompanyID##.##AppName##.TimedVBScript.Monitor.vbs", 1234, 0, "Starting script with arg1: " & arg1 & " and arg2: " & arg2)
+  Call oAPI.LogScriptEvent("##CompanyID##.##AppName##.##UniqueID##.Monitor.vbs", 1234, 0, "Starting script with arg1: " & arg1 & " and arg2: " & arg2)
 
 'Check if first argument = Good if not, output bad
   If arg1 = "Good" Then
-      Call oAPI.LogScriptEvent("##CompanyID##.##AppName##.TimedVBScript.Monitor.vbs", 1234, 0, "Good condition found.  The arg1 = " & arg1 & " and arg2 = " & arg2)
+      Call oAPI.LogScriptEvent("##CompanyID##.##AppName##.##UniqueID##.Monitor.vbs", 1234, 0, "Good condition found.  The arg1 = " & arg1 & " and arg2 = " & arg2)
       Call oBag.AddValue("Result","GoodCondition")
       Call oBag.AddValue("arg1",arg1)  	
       Call oBag.AddValue("arg2",arg2)
       oAPI.Return(oBag)
   Else
-      Call oAPI.LogScriptEvent("##CompanyID##.##AppName##.TimedVBScript.Monitor.vbs", 1234, 0, "Bad condition found.  The arg1 = " & arg1 & " and arg2 = " & arg2)
+      Call oAPI.LogScriptEvent("##CompanyID##.##AppName##.##UniqueID##.Monitor.vbs", 1234, 0, "Bad condition found.  The arg1 = " & arg1 & " and arg2 = " & arg2)
       Call oBag.AddValue("Result","BadCondition")
       Call oBag.AddValue("arg1",arg1)  	
       Call oBag.AddValue("arg2",arg2)
@@ -108,22 +116,22 @@ wscript.quit]]></ScriptBody>
   </Monitoring>	
   <Presentation>
     <StringResources>
-      <StringResource ID="##CompanyID##.##AppName##.TimedVBScript.Monitor.AlertMessage" />
+      <StringResource ID="##CompanyID##.##AppName##.##UniqueID##.Monitor.AlertMessage" />
     </StringResources>
   </Presentation>
   <LanguagePacks>
     <LanguagePack ID="ENU" IsDefault="true">
       <DisplayStrings>
-        <DisplayString ElementID="##CompanyID##.##AppName##.TimedVBScript.Monitor">
-          <Name>##CompanyID## ##AppName## TimedVBScript Monitor</Name>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Monitor">
+          <Name>##CompanyID## ##AppName## ##UniqueID## Monitor</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.TimedVBScript.Monitor" SubElementID="BadCondition">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Monitor" SubElementID="BadCondition">
           <Name>Bad Condition</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.TimedVBScript.Monitor" SubElementID="GoodCondition">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Monitor" SubElementID="GoodCondition">
           <Name>Good Condition</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.TimedVBScript.Monitor.AlertMessage">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Monitor.AlertMessage">
           <Name>A bad condition was found after running the VBScript monitor</Name>
           <Description>A bad condition was found after running the VBScript monitor
 

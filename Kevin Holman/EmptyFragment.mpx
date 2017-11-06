@@ -3,8 +3,9 @@
 %%
 Description:
   This fragment includes a (provide description for what this MP fragment does HERE)
-Version: 1.0
-LastModified: 29-May-2017
+
+Version: 1.2
+LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
@@ -20,6 +21,7 @@ In this fragment you need to replace:
   ##ServiceName##
   ##ProcessName##
   ##WMIQuery##
+  ##UniqueID##
   ##ObjectName##
   ##InstanceName##
   ##CounterName##
@@ -33,6 +35,7 @@ In this fragment you need to replace:
   ##StringToMatch##
   ##AppFilePath##
   ##ShellCommand##
+  
 
 This fragment depends on references:
 (REMOVE ANY THAT DONT BELONG)
@@ -49,6 +52,8 @@ This fragment depends on references:
   RequiredReference: Alias="MUL", ID="Microsoft.Unix.Library"
   RequiredReference: Alias="MSWL", ID="Microsoft.SystemCenter.WSManagement.Library"
   RequiredReference: Alias="MUSL", ID="Microsoft.Unix.ShellCommand.Library"	
+
+@@Author=Kevin Holman@@
 --> 
   <TypeDefinitions>
     <EntityTypes>

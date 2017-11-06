@@ -3,13 +3,15 @@
 %%
 Description:
   A GROUP of Windows Computers that are pulled from a SQL Query
-  GroupNameNoSpaces - needs to be the name that describes your group, NO SPACES OR SPECIAL CHARACTERS ALLOWED.
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  GroupNameNoSpaces - needs to be the UNIQUE name that describes your group with NO SPACES OR SPECIAL CHARACTERS ALLOWED.
   SQLServer - the servername and instancename (if required) of the SQL server to connect to
   SQLDBName - the database name to query
   SQLQuery - the SQL query that will return a list of FQDN names ONLY
 
-Version: 1.1
-LastModified: 11-Oct-2017
+Version: 1.2
+LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
@@ -20,12 +22,13 @@ In this fragment you need to replace:
   ##SQLDBName##
   ##SQLQuery##
 
-
 This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"  
   RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library"
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
   RequiredReference: Alias="MSIL", ID="Microsoft.SystemCenter.InstanceGroup.Library"
+  
+@@Author=Kevin Holman@@
 --> 
   <TypeDefinitions>
     <EntityTypes>

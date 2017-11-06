@@ -3,8 +3,12 @@
 %%
 Description:
   A MONITOR which checks for the existence of a registry Key
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED 
+  ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem  
   RegKeyPath - needs to be in the format of "SOFTWARE\Microsoft\CCM" or "SYSTEM\CurrentControlSet\Services\CcmExec" as HKLM is assumed
-  RegKeyName - needs to be the actual key name or your description of it (NO SPACES or special characters allowed) such as "CcmExec"
+  RegKeyName - is a UNIQUE short description of key or the actual key name with NO SPACES OR SPECIAL CHARACTERS ALLOWED such as "CcmExec"
+
 Version: 1.1
 LastModified: 29-May-2017
 %%
@@ -20,6 +24,8 @@ This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
   RequiredReference: Alias="Health", ID="System.Health.Library"	
+
+@@Author=Kevin Holman@@  
 --> 
   <TypeDefinitions>
     <MonitorTypes>

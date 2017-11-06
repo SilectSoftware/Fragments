@@ -3,76 +3,101 @@
 %%
 Description:
   A rule that runs a PowerShell script on a timer with examples for sending parameters to the script
-Version: 1.0
-LastModified: 12-Aug-2017
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED 
+  UniqueID - Is a unique short description of the workflow purpose (NO SPACES OR SPECIAL CHARACTERS ALLOWED) such as "MonitorFilesInFolder"  
+  ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem
+
+Version: 1.4
+LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
   ##CompanyID##
   ##AppName##
+  ##UniqueID##
   ##ClassID##
-
+  
 This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
+
+@@Author=Kevin Holman@@  
 --> 
   <Monitoring>
     <Rules>
-      <Rule ID="##CompanyID##.##AppName##.TimedPowerShell.Rule" Enabled="true" Target="##ClassID##" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+      <Rule ID="##CompanyID##.##AppName##.##UniqueID##.TimedPowerShell.Rule" Enabled="true" Target="##ClassID##" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
         <Category>Custom</Category>
         <DataSources>
           <DataSource ID="Scheduler" TypeID="System!System.Scheduler">
             <Scheduler>
               <SimpleReccuringSchedule>
                 <Interval Unit="Seconds">3600</Interval>
+				<SyncTime></SyncTime>
               </SimpleReccuringSchedule>
               <ExcludeDates />
             </Scheduler>
           </DataSource>		  
         </DataSources>
         <WriteActions>
-          <WriteAction ID="PSWA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
-            <ScriptName>##CompanyID##.##AppName##.TimedPowerShell.Rule.ps1</ScriptName>
+          <WriteAction ID="WA" TypeID="Windows!Microsoft.Windows.PowerShellWriteAction">
+            <ScriptName>##CompanyID##.##AppName##.##UniqueID##.TimedPowerShell.Rule.ps1</ScriptName>
             <ScriptBody>
 #=================================================================================
-#  Description of Script here
+#  Describe Script Here
+#
+#  Author: 
+#  v1.0
 #=================================================================================
 param($ComputerName,$MGName,$YourStaticParam)
 
+
+# Manual Testing section - put stuff here for manually testing script - typically parameters:
 #=================================================================================
+# $ComputerName = "computername.domain.com"
+# $MGName = "foo"
+# $YourStaticParam = "bar"
+#=================================================================================
+
+
 # Constants section - modify stuff here:
-
-# Assign script name variable for use in event logging
-$ScriptName = "##CompanyID##.##AppName##.TimedPowerShell.Rule.ps1"
+#=================================================================================
+# Assign script name variable for use in event logging.  
+# ScriptName should be the same as the ID of the module that the script is contained in
+$ScriptName = "##CompanyID##.##AppName##.##UniqueID##.TimedPowerShell.Rule.ps1"
+$EventID = "1234"
 #=================================================================================
 
-# Gather script start time
-$StartTime = Get-Date             
 
-# Gather who the script is running as
+# Starting Script section - All scripts get this
+#=================================================================================
+# Gather the start time of the script
+$StartTime = Get-Date
+#Set variable to be used in logging events
 $whoami = whoami
-
 # Load MOMScript API
 $momapi = New-Object -comObject MOM.ScriptAPI
+#Log script event that we are starting task
+$momapi.LogScriptEvent($ScriptName,$EventID,0,"`n Script is starting. `n Running as ($whoami).")
+#=================================================================================
 
-# Log an event for the script starting			  
-$momapi.LogScriptEvent($ScriptName,1234,0, "`n Script is starting. `n Running, as ($whoami).")
 
+# Begin MAIN script section
+#=================================================================================
 # Log an event for the Params			  
-$momapi.LogScriptEvent($ScriptName,1234,0, "`n These are the parameters passed from script: `n ComputerName: ($ComputerName). `n ManagementGroup Name: ($MGName) `n YourStaticParam: ($YourStaticParam).")
-
-
+$momapi.LogScriptEvent($ScriptName,$EventID,0,"`n These are the parameters passed from script: `n ComputerName: ($ComputerName). `n ManagementGroup Name: ($MGName) `n YourStaticParam: ($YourStaticParam).")
 #=================================================================================
-# MAIN body of your script
+# End MAIN script section
 
 
-
+# End of script section
 #=================================================================================
-
 #Log an event for script ending and total execution time.
 $EndTime = Get-Date
 $ScriptTime = ($EndTime - $StartTime).TotalSeconds
-$momapi.LogScriptEvent($ScriptName,1234,0,"`n Script has completed. `n Runtime was ($ScriptTime) seconds.")
+$momapi.LogScriptEvent($ScriptName,$EventID,0,"`n Script Completed. `n Script Runtime: ($ScriptTime) seconds.")
+#=================================================================================
+# End of script
             </ScriptBody>
             <Parameters>
               <Parameter>
@@ -97,8 +122,8 @@ $momapi.LogScriptEvent($ScriptName,1234,0,"`n Script has completed. `n Runtime w
   <LanguagePacks>
     <LanguagePack ID="ENU" IsDefault="true">
       <DisplayStrings>
-        <DisplayString ElementID="##CompanyID##.##AppName##.TimedPowerShell.Rule">
-          <Name>##CompanyID## ##AppName## TimedPowerShell Rule</Name>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.TimedPowerShell.Rule">
+          <Name>##CompanyID## ##AppName## ##UniqueID## TimedPowerShell Rule</Name>
           <Description />
         </DisplayString>
       </DisplayStrings>

@@ -1,11 +1,12 @@
 ﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-<!--
+<!-- 
 %%
 Description:
-  A CLASS and DISCOVERY based on a REGEX EXPRESSION criteria match of the data within a registry VALUE
+  A CLASS and DISCOVERY based on existence of a registry VALUE within a KEY with an example class property added
   CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
-  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
-  RegValuePath - needs to be in the format of "SOFTWARE\Microsoft\CCM\HttpPort" or "SYSTEM\CurrentControlSet\Services\CcmExec\Start" as HKLM is assumed
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  RegValuePath - needs to be in the format of "SOFTWARE\KeyName\ValueName" or "SYSTEM\KeyName\ValueName" as HKLM is assumed 
+
 Version: 1.2
 LastModified: 4-Nov-2017
 %%
@@ -13,19 +14,22 @@ LastModified: 4-Nov-2017
 In this fragment you need to replace:
   ##CompanyID##
   ##AppName##
-  ##RegValuePath##
+  ##RegValuePath## 
 
 This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
-  
+	
 @@Author=Kevin Holman@@
 --> 
   <TypeDefinitions>
     <EntityTypes>
       <ClassTypes>
-        <ClassType ID="##CompanyID##.##AppName##.Class" Base="Windows!Microsoft.Windows.LocalApplication" Accessibility="Public" Abstract="false" Hosted="true" Singleton="false"></ClassType>
+        <ClassType ID="##CompanyID##.##AppName##.Class" Base="Windows!Microsoft.Windows.LocalApplication" Accessibility="Public" Abstract="false" Hosted="true" Singleton="false">
+          <Property ID="Version" Type="string" Key="false" CaseSensitive="false" MaxLength="256" MinLength="0" />
+		</ClassType>
 		<!-- We choose Microsoft.Windows.LocalApplication as our generic base class -->
+		<!-- This specific fragment example has a class property of "Version" just as an example. You can change as needed or add new ones -->	
       </ClassTypes>
     </EntityTypes>
   </TypeDefinitions>
@@ -35,17 +39,25 @@ This fragment depends on references:
 	  <!-- We choose Microsoft.Windows.Server.OperatingSystem as the preferred target class to ensure this will run on all Windows Servers, but wont create duplicates on clusters -->
         <Category>Discovery</Category>
         <DiscoveryTypes>
-		  <DiscoveryClass TypeID="##CompanyID##.##AppName##.Class" />
+		  <DiscoveryClass TypeID="##CompanyID##.##AppName##.Class">
+			<Property PropertyID="Version"/>
+		  </DiscoveryClass>
         </DiscoveryTypes>
         <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.FilteredRegistryDiscoveryProvider">
-          <ComputerName>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$</ComputerName>
+          <ComputerName>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$</ComputerName>  <!-- You may need to add or remove Host references in this line depending on your target -->
           <RegistryAttributeDefinitions>
             <RegistryAttributeDefinition>
-              <AttributeName>##AppName##RegValueData</AttributeName>
+              <AttributeName>##AppName##RegValueExists</AttributeName>
               <Path>##RegValuePath##</Path>
               <PathType>1</PathType>  <!-- 0=RegKey 1=RegValue -->
-              <AttributeType>2</AttributeType>  <!-- 0=CheckIfExists (Boolean) 1=treat data as (String) 2=treat data as (Integer) -->
+              <AttributeType>0</AttributeType>  <!-- 0=CheckIfExists (Boolean) 1=treat data as (String) 2=treat data as (Integer) -->
             </RegistryAttributeDefinition>
+            <RegistryAttributeDefinition>
+              <AttributeName>##AppName##RegVersion</AttributeName>
+              <Path>##RegValuePath##\Version</Path>
+              <PathType>1</PathType>  <!-- 0=regKey 1=regValue -->
+              <AttributeType>1</AttributeType>  <!-- 0=CheckIfExists (Boolean) 1=treat data as (String) 2=treat data as (Integer) -->
+            </RegistryAttributeDefinition>				
           </RegistryAttributeDefinitions>
           <Frequency>86400</Frequency>
           <ClassId>$MPElement[Name="##CompanyID##.##AppName##.Class"]$</ClassId>
@@ -59,16 +71,20 @@ This fragment depends on references:
                 <Name>$MPElement[Name="System!System.Entity"]/DisplayName$</Name>
                 <Value>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$</Value>
               </Setting>
+              <Setting>
+                <Name>$MPElement[Name="##CompanyID##.##AppName##.Class"]/Version$</Name>
+                <Value>$Data/Values/##AppName##RegVersion$</Value>
+              </Setting>				  
             </Settings>
           </InstanceSettings>
           <Expression>
             <SimpleExpression>
               <ValueExpression>
-                <XPathQuery Type="Integer">Values/##AppName##RegValueData</XPathQuery>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
+                <XPathQuery Type="Boolean">Values/##AppName##RegValueExists</XPathQuery>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
               </ValueExpression>
               <Operator>Equal</Operator>  <!-- Common options for SimpleExpression Operator are "Equal" "NotEqual" "Greater" "Less" "GreaterEqual" "LessEqual" "Like" "NotLike" -->
               <ValueExpression>
-                <Value Type="Integer">4</Value>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
+                <Value Type="Boolean">true</Value>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
               </ValueExpression>
             </SimpleExpression>
           </Expression>

@@ -4,6 +4,10 @@
 Description:
   A MONITOR to query a SNMP devices OID value as an integer, and has two expressions to evaluate and drive monitor state
   A monitor state change will occur if the INTEGER value is above or below a set threshold.  You will have to modify this example if your OID returns a string
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED 
+  ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem 
+  
 Version: 1.1
 LastModified: 29-May-2017
 %%
@@ -19,12 +23,14 @@ In this fragment you need to replace:
 This fragment depends on references:
   RequiredReference: Alias="Health", ID="System.Health.Library"
   RequiredReference: Alias="SNL", ID="System.NetworkManagement.Library"
+
+@@Author=Kevin Holman@@  
 --> 
   <Monitoring>
     <Monitors>
       <UnitMonitor ID="##CompanyID##.##AppName##.SNMP.Poll.OIDValue.##OID##.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.PerformanceState" Remotable="true" Priority="Normal" TypeID="SNL!System.NetworkManagement.SnmpProbe.2SingleEvent2StateMonitorType" ConfirmDelivery="false">
         <Category>Custom</Category>
-        <AlertSettings AlertMessage="##CompanyID##.##AppName##.SNMP.Poll.OIDValue.##OID##.Monitor_AlertMessageResourceID">
+        <AlertSettings AlertMessage="##CompanyID##.##AppName##.SNMP.Poll.OIDValue.##OID##.Monitor.AlertMessage">
           <AlertOnState>Warning</AlertOnState>  <!-- Warning or Error should match OperationalStates below  -->
           <AutoResolve>true</AutoResolve>
           <AlertPriority>Normal</AlertPriority>
@@ -90,7 +96,7 @@ This fragment depends on references:
   </Monitoring>
   <Presentation>
     <StringResources>
-      <StringResource ID="##CompanyID##.##AppName##.SNMP.Poll.OIDValue.##OID##.Monitor_AlertMessageResourceID" />
+      <StringResource ID="##CompanyID##.##AppName##.SNMP.Poll.OIDValue.##OID##.Monitor.AlertMessage" />
     </StringResources>
   </Presentation>
   <LanguagePacks>
@@ -106,7 +112,7 @@ This fragment depends on references:
         <DisplayString ElementID="##CompanyID##.##AppName##.SNMP.Poll.OIDValue.##OID##.Monitor" SubElementID="AboveThreshold">
           <Name>First Probe Raised</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.SNMP.Poll.OIDValue.##OID##.Monitor_AlertMessageResourceID">
+        <DisplayString ElementID="##CompanyID##.##AppName##.SNMP.Poll.OIDValue.##OID##.Monitor.AlertMessage">
           <Name>SNMP Device Polled OIDValue Is Above a Threshold</Name>
           <Description>The OID value of a polled OID on a SNMP device was above a threshold.
 

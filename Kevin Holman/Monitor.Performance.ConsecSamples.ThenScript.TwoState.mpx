@@ -3,21 +3,24 @@
 %%
 Description:
   A custom MONITORTYPE and MONITOR for performance data which checks a threshold first using native modules then runs a script to gather additional output.
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
+  ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem
+  UniqueID - needs to be your perf counter name, with NO SPACES OR SPECIAL CHARACTERS ALLOWED.  For instance, "% Processor Time" would be cleaned up to "PercentProcessorTime"
   In the event the monitor threshold is met, a script will be executed to gather additional propertybag data for the monitor context and alert description
-  CounterNameSanitizeForUseInElementID - needs to be your perf counter name, but cleaned up without special characters or 
-  spaces.  For instance, "% Processor Time" would be cleaned up to "PercentProcessorTime"
-Version: 1.1
-LastModified: 29-May-2017
+
+Version: 1.2
+LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
   ##CompanyID##
   ##AppName##
   ##ClassID##
+  ##UniqueID##
   ##ObjectName##
   ##InstanceName##
   ##CounterName##
-  ##CounterNameSanitizeForUseInElementID##
   ##Threshold##
 
 This fragment depends on references:
@@ -25,10 +28,12 @@ This fragment depends on references:
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
   RequiredReference: Alias="Health", ID="System.Health.Library"
   RequiredReference: Alias="Perf", ID="System.Performance.Library"
+
+@@Author=Kevin Holman@@
 --> 
   <TypeDefinitions>
     <MonitorTypes>
-      <UnitMonitorType ID="##CompanyID##.##AppName##.##CounterNameSanitizeForUseInElementID##.Perf.ThenScript.MonitorType" Accessibility="Public">
+      <UnitMonitorType ID="##CompanyID##.##AppName##.##UniqueID##.Perf.ThenScript.MonitorType" Accessibility="Public">
         <MonitorTypeStates>
           <MonitorTypeState ID="ConditionTrue" />
           <MonitorTypeState ID="ConditionFalse" />
@@ -165,9 +170,9 @@ This fragment depends on references:
   </TypeDefinitions>
   <Monitoring>
     <Monitors>
-      <UnitMonitor ID="##CompanyID##.##AppName##.##CounterNameSanitizeForUseInElementID##.Perf.ThenScript.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.PerformanceState" Remotable="true" Priority="Normal" TypeID="##CompanyID##.##AppName##.##CounterNameSanitizeForUseInElementID##.Perf.ThenScript.MonitorType" ConfirmDelivery="false">
+      <UnitMonitor ID="##CompanyID##.##AppName##.##UniqueID##.Perf.ThenScript.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.PerformanceState" Remotable="true" Priority="Normal" TypeID="##CompanyID##.##AppName##.##UniqueID##.Perf.ThenScript.MonitorType" ConfirmDelivery="false">
         <Category>PerformanceHealth</Category>
-        <AlertSettings AlertMessage="##CompanyID##.##AppName##.##CounterNameSanitizeForUseInElementID##.Perf.ThenScript.Monitor_AlertMessageResourceID">
+        <AlertSettings AlertMessage="##CompanyID##.##AppName##.##UniqueID##.Perf.ThenScript.Monitor_AlertMessageResourceID">
           <AlertOnState>Warning</AlertOnState>
           <AutoResolve>true</AutoResolve>
           <AlertPriority>Normal</AlertPriority>
@@ -195,7 +200,7 @@ This fragment depends on references:
           <Threshold>##Threshold##</Threshold>
           <Direction>greater</Direction>
           <NumSamples>3</NumSamples>
-          <ScriptName>##CompanyID##.##AppName##.##CounterNameSanitizeForUseInElementID##.Perf.ThenScript.Monitor.ps1</ScriptName>
+          <ScriptName>##CompanyID##.##AppName##.##UniqueID##.Perf.ThenScript.Monitor.ps1</ScriptName>
           <ScriptBody>#=================================================================================
 #  Generic monitoring script to input perf data and gather additional propertybags for alert enrichment
 #
@@ -207,7 +212,7 @@ param ($ObjectName, $CounterName, $InstanceName, $SampleValue, $NumSamples)
 #=================================================================================
 # Constants section - modify stuff here:
 # Assign script name variable for use in event logging
-$ScriptName = "##CompanyID##.##AppName##.##CounterNameSanitizeForUseInElementID##.Perf.ThenScript.Monitor.ps1"
+$ScriptName = "##CompanyID##.##AppName##.##UniqueID##.Perf.ThenScript.Monitor.ps1"
 #=================================================================================
 
 # Gather the start time of the script
@@ -294,23 +299,23 @@ $momapi.LogScriptEvent($ScriptName,1234,0,"Ending monitor script. Total runtime 
   </Monitoring>
   <Presentation>
     <StringResources>
-      <StringResource ID="##CompanyID##.##AppName##.##CounterNameSanitizeForUseInElementID##.Perf.ThenScript.Monitor_AlertMessageResourceID" />
+      <StringResource ID="##CompanyID##.##AppName##.##UniqueID##.Perf.ThenScript.Monitor_AlertMessageResourceID" />
     </StringResources>
   </Presentation>  
   <LanguagePacks>
     <LanguagePack ID="ENU" IsDefault="true">
       <DisplayStrings>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##CounterNameSanitizeForUseInElementID##.Perf.ThenScript.Monitor">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Perf.ThenScript.Monitor">
           <Name>##CompanyID## ##AppName## ##CounterName## Perf Then Script Monitor</Name>
           <Description></Description>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##CounterNameSanitizeForUseInElementID##.Perf.ThenScript.Monitor" SubElementID="ConditionTrue">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Perf.ThenScript.Monitor" SubElementID="ConditionTrue">
           <Name>Bad Condition Detected</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##CounterNameSanitizeForUseInElementID##.Perf.ThenScript.Monitor" SubElementID="ConditionFalse">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Perf.ThenScript.Monitor" SubElementID="ConditionFalse">
           <Name>Healthy Condition Detected</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##CounterNameSanitizeForUseInElementID##.Perf.ThenScript.Monitor_AlertMessageResourceID">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Perf.ThenScript.Monitor_AlertMessageResourceID">
           <Name>##CompanyID## ##AppName## ##CounterName## has breached a threshold</Name>
           <Description>Object Name: {0}
 Counter Name: {1}
