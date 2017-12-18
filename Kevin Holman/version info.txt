@@ -88,3 +88,12 @@
 	Major update to comments section in all fragments.
 	Added ##UniqueID## to many fragments to allow for multiple reuse of the same fragment over and over in the same management pack
 	Updated several powershell script fragments to be more standardized.
+3.1 - (12-11-2017)
+	New Fragments:
+		Rule.TimedScript.PowerShell.OverrideableParams.mpx
+	Bug fixes for:
+		Class.And.Discovery.Script.PowerShell.mpx
+		Class.And.Discovery.Script.VBScript.mpx
+3.2 - (12-11-2017)
+	New Fragments:
+		Rule.TextLog.ScriptResponse.mpx

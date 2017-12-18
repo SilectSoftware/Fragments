@@ -1,0 +1,111 @@
+<ManagementPackFragment SchemaVersion="2.0"
+    xmlns:xsd = "http://www.w3.org/2001/XMLSchema">
+  <!--
+%%
+Description:
+  A module type used to discover classes based only on the properties of the target 
+  class. This discovery does not read or process any data (no registry, no WMI, no
+  SNMP, no scripts).
+
+Version: 1.0
+LastModified: 13-Dec-2017
+%%
+
+In this fragment you need to replace:
+
+This fragment depends on references:
+  RequiredReference: Alias="System", ID="System.Library"
+
+@@Author=Mike Sargent@@
+@@Author=Silect Software, Inc.@@
+@@Workflow=Discovery Module Type@@
+-->
+  <TypeDefinitions>
+    <ModuleTypes>
+      <DataSourceModuleType ID="Silect.FilteredDerivedDiscoveryProvider"
+          Accessibility="Public"
+          Batching="false">
+        <Configuration>
+          <IncludeSchemaTypes>
+            <SchemaType>System!System.Discovery.MapperSchema</SchemaType>
+            <SchemaType>System!System.ExpressionEvaluatorSchema</SchemaType>
+          </IncludeSchemaTypes>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              name="Frequency"
+              type="xsd:unsignedInt" />
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              name="SyncTime"
+              type="xsd:string"
+              minOccurs="0" />
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              name="ClassId"
+              type="xsd:string" />
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              name="InstanceSettings"
+              minOccurs="0"
+              maxOccurs="1"
+              type="SettingsType" />
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              name="Expression"
+              type="ExpressionType" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="Frequency"
+              Selector="$Config/Frequency$"
+              ParameterType="int" />
+          <OverrideableParameter ID="SyncTime"
+              Selector="$Config/SyncTime$"
+              ParameterType="string" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <DataSource ID="Scheduler"
+                  TypeID="System!System.Discovery.Scheduler">
+                <Scheduler>
+                  <SimpleReccuringSchedule>
+                    <Interval Unit="Seconds">$Config/Frequency$</Interval>
+                    <SyncTime>$Config/SyncTime$</SyncTime>
+                  </SimpleReccuringSchedule>
+                  <ExcludeDates />
+                </Scheduler>
+              </DataSource>
+              <ConditionDetection ID="Mapping"
+                  TypeID="System!System.Discovery.FilteredClassSnapshotDataMapper">
+                <Expression>$Config/Expression$</Expression>
+                <ClassId>$Config/ClassId$</ClassId>
+                <InstanceSettings>$Config/InstanceSettings$</InstanceSettings>
+              </ConditionDetection>
+            </MemberModules>
+            <Composition>
+              <Node ID="Mapping">
+                <Node ID="Scheduler" />
+              </Node>
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.Discovery.Data</OutputType>
+      </DataSourceModuleType>
+    </ModuleTypes>
+  </TypeDefinitions>
+  <LanguagePacks>
+    <LanguagePack ID="ENU">
+      <DisplayStrings>
+        <DisplayString ElementID="Silect.FilteredDerivedDiscoveryProvider">
+          <Name>Filtered Deriived Discovery Provider</Name>
+          <Description>Allows discovery of a new class based on the properties of an existing class.</Description>
+        </DisplayString>
+        <DisplayString ElementID="Silect.FilteredDerivedDiscoveryProvider"
+            SubElementID="Frequency">
+          <Name>Frequency</Name>
+          <Description>How often the discovery is run, in seconds.</Description>
+        </DisplayString>
+        <DisplayString ElementID="Silect.FilteredDerivedDiscoveryProvider"
+            SubElementID="SyncTime">
+          <Name>Sync Time</Name>
+          <Description>Optional time of day at which to synchronize the discovery.</Description>
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>
