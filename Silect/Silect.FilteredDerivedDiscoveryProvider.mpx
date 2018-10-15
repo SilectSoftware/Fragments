@@ -92,7 +92,7 @@ This fragment depends on references:
     <LanguagePack ID="ENU">
       <DisplayStrings>
         <DisplayString ElementID="Silect.FilteredDerivedDiscoveryProvider">
-          <Name>Filtered Deriived Discovery Provider</Name>
+          <Name>Filtered Derived Discovery Provider</Name>
           <Description>Allows discovery of a new class based on the properties of an existing class.</Description>
         </DisplayString>
         <DisplayString ElementID="Silect.FilteredDerivedDiscoveryProvider"

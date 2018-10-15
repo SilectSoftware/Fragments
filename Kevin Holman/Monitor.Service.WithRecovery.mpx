@@ -6,17 +6,19 @@ Description:
   CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
   AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED 
   ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem   
-  ServiceName - must be the short name of the service as seen in the registry and can not contain spaces or special characters by default
+  ServiceName - must be the short name of the service as seen in the registry
+  UniqueID - We need a Unique ID for this Monitor to reuse the fragment.  If your service name contains spaces - create a shortened ServiceName with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
 
-Version: 1.1
-LastModified: 29-May-2017
+Version: 1.2
+LastModified: 14-Oct-2018
 %%
 
 In this fragment you need to replace:
   ##CompanyID##
   ##AppName##
   ##ClassID##
-  ##ServiceName## 
+  ##ServiceName##
+  ##UniqueID##  
 
 This fragment depends on references:
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
@@ -26,7 +28,7 @@ This fragment depends on references:
 --> 
   <Monitoring>
     <Monitors>
-      <UnitMonitor ID="##CompanyID##.##AppName##.##ServiceName##.Service.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.CheckNTServiceStateMonitorType" ConfirmDelivery="false">
+      <UnitMonitor ID="##CompanyID##.##AppName##.##UniqueID##.Service.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.CheckNTServiceStateMonitorType" ConfirmDelivery="false">
         <Category>AvailabilityHealth</Category>
         <OperationalStates>
           <OperationalState ID="Running" MonitorTypeStateID="Running" HealthState="Success" />
@@ -40,7 +42,7 @@ This fragment depends on references:
       </UnitMonitor>	  
     </Monitors>
     <Recoveries>
-      <Recovery ID="##CompanyID##.##AppName##.##ServiceName##.Service.Recovery" Accessibility="Public" Enabled="false" Target="##ClassID##" Monitor="##CompanyID##.##AppName##.##ServiceName##.Service.Monitor" ResetMonitor="false" ExecuteOnState="Error" Remotable="true" Timeout="300">
+      <Recovery ID="##CompanyID##.##AppName##.##UniqueID##.Service.Recovery" Accessibility="Public" Enabled="false" Target="##ClassID##" Monitor="##CompanyID##.##AppName##.##UniqueID##.Service.Monitor" ResetMonitor="false" ExecuteOnState="Error" Remotable="true" Timeout="300">
         <Category>Custom</Category>
         <WriteAction ID="VBScriptWA" TypeID="Windows!Microsoft.Windows.ScriptWriteAction">
           <ScriptName>ServiceRecovery.vbs</ScriptName>
@@ -203,16 +205,16 @@ End Sub
   <LanguagePacks>
     <LanguagePack ID="ENU" IsDefault="true">
       <DisplayStrings>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##ServiceName##.Service.Monitor">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Service.Monitor">
           <Name>##CompanyID## ##AppName## ##ServiceName## Service Monitor</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##ServiceName##.Service.Monitor" SubElementID="Running">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Service.Monitor" SubElementID="Running">
           <Name>Running</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##ServiceName##.Service.Monitor" SubElementID="NotRunning">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Service.Monitor" SubElementID="NotRunning">
           <Name>Not Running</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##ServiceName##.Service.Recovery">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Service.Recovery">
           <Name>##CompanyID## ##AppName## ##ServiceName## Service Recovery</Name>
         </DisplayString>		
       </DisplayStrings>

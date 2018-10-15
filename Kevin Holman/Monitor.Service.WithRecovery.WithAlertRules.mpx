@@ -8,17 +8,19 @@ Description:
   CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
   AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED 
   ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem   
-  ServiceName - must be the short name of the service as seen in the registry and can not contain spaces or special characters by default
+  ServiceName - must be the short name of the service as seen in the registry
+  UniqueID - We need a Unique ID for this Monitor to reuse the fragment.  If your service name contains spaces - create a shortened ServiceName with NO SPACES OR SPECIAL CHARACTERS ALLOWED    
 
-Version: 1.1
-LastModified: 29-May-2017
+Version: 1.2
+LastModified: 14-Oct-2018
 %%
 
 In this fragment you need to replace:
   ##CompanyID##
   ##AppName##
   ##ClassID##
-  ##ServiceName## 
+  ##ServiceName##
+  ##UniqueID##  
 
 This fragment depends on references:
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
@@ -28,7 +30,7 @@ This fragment depends on references:
 --> 
   <Monitoring>
 	<Rules>
-	  <Rule ID="##CompanyID##.##AppName##.AlertOnEvent.3754.Rule" Enabled="true" Target="##ClassID##" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+	  <Rule ID="##CompanyID##.##AppName##.##UniqueID##.ServiceFoundRunning.Recovery.Rule" Enabled="true" Target="##ClassID##" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
         <Category>Alert</Category>
         <DataSources>
           <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.EventProvider">
@@ -78,7 +80,7 @@ This fragment depends on references:
             <AlertName />
             <AlertDescription />
             <AlertOwner />
-            <AlertMessageId>$MPElement[Name="##CompanyID##.##AppName##.AlertOnEvent.3754.Rule.AlertMessage"]$</AlertMessageId>
+            <AlertMessageId>$MPElement[Name="##CompanyID##.##AppName##.##UniqueID##.ServiceFoundRunning.Recovery.Rule.AlertMessage"]$</AlertMessageId>
             <AlertParameters>
               <AlertParameter1>$Data/EventDescription$</AlertParameter1>
             </AlertParameters>
@@ -100,7 +102,7 @@ This fragment depends on references:
           </WriteAction>
         </WriteActions>
       </Rule>
-      <Rule ID="##CompanyID##.##AppName##.AlertOnEvent.3758.Rule" Enabled="true" Target="##ClassID##" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+      <Rule ID="##CompanyID##.##AppName##.##UniqueID##.ServiceRecoveryFailed.Recovery.Rule" Enabled="true" Target="##ClassID##" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
         <Category>Alert</Category>
         <DataSources>
           <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.EventProvider">
@@ -150,7 +152,7 @@ This fragment depends on references:
             <AlertName />
             <AlertDescription />
             <AlertOwner />
-            <AlertMessageId>$MPElement[Name="##CompanyID##.##AppName##.AlertOnEvent.3758.Rule.AlertMessage"]$</AlertMessageId>
+            <AlertMessageId>$MPElement[Name="##CompanyID##.##AppName##.##UniqueID##.ServiceRecoveryFailed.Recovery.Rule.AlertMessage"]$</AlertMessageId>
             <AlertParameters>
               <AlertParameter1>$Data/EventDescription$</AlertParameter1>
             </AlertParameters>
@@ -172,7 +174,7 @@ This fragment depends on references:
           </WriteAction>
         </WriteActions>
       </Rule>
-	  <Rule ID="##CompanyID##.##AppName##.AlertOnEvent.3759.Rule" Enabled="true" Target="##ClassID##" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
+	  <Rule ID="##CompanyID##.##AppName##.##UniqueID##.TooManyRecoveryAttempts.Recovery.Rule" Enabled="true" Target="##ClassID##" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
         <Category>Alert</Category>
         <DataSources>
           <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.EventProvider">
@@ -222,7 +224,7 @@ This fragment depends on references:
             <AlertName />
             <AlertDescription />
             <AlertOwner />
-            <AlertMessageId>$MPElement[Name="##CompanyID##.##AppName##.AlertOnEvent.3759.Rule.AlertMessage"]$</AlertMessageId>
+            <AlertMessageId>$MPElement[Name="##CompanyID##.##AppName##.##UniqueID##.TooManyRecoveryAttempts.Recovery.Rule.AlertMessage"]$</AlertMessageId>
             <AlertParameters>
               <AlertParameter1>$Data/EventDescription$</AlertParameter1>
             </AlertParameters>
@@ -246,7 +248,7 @@ This fragment depends on references:
       </Rule>
     </Rules>  
     <Monitors>
-      <UnitMonitor ID="##CompanyID##.##AppName##.##ServiceName##.Service.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.CheckNTServiceStateMonitorType" ConfirmDelivery="false">
+      <UnitMonitor ID="##CompanyID##.##AppName##.##UniqueID##.Service.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.CheckNTServiceStateMonitorType" ConfirmDelivery="false">
         <Category>AvailabilityHealth</Category>
         <OperationalStates>
           <OperationalState ID="Running" MonitorTypeStateID="Running" HealthState="Success" />
@@ -260,7 +262,7 @@ This fragment depends on references:
       </UnitMonitor>	  
     </Monitors>
     <Recoveries>
-      <Recovery ID="##CompanyID##.##AppName##.##ServiceName##.Service.Recovery" Accessibility="Public" Enabled="true" Target="##ClassID##" Monitor="##CompanyID##.##AppName##.##ServiceName##.Service.Monitor" ResetMonitor="false" ExecuteOnState="Error" Remotable="true" Timeout="300">
+      <Recovery ID="##CompanyID##.##AppName##.##UniqueID##.Service.Recovery" Accessibility="Public" Enabled="true" Target="##ClassID##" Monitor="##CompanyID##.##AppName##.##ServiceName##.Service.Monitor" ResetMonitor="false" ExecuteOnState="Error" Remotable="true" Timeout="300">
         <Category>Custom</Category>
         <WriteAction ID="VBScriptWA" TypeID="Windows!Microsoft.Windows.ScriptWriteAction">
           <ScriptName>ServiceRecovery.vbs</ScriptName>
@@ -422,44 +424,44 @@ End Sub
   </Monitoring>	
   <Presentation>
     <StringResources>
-	  <StringResource ID="##CompanyID##.##AppName##.AlertOnEvent.3754.Rule.AlertMessage" />
-      <StringResource ID="##CompanyID##.##AppName##.AlertOnEvent.3758.Rule.AlertMessage" />
-	  <StringResource ID="##CompanyID##.##AppName##.AlertOnEvent.3759.Rule.AlertMessage" />
+	  <StringResource ID="##CompanyID##.##AppName##.##UniqueID##.ServiceFoundRunning.Recovery.Rule.AlertMessage" />
+      <StringResource ID="##CompanyID##.##AppName##.##UniqueID##.ServiceRecoveryFailed.Recovery.Rule.AlertMessage" />
+	  <StringResource ID="##CompanyID##.##AppName##.##UniqueID##.TooManyRecoveryAttempts.Recovery.Rule.AlertMessage" />
     </StringResources>
   </Presentation>  
   <LanguagePacks>
     <LanguagePack ID="ENU" IsDefault="true">
       <DisplayStrings>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##ServiceName##.Service.Monitor">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Service.Monitor">
           <Name>##CompanyID## ##AppName## ##ServiceName## Service Monitor</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##ServiceName##.Service.Monitor" SubElementID="Running">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Service.Monitor" SubElementID="Running">
           <Name>Running</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##ServiceName##.Service.Monitor" SubElementID="NotRunning">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Service.Monitor" SubElementID="NotRunning">
           <Name>Not Running</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##ServiceName##.Service.Recovery">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Service.Recovery">
           <Name>##CompanyID## ##AppName## ##ServiceName## Service Recovery</Name>
         </DisplayString>
-		<DisplayString ElementID="##CompanyID##.##AppName##.AlertOnEvent.3754.Rule">
+		<DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.ServiceFoundRunning.Recovery.Rule">
           <Name>##CompanyID## ##AppName## ##ServiceName## Recovery script found service is not in stopped state</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.AlertOnEvent.3754.Rule.AlertMessage">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.ServiceFoundRunning.Recovery.Rule.AlertMessage">
           <Name>##CompanyID## ##AppName## ##ServiceName## Recovery script found service is not in stopped state</Name>
           <Description>Event Description: {0}</Description>
         </DisplayString>		  
-		<DisplayString ElementID="##CompanyID##.##AppName##.AlertOnEvent.3758.Rule">
+		<DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.ServiceRecoveryFailed.Recovery.Rule">
           <Name>##CompanyID## ##AppName## ##ServiceName## Recovery script failed to start all services</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.AlertOnEvent.3758.Rule.AlertMessage">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.ServiceRecoveryFailed.Recovery.Rule.AlertMessage">
           <Name>##CompanyID## ##AppName## ##ServiceName## Recovery script failed to start all services</Name>
           <Description>Event Description: {0}</Description>
         </DisplayString>
-		<DisplayString ElementID="##CompanyID##.##AppName##.AlertOnEvent.3759.Rule">
+		<DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.TooManyRecoveryAttempts.Recovery.Rule">
           <Name>##CompanyID## ##AppName## ##ServiceName## Recovery script attempted to restart the service 3 times in an hour</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.AlertOnEvent.3759.Rule.AlertMessage">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.TooManyRecoveryAttempts.Recovery.Rule.AlertMessage">
           <Name>##CompanyID## ##AppName## ##ServiceName## Recovery script attempted to restart the service 3 times in an hour</Name>
           <Description>Event Description: {0}</Description>
         </DisplayString>		

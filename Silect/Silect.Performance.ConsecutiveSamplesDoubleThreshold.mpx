@@ -1,0 +1,203 @@
+<ManagementPackFragment SchemaVersion="2.0"
+    xmlns:xsd = "http://www.w3.org/2001/XMLSchema">
+  <!--
+%%
+Description:
+  A module type used to evaluate a 3-state consecutive sample performance monitor.
+
+Version: 1.0
+LastModified: 03-Jan-2018
+%%
+
+In this fragment you need to replace:
+
+This fragment depends on references:
+  RequiredReference: Alias="System", ID="System.Library"
+  RequiredReference: Alias="Performance", ID="System.Performance.Library"
+
+@@Author=Mike Sargent@@
+@@Author=Silect Software, Inc.@@
+@@Workflow=Monitor Module Type@@
+-->
+  <TypeDefinitions>
+    <MonitorTypes>
+      <UnitMonitorType ID="Silect.Performance.ConsecutiveSamplesDoubleThreshold" Accessibility="Public">
+        <MonitorTypeStates>
+          <MonitorTypeState ID="UnderWarningThreshold" NoDetection="false" />
+          <MonitorTypeState ID="OverWarningThresholdUnderErrorThreshold" NoDetection="false" />
+          <MonitorTypeState ID="OverErrorThreshold" NoDetection="false" />
+        </MonitorTypeStates>
+        <Configuration>
+          <xsd:element name="ComputerName" type="xsd:string" minOccurs="0" maxOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="CounterName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="ObjectName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="InstanceName" type="xsd:string" minOccurs="0" maxOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="AllInstances" type="xsd:boolean" minOccurs="0" maxOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="Frequency" type="xsd:unsignedInt" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="ScaleBy" type="xsd:double" minOccurs="0" maxOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="NumSamples" type="xsd:unsignedInt" minOccurs="1" maxOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="WarningThreshold" type="xsd:double" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="ErrorThreshold" type="xsd:double" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="Frequency" Selector="$Config/Frequency$" ParameterType="int" />
+          <OverrideableParameter ID="NumSamples" Selector="$Config/NumSamples$" ParameterType="int" />
+          <OverrideableParameter ID="WarningThreshold" Selector="$Config/WarningThreshold$" ParameterType="double" />
+          <OverrideableParameter ID="ErrorThreshold" Selector="$Config/ErrorThreshold$" ParameterType="double" />
+        </OverrideableParameters>
+        <MonitorImplementation>
+          <MemberModules>
+            <DataSource ID="DSPerformance" TypeID="Performance!System.Performance.DataProvider">
+              <ComputerName>$Config/ComputerName$</ComputerName>
+              <CounterName>$Config/CounterName$</CounterName>
+              <ObjectName>$Config/ObjectName$</ObjectName>
+              <InstanceName>$Config/InstanceName$</InstanceName>
+              <AllInstances>$Config/AllInstances$</AllInstances>
+              <Frequency>$Config/Frequency$</Frequency>
+              <ScaleBy>$Config/ScaleBy$</ScaleBy>
+            </DataSource>
+            <ConditionDetection ID="CDConsecutiveSamples" TypeID="Performance!System.Performance.ConsecutiveSamplesCondition">
+              <Threshold>$Config/NumSamples$</Threshold>
+              <Direction>greaterequal</Direction>
+            </ConditionDetection>
+            <ConditionDetection ID="CDSufficientSamples" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="Double">Value</XPathQuery>
+                  </ValueExpression>
+                  <Operator>GreaterEqual</Operator>
+                  <ValueExpression>
+                    <Value Type="Double">$Config/NumSamples$</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </ConditionDetection>
+            <ConditionDetection ID="CDInSufficientSamples" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="Double">Value</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Less</Operator>
+                  <ValueExpression>
+                    <Value Type="Double">$Config/NumSamples$</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </ConditionDetection>
+            <ConditionDetection ID="CDUnderWarningThreshold" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="Double">Value</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Less</Operator>
+                  <ValueExpression>
+                    <Value Type="Double">$Config/WarningThreshold$</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </ConditionDetection>
+            <ConditionDetection ID="CDOverWarningThresholdUnderErrorThreshold" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <And>
+                  <Expression>
+                    <SimpleExpression>
+                      <ValueExpression>
+                        <XPathQuery Type="Double">Value</XPathQuery>
+                      </ValueExpression>
+                      <Operator>GreaterEqual</Operator>
+                      <ValueExpression>
+                        <Value Type="Double">$Config/WarningThreshold$</Value>
+                      </ValueExpression>
+                    </SimpleExpression>
+                  </Expression>
+                  <Expression>
+                    <SimpleExpression>
+                      <ValueExpression>
+                        <XPathQuery Type="Double">Value</XPathQuery>
+                      </ValueExpression>
+                      <Operator>LessEqual</Operator>
+                      <ValueExpression>
+                        <Value Type="Double">$Config/ErrorThreshold$</Value>
+                      </ValueExpression>
+                    </SimpleExpression>
+                  </Expression>
+                </And>
+              </Expression>
+            </ConditionDetection>
+            <ConditionDetection ID="CDOverErrorThreshold" TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="Double">Value</XPathQuery>
+                  </ValueExpression>
+                  <Operator>Greater</Operator>
+                  <ValueExpression>
+                    <Value Type="Double">$Config/ErrorThreshold$</Value>
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </ConditionDetection>
+          </MemberModules>
+          <RegularDetections>
+            <RegularDetection MonitorTypeStateID="UnderWarningThreshold">
+              <Node ID="CDInSufficientSamples">
+                <Node ID="CDConsecutiveSamples">
+                  <Node ID="CDUnderWarningThreshold">
+                    <Node ID="DSPerformance" />
+                  </Node>
+                </Node>
+              </Node>
+            </RegularDetection>
+            <RegularDetection MonitorTypeStateID="OverWarningThresholdUnderErrorThreshold">
+              <Node ID="CDSufficientSamples">
+                <Node ID="CDConsecutiveSamples">
+                  <Node ID="CDOverWarningThresholdUnderErrorThreshold">
+                    <Node ID="DSPerformance" />
+                  </Node>
+                </Node>
+              </Node>
+            </RegularDetection>
+            <RegularDetection MonitorTypeStateID="OverErrorThreshold">
+              <Node ID="CDSufficientSamples">
+                <Node ID="CDConsecutiveSamples">
+                  <Node ID="CDOverErrorThreshold">
+                    <Node ID="DSPerformance" />
+                  </Node>
+                </Node>
+              </Node>
+            </RegularDetection>
+          </RegularDetections>
+        </MonitorImplementation>
+      </UnitMonitorType>
+    </MonitorTypes>
+  </TypeDefinitions>
+  <LanguagePacks>
+    <LanguagePack ID="ENU">
+      <DisplayStrings>
+        <DisplayString ElementID="Silect.Performance.ConsecutiveSamplesDoubleThreshold">
+          <Name>Three state consecutive performance unit monitor type.</Name>
+          <Description>Allows monitoring a performance counter for Success, Warning, and Critical error status over consecutive samples.</Description>
+        </DisplayString>
+        <DisplayString ElementID="Silect.Performance.ConsecutiveSamplesDoubleThreshold" SubElementID="ErrorThreshold">
+          <Name>Error Threshold</Name>
+          <Description>The value which the performance counter must exceed to enter a Critical state.</Description>
+        </DisplayString>
+        <DisplayString ElementID="Silect.Performance.ConsecutiveSamplesDoubleThreshold" SubElementID="WarningThreshold">
+          <Name>Warning Threshold</Name>
+          <Description>The value which the performance counter must exceeded to enter a Warning state.</Description>
+        </DisplayString>
+        <DisplayString ElementID="Silect.Performance.ConsecutiveSamplesDoubleThreshold" SubElementID="Frequency">
+          <Name>Frequency</Name>
+          <Description>The frequency (in seconds) at which the performance counter should be sampled.</Description>
+        </DisplayString>
+        <DisplayString ElementID="Silect.Performance.ConsecutiveSamplesDoubleThreshold" SubElementID="NumSamples">
+          <Name>Number Of Samples</Name>
+          <Description>The number of consecutive samples which must exceed the warning or error threshold to change the health state.</Description>
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>

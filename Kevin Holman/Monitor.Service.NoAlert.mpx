@@ -6,10 +6,11 @@ Description:
   CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
   AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED 
   ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem 	
-  ServiceName - must be the short name of the service as seen in the registry and can not contain spaces or special characters by default
+  ServiceName - must be the short name of the service as seen in the registry
+  UniqueID - We need a Unique ID for this Monitor to reuse the fragment.  If your service name contains spaces - create a shortened ServiceName with NO SPACES OR SPECIAL CHARACTERS ALLOWED
 
-Version: 1.1
-LastModified: 29-May-2017
+Version: 1.2
+LastModified: 14-Oct-2018
 %%
 
 In this fragment you need to replace:
@@ -17,6 +18,7 @@ In this fragment you need to replace:
   ##AppName##
   ##ClassID##
   ##ServiceName## 
+  ##UniqueID##
 
 This fragment depends on references:
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"
@@ -26,7 +28,7 @@ This fragment depends on references:
 --> 
   <Monitoring>
     <Monitors>
-      <UnitMonitor ID="##CompanyID##.##AppName##.##ServiceName##.Service.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.CheckNTServiceStateMonitorType" ConfirmDelivery="false">
+      <UnitMonitor ID="##CompanyID##.##AppName##.##UniqueID##.Service.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.CheckNTServiceStateMonitorType" ConfirmDelivery="false">
         <Category>AvailabilityHealth</Category>
         <OperationalStates>
           <OperationalState ID="Running" MonitorTypeStateID="Running" HealthState="Success" />
@@ -43,7 +45,7 @@ This fragment depends on references:
   <LanguagePacks>
     <LanguagePack ID="ENU" IsDefault="true">
       <DisplayStrings>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##ServiceName##.Service.Monitor">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Service.Monitor">
           <Name>##CompanyID## ##AppName## ##ServiceName## Service Monitor</Name>
         </DisplayString>
       </DisplayStrings>

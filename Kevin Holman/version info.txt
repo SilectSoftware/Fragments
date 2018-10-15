@@ -97,3 +97,9 @@
 3.2 - (12-11-2017)
 	New Fragments:
 		Rule.TextLog.ScriptResponse.mpx
+3.3 - (10-14_2018)
+	New Fragments:
+		Folder.State.Alert.Views.mpx
+		Monitor.Service.Alert.PSRecovery.AlertRules.FreqSamples.IgnoreDisabled.mpx
+	Bug Fixes for:
+		All service monitors now use UniqueID

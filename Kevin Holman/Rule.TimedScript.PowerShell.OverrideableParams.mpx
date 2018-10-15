@@ -5,18 +5,18 @@ Description:
   A rule that runs a PowerShell script on a timer with examples for sending parameters to the script
   CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
   AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED 
-  UniqueID - Is a unique short description of the workflow purpose (NO SPACES OR SPECIAL CHARACTERS ALLOWED) such as "MonitorFilesInFolder"  
   ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem
+  UniqueID - Is a unique short description of the workflow purpose (NO SPACES OR SPECIAL CHARACTERS ALLOWED) such as "MonitorFilesInFolder"  
 
-Version: 1.0
-LastModified: 11-Dec-2017
+Version: 1.1
+LastModified: 05-May-2018
 %%
 
 In this fragment you need to replace:
   ##CompanyID##
   ##AppName##
-  ##UniqueID##
   ##ClassID##
+  ##UniqueID##
   
 This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"
@@ -26,6 +26,38 @@ This fragment depends on references:
 -->
   <TypeDefinitions>
     <ModuleTypes>
+      <DataSourceModuleType ID="##CompanyID##.##AppName##.##UniqueID##.TimedPowerShell.Rule.DS" Accessibility="Public" Batching="false">
+        <Configuration>
+          <IncludeSchemaTypes>
+            <SchemaType>System!System.ExpressionEvaluatorSchema</SchemaType>
+          </IncludeSchemaTypes>
+          <xsd:element name="IntervalSeconds" type="xsd:int" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="SyncTime" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
+          <OverrideableParameter ID="SyncTime" Selector="$Config/SyncTime$" ParameterType="string" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <DataSource ID="DS" TypeID="System!System.Scheduler">
+                <Scheduler>
+                  <SimpleReccuringSchedule>
+                    <Interval Unit="Seconds">$Config/IntervalSeconds$</Interval>
+                    <SyncTime>$Config/SyncTime$</SyncTime>
+                  </SimpleReccuringSchedule>
+                  <ExcludeDates />
+                </Scheduler>
+              </DataSource>
+            </MemberModules>
+            <Composition>
+              <Node ID="DS" />
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.TriggerData</OutputType>
+      </DataSourceModuleType>	
       <WriteActionModuleType ID="##CompanyID##.##AppName##.##UniqueID##.TimedPowerShell.Rule.WA" Accessibility="Internal" Batching="false">
         <Configuration>
 		  <xsd:element minOccurs="1" name="ComputerName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
@@ -130,16 +162,11 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"`n Script Completed. `n Script Ru
       <Rule ID="##CompanyID##.##AppName##.##UniqueID##.TimedPowerShell.Rule" Enabled="true" Target="##ClassID##" ConfirmDelivery="true" Remotable="true" Priority="Normal" DiscardLevel="100">
         <Category>Custom</Category>
         <DataSources>
-		  <DataSource ID="Scheduler" TypeID="System!System.Scheduler">
-            <Scheduler>
-              <SimpleReccuringSchedule>
-                <Interval Unit="Seconds">3600</Interval>
-				<SyncTime></SyncTime>
-              </SimpleReccuringSchedule>
-              <ExcludeDates />
-            </Scheduler>
+		  <DataSource ID="Scheduler" TypeID="##CompanyID##.##AppName##.##UniqueID##.TimedPowerShell.Rule.DS">
+            <IntervalSeconds>86400</IntervalSeconds>
+  		    <SyncTime></SyncTime>
           </DataSource>	  
-        </DataSources>
+        </DataSources>		
         <WriteActions>
           <WriteAction ID="WA" TypeID="##CompanyID##.##AppName##.##UniqueID##.TimedPowerShell.Rule.WA">
 		    <ComputerName>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$</ComputerName>

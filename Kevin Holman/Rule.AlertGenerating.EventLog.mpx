@@ -40,7 +40,7 @@ This fragment depends on references:
                     <ValueExpression>
                       <XPathQuery Type="UnsignedInteger">EventDisplayNumber</XPathQuery>
                     </ValueExpression>
-                    <Operator>Equal</Operator>
+                    <Operator>Equal</Operator>  
                     <ValueExpression>
                       <Value Type="UnsignedInteger">##EventID##</Value>
                     </ValueExpression>

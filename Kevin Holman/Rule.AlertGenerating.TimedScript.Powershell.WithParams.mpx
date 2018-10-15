@@ -5,8 +5,9 @@ Description:
   A Rule which runs a timed PowerShell script (WITH parameters) as the DataSource and ALERTS based on matching a condition detection
   CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
   AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED 
+  ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem
   UniqueID - Is a unique short description of the workflow purpose (NO SPACES OR SPECIAL CHARACTERS ALLOWED) such as "CountFilesInFolder"  
-  ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem  
+  
   
 Version: 1.2
 LastModified: 4-Nov-2017
@@ -15,8 +16,8 @@ LastModified: 4-Nov-2017
 In this fragment you need to replace:
   ##CompanyID##
   ##AppName##
-  ##UniqueID##
   ##ClassID##
+  ##UniqueID##
 
 This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"

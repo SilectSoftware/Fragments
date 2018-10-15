@@ -6,7 +6,7 @@ Description:
   CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
   AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED 
   ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem  
-  UniqueID - Is a unique short description of the workflow purpose (NO SPACES OR SPECIAL CHARACTERS ALLOWED) such as "PercentProcessorTime"  
+  UniqueID - Is a unique short description of the workflow purpose (NO SPACES OR SPECIAL CHARACTERS ALLOWED) such as "PercentProcessorTime"
 
 
 Version: 1.2

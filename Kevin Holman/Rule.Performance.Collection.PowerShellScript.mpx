@@ -5,8 +5,8 @@ Description:
   A RULE that uses a PowerShell script to collect data and output/map it to Performance data for collection
   CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
   AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED 
-  UniqueID - Is a unique short description of the workflow purpose (NO SPACES OR SPECIAL CHARACTERS ALLOWED) such as "CountFilesInFolder"  
   ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem
+  UniqueID - Is a unique short description of the workflow purpose (NO SPACES OR SPECIAL CHARACTERS ALLOWED) such as "CountFilesInFolder"  
   ObjectName, CounterName, and InstanceName - you can make up in this case, as we are mapping the data from PowerShell to a made up Performance Counter
 
 Version: 1.2
@@ -16,8 +16,8 @@ LastModified: 4-Nov-2017
 In this fragment you need to replace:
   ##CompanyID##
   ##AppName##
-  ##UniqueID##  
   ##ClassID##
+  ##UniqueID##  
   ##ObjectName##
   ##InstanceName##
   ##CounterName##
