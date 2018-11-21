@@ -7,8 +7,8 @@ Description:
   AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
   ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem
   
-Version: 1.0
-LastModified: 14-Oct-2018
+Version: 1.1
+LastModified: 20-Nov-2018
 %%
 
 In this fragment you need to replace:
@@ -23,7 +23,7 @@ This fragment depends on references:
 -->
   <Presentation>
     <Views>
-      <View ID="##CompanyID##.##AppName##.AlertView" Accessibility="Internal" Enabled="true" Target="##ClassID##" TypeID="SC!Microsoft.SystemCenter.AlertViewType" Visible="true">
+      <View ID="##CompanyID##.##AppName##.Alert.View" Accessibility="Internal" Enabled="true" Target="##ClassID##" TypeID="SC!Microsoft.SystemCenter.AlertViewType" Visible="true">
         <Category>Custom</Category>
         <Criteria>
           <ResolutionState>
@@ -31,7 +31,7 @@ This fragment depends on references:
           </ResolutionState>
         </Criteria>
       </View>
-      <View ID="##CompanyID##.##AppName##.StateView" Accessibility="Internal" Enabled="true" Target="##ClassID##" TypeID="SC!Microsoft.SystemCenter.StateViewType" Visible="true">
+      <View ID="##CompanyID##.##AppName##.State.View" Accessibility="Internal" Enabled="true" Target="##ClassID##" TypeID="SC!Microsoft.SystemCenter.StateViewType" Visible="true">
         <Category>Custom</Category>
         <Criteria />
       </View>
@@ -40,14 +40,14 @@ This fragment depends on references:
       <Folder ID="##CompanyID##.##AppName##.Root.Folder" Accessibility="Internal" ParentFolder="SC!Microsoft.SystemCenter.Monitoring.ViewFolder.Root" />
     </Folders>
     <FolderItems>
-      <FolderItem ElementID="##CompanyID##.##AppName##.AlertView" ID="##CompanyID##.##AppName##.AlertView.FolderItem" Folder="##CompanyID##.##AppName##.Root.Folder" />
-      <FolderItem ElementID="##CompanyID##.##AppName##.StateView" ID="##CompanyID##.##AppName##.StateView.FolderItem" Folder="##CompanyID##.##AppName##.Root.Folder" />
+      <FolderItem ElementID="##CompanyID##.##AppName##.Alert.View" ID="##CompanyID##.##AppName##.Alert.View.FolderItem" Folder="##CompanyID##.##AppName##.Root.Folder" />
+      <FolderItem ElementID="##CompanyID##.##AppName##.State.View" ID="##CompanyID##.##AppName##.State.View.FolderItem" Folder="##CompanyID##.##AppName##.Root.Folder" />
     </FolderItems>
   </Presentation>
   <LanguagePacks>
     <LanguagePack ID="ENU" IsDefault="true">
       <DisplayStrings>
-        <DisplayString ElementID="##CompanyID##.##AppName##.AlertView">
+        <DisplayString ElementID="##CompanyID##.##AppName##.Alert.View">
           <Name>Alerts</Name>
           <Description />
         </DisplayString>
@@ -55,7 +55,7 @@ This fragment depends on references:
           <Name>##CompanyID## ##AppName##</Name>
           <Description />
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.StateView">
+        <DisplayString ElementID="##CompanyID##.##AppName##.State.View">
           <Name>State</Name>
           <Description />
         </DisplayString>

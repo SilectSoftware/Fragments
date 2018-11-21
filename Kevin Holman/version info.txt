@@ -97,9 +97,18 @@
 3.2 - (12-11-2017)
 	New Fragments:
 		Rule.TextLog.ScriptResponse.mpx
-3.3 - (10-14_2018)
+3.3 - (10-14-2018)
 	New Fragments:
 		Folder.State.Alert.Views.mpx
 		Monitor.Service.Alert.PSRecovery.AlertRules.FreqSamples.IgnoreDisabled.mpx
 	Bug Fixes for:
 		All service monitors now use UniqueID
+3.4 - (11-20-2018)
+	New Fragments:
+		Class.Group.PowerShellWindowsComputers.mpx
+		Rule.AlertGenerating.EventLog.TwoCorrelatedEvents.mpx		
+		Combo.Class.Discovery.ServiceMonitor.Recovery.mpx
+		Combo.Class.Discovery.ServiceMonitor.Recovery.ComputerWatcherGroup.Views.Folder.mpx
+	Bug Fixes for:
+		Minor fixes in displaystrings and IDs for consistency across fragments
+
