@@ -111,4 +111,8 @@
 		Combo.Class.Discovery.ServiceMonitor.Recovery.ComputerWatcherGroup.Views.Folder.mpx
 	Bug Fixes for:
 		Minor fixes in displaystrings and IDs for consistency across fragments
-
+3.5 - (12-10-2018)
+	New Fragments:
+		Class.And.Discovery.ClusteredApp.RegistrySeed.mpx
+		Combo.Class.Discovery.ClusteredApp.RegistrySeed.ComputerWatcherGroup.Views.Folder.mpx
+		
