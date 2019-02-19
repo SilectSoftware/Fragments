@@ -8,8 +8,8 @@ Description:
   UniqueID - Is a unique short description of the workflow purpose (NO SPACES OR SPECIAL CHARACTERS ALLOWED) such as "MonitorFilesInFolder"  
   ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem
 
-Version: 1.4
-LastModified: 4-Nov-2017
+Version: 1.5
+LastModified: 27-Jan-2019
 %%
 
 In this fragment you need to replace:
@@ -33,7 +33,7 @@ This fragment depends on references:
             <Scheduler>
               <SimpleReccuringSchedule>
                 <Interval Unit="Seconds">3600</Interval>
-				<SyncTime></SyncTime>				
+				        <SyncTime></SyncTime>				
               </SimpleReccuringSchedule>
               <ExcludeDates />
             </Scheduler>

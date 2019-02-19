@@ -115,10 +115,10 @@ This fragment depends on references:
             <AlertParameters>
               <AlertParameter1>$Data[Default='']/Item0Context/DataItem/EventDisplayNumber$</AlertParameter1>
               <AlertParameter2>$Data[Default='']/Item0Context/DataItem/EventSourceName$</AlertParameter2>
-			  <AlertParameter3>$Data[Default='']/Item0Context/DataItem/EventDescription$</AlertParameter3>
+							<AlertParameter3>$Data[Default='']/Item0Context/DataItem/EventDescription$</AlertParameter3>
               <AlertParameter4>$Data[Default='']/Item1Context/DataItem/EventDisplayNumber$</AlertParameter4>
               <AlertParameter5>$Data[Default='']/Item1Context/DataItem/EventSourceName$</AlertParameter5>
-			  <AlertParameter6>$Data[Default='']/Item1Context/DataItem/EventDescription$</AlertParameter6>
+							<AlertParameter6>$Data[Default='']/Item1Context/DataItem/EventDescription$</AlertParameter6>
             </AlertParameters>
 			<Suppression/>
           </WriteAction>

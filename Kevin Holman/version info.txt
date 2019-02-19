@@ -115,4 +115,15 @@
 	New Fragments:
 		Class.And.Discovery.ClusteredApp.RegistrySeed.mpx
 		Combo.Class.Discovery.ClusteredApp.RegistrySeed.ComputerWatcherGroup.Views.Folder.mpx
-		
+3.6 - (1-22-2019)
+	New Fragments:
+		Class.And.Discovery.Script.PowerShell.Params.mpx
+3.7 - (1-27-2019)
+	New Fragments:
+		Rule.TimedScript.PowerShellDS.Filter.PowerShellWA.mpx
+3.8 - (2-12-2019)
+	New Fragments:
+		Monitor.TimedScript.PowerShell.FolderFilesChanged.mpx
+		Folder.mpx
+	Bug Fixes for:
+		Added UniqueID to class and discovery workflows to allow reuse in the same MP	

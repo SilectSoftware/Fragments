@@ -47,14 +47,14 @@ This fragment depends on references:
         <Configuration>
           <xsd:element name="ComputerName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
           <xsd:element name="ServiceName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
-		  <xsd:element name="IntervalSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
-		  <xsd:element name="CheckStartupType" minOccurs="0" maxOccurs="1" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
-		  <xsd:element name="Samples" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="IntervalSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="CheckStartupType" minOccurs="0" maxOccurs="1" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+					<xsd:element name="Samples" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
         </Configuration>		
         <OverrideableParameters>
           <OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
-		  <OverrideableParameter ID="CheckStartupType" Selector="$Config/CheckStartupType$" ParameterType="string" />
-		  <OverrideableParameter ID="Samples" Selector="$Config/Samples$" ParameterType="int" />
+					<OverrideableParameter ID="CheckStartupType" Selector="$Config/CheckStartupType$" ParameterType="string" />
+					<OverrideableParameter ID="Samples" Selector="$Config/Samples$" ParameterType="int" />
         </OverrideableParameters>
         <MonitorImplementation>
           <MemberModules>
@@ -62,7 +62,7 @@ This fragment depends on references:
               <ComputerName>$Config/ComputerName$</ComputerName>
               <ServiceName>$Config/ServiceName$</ServiceName>
               <Frequency>$Config/IntervalSeconds$</Frequency>
-			  <DisableCaching>true</DisableCaching>
+							<DisableCaching>true</DisableCaching>
               <CheckStartupType>$Config/CheckStartupType$</CheckStartupType>
             </DataSource>
             <ProbeAction ID="Probe" TypeID="Windows!Microsoft.Windows.Win32ServiceInformationProbe">
@@ -234,7 +234,7 @@ This fragment depends on references:
                     </ValueExpression>
                   </SimpleExpression>
                 </Expression>
-				<Expression>
+								<Expression>
                   <RegExExpression>
                     <ValueExpression>
                       <XPathQuery Type="String">Params/Param[2]</XPathQuery>
@@ -667,10 +667,10 @@ write-host "Script Completed. Script Runtime: ($ScriptTime) seconds."
   <Presentation>
     <StringResources>
       <StringResource ID="##CompanyID##.##AppName##.##UniqueID##.Service.Monitor.AlertMessage" />	
-	  <StringResource ID="##CompanyID##.##AppName##.##UniqueID##.ServiceNotFound.Recovery.Rule.AlertMessage" />
+			<StringResource ID="##CompanyID##.##AppName##.##UniqueID##.ServiceNotFound.Recovery.Rule.AlertMessage" />
       <StringResource ID="##CompanyID##.##AppName##.##UniqueID##.ServiceFoundRunning.Recovery.Rule.AlertMessage" />
-	  <StringResource ID="##CompanyID##.##AppName##.##UniqueID##.ServiceRecoveryFailed.Recovery.Rule.AlertMessage" />
-	  <StringResource ID="##CompanyID##.##AppName##.##UniqueID##.TooManyRecoveryAttempts.Recovery.Rule.AlertMessage" />	  
+			<StringResource ID="##CompanyID##.##AppName##.##UniqueID##.ServiceRecoveryFailed.Recovery.Rule.AlertMessage" />
+			<StringResource ID="##CompanyID##.##AppName##.##UniqueID##.TooManyRecoveryAttempts.Recovery.Rule.AlertMessage" />	  
     </StringResources>
   </Presentation>   
   <LanguagePacks>

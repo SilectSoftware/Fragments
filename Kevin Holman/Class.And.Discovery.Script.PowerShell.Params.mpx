@@ -4,15 +4,18 @@
 Description:
   A CLASS and DISCOVERY using a PowerShell Script to create class instances with overrideable parameter examples
   CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
-  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+	UniqueID - We need a Unique ID to reuse the fragment within the same MP.  Use a shortened descriptive name with NO SPACES OR SPECIAL CHARACTERS ALLOWED
   In this example we added a a couple additional class properties to demo that capability 
-Version: 1.0
+	
+Version: 1.1
 LastModified: 22-Jan-2019
 %%
 
 In this fragment you need to replace:
   ##CompanyID##
   ##AppName##
+	##UniqueID##
 
 This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"
@@ -23,7 +26,7 @@ This fragment depends on references:
   <TypeDefinitions>
     <EntityTypes>
       <ClassTypes>
-        <ClassType ID="##CompanyID##.##AppName##.Class" Base="Windows!Microsoft.Windows.LocalApplication" Accessibility="Public" Abstract="false" Hosted="true" Singleton="false">
+        <ClassType ID="##CompanyID##.##AppName##.##UniqueID##.Class" Base="Windows!Microsoft.Windows.LocalApplication" Accessibility="Public" Abstract="false" Hosted="true" Singleton="false">
           <Property ID="Version" Type="string"/>
           <Property ID="Path" Type="string"/>
 		<!-- We choose Microsoft.Windows.LocalApplication as our generic base class -->
@@ -32,7 +35,7 @@ This fragment depends on references:
       </ClassTypes>
     </EntityTypes>
     <ModuleTypes>
-      <DataSourceModuleType ID="##CompanyID##.##AppName##.Class.Discovery.DS" Accessibility="Internal" Batching="false">
+      <DataSourceModuleType ID="##CompanyID##.##AppName##.##UniqueID##.Class.Discovery.DS" Accessibility="Internal" Batching="false">
         <Configuration>
           <xsd:element name="IntervalSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
 					<xsd:element name="SyncTime" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
@@ -53,7 +56,7 @@ This fragment depends on references:
               <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.TimedPowerShell.DiscoveryProvider">
                 <IntervalSeconds>$Config/IntervalSeconds$</IntervalSeconds>
                 <SyncTime>$Config/SyncTime$</SyncTime>
-                <ScriptName>##CompanyID##.##AppName##.Class.Discovery.DS.ps1</ScriptName>
+                <ScriptName>##CompanyID##.##AppName##.##UniqueID##.Class.Discovery.DS.ps1</ScriptName>
                 <ScriptBody>
 #=================================================================================
 #  Describe Script Here
@@ -79,7 +82,7 @@ param($SourceId,$ManagedEntityId,$ComputerName,$MGName,$DebugLogging,$ExampleStr
 #=================================================================================
 # Assign script name variable for use in event logging.  
 # ScriptName should be the same as the ID of the module that the script is contained in
-$ScriptName = "##CompanyID##.##AppName##.Class.Discovery.DS.ps1"
+$ScriptName = "##CompanyID##.##AppName##.##UniqueID##.Class.Discovery.DS.ps1"
 $EventID = "1234"
 #=================================================================================
 
@@ -126,10 +129,10 @@ $Version = "2.0"
 # If folder exists create instance of class
 If ($FolderExists -eq $true)
 {
-	$instance = $DiscoveryData.CreateClassInstance("$MPElement[Name='##CompanyID##.##AppName##.Class']$")
+	$instance = $DiscoveryData.CreateClassInstance("$MPElement[Name='##CompanyID##.##AppName##.##UniqueID##.Class']$")
 	$instance.AddProperty("$MPElement[Name='Windows!Microsoft.Windows.Computer']/PrincipalName$", $ComputerName)
-	$instance.AddProperty("$MPElement[Name='##CompanyID##.##AppName##.Class']/Version$", $Version)
-	$instance.AddProperty("$MPElement[Name='##CompanyID##.##AppName##.Class']/Path$", $Folder)
+	$instance.AddProperty("$MPElement[Name='##CompanyID##.##AppName##.##UniqueID##.Class']/Version$", $Version)
+	$instance.AddProperty("$MPElement[Name='##CompanyID##.##AppName##.##UniqueID##.Class']/Path$", $Folder)
 	$instance.AddProperty("$MPElement[Name='System!System.Entity']/DisplayName$", $ComputerName)
 	$DiscoveryData.AddInstance($instance)
 	
@@ -199,16 +202,16 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"`n Script Completed. `n Script Ru
   </TypeDefinitions>
   <Monitoring>
     <Discoveries>
-      <Discovery ID="##CompanyID##.##AppName##.Class.Discovery" Target="Windows!Microsoft.Windows.Server.OperatingSystem" Enabled="true" ConfirmDelivery="false" Remotable="true" Priority="Normal">
+      <Discovery ID="##CompanyID##.##AppName##.##UniqueID##.Class.Discovery" Target="Windows!Microsoft.Windows.Server.OperatingSystem" Enabled="true" ConfirmDelivery="false" Remotable="true" Priority="Normal">
       <!-- We choose Microsoft.Windows.Server.OperatingSystem as the preferred target class to ensure this will run on all Windows Servers, but will not create duplicates on clusters -->
         <Category>Discovery</Category>
         <DiscoveryTypes>
-	        <DiscoveryClass TypeID="##CompanyID##.##AppName##.Class">
+	        <DiscoveryClass TypeID="##CompanyID##.##AppName##.##UniqueID##.Class">
             <Property PropertyID="Version"/>
             <Property PropertyID="Path"/>
           </DiscoveryClass>
         </DiscoveryTypes>
-        <DataSource ID="DS" TypeID="##CompanyID##.##AppName##.Class.Discovery.DS">
+        <DataSource ID="DS" TypeID="##CompanyID##.##AppName##.##UniqueID##.Class.Discovery.DS">
           <IntervalSeconds>86400</IntervalSeconds>
 					<SyncTime></SyncTime>
           <TimeoutSeconds>120</TimeoutSeconds>
@@ -222,18 +225,18 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"`n Script Completed. `n Script Ru
     <LanguagePack ID="ENU" IsDefault="true">
       <DisplayStrings>
         <!-- Classes -->	  
-        <DisplayString ElementID="##CompanyID##.##AppName##.Class">
-          <Name>##CompanyID## ##AppName## Class</Name>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Class">
+          <Name>##CompanyID## ##AppName## ##UniqueID## Class</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.Class" SubElementID="Version">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Class" SubElementID="Version">
           <Name>Version</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.Class" SubElementID="Path">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Class" SubElementID="Path">
           <Name>Path</Name>
         </DisplayString>
         <!-- Discoveries -->		
-        <DisplayString ElementID="##CompanyID##.##AppName##.Class.Discovery">
-          <Name>##CompanyID## ##AppName## Class Discovery</Name>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Class.Discovery">
+          <Name>##CompanyID## ##AppName## ##UniqueID## Class Discovery</Name>
         </DisplayString>		
       </DisplayStrings>
     </LanguagePack>
