@@ -134,7 +134,7 @@ if ($strCondition -eq "Good")
   }
 else
   {
-  # Recovery Action Here
+  ## Recovery Action Here
   Restart-Service ##ServiceName##
   $momapi.LogScriptEvent($ScriptName,107,0, "Bad Condition Found")
   $bag.AddValue('Result','BadCondition')

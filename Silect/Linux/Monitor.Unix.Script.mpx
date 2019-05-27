@@ -1,0 +1,115 @@
+<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!--
+%%
+Description:
+  A MONITOR that compares the output of a script with a fixed value
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
+  ClassID - is the targeted class; this fragment does not define its own
+  UniqueID - is a unique short description of the monitor purpose (NO SPACES OR SPECIAL CHARACTERS ALLOWED)
+  ScriptFileName - the name of a script file on disk to read when importing the fragment
+  ScriptBodyBase64 - is the base64-encoded version of the script (filled in automatically when selecting a script file)
+  ScriptArgs - are the command-line arguments provided to the script; refer to them in the script as $1, $2, etc
+
+Version: 1.0
+LastModified: 17-May-2019
+%%
+
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName##
+  ##ClassID##
+  ##UniqueID##  
+  ##ScriptFileName##
+  ##ScriptBodyBase64##
+  ##ScriptArgs##
+
+This fragment depends on references:
+  RequiredReference: Alias="Health", ID="System.Health.Library"
+  RequiredReference: Alias="Unix", ID="Microsoft.Unix.Library"
+  RequiredReference: Alias="UnixShell", ID="Microsoft.Unix.ShellCommand.Library"
+
+@@Author=Silect Software, Inc.@@  
+-->
+  <Monitoring>
+    <Monitors>
+      <UnitMonitor ID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="UnixShell!Microsoft.Unix.Script.TwoState.MonitorType" ConfirmDelivery="false">
+        <Category>Custom</Category>
+        <AlertSettings AlertMessage="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.Monitor.AlertMessage">
+          <AlertOnState>Warning</AlertOnState>
+          <AutoResolve>true</AutoResolve>
+          <AlertPriority>Normal</AlertPriority>
+          <AlertSeverity>Warning</AlertSeverity>
+          <AlertParameters>
+            <AlertParameter1>$Target/Host/Property[Type="Unix!Microsoft.Unix.Computer"]/PrincipalName$</AlertParameter1>
+          </AlertParameters>
+        </AlertSettings>
+        <OperationalStates>
+          <OperationalState ID="StatusOK" MonitorTypeStateID="StatusOK" HealthState="Success" />
+          <OperationalState ID="StatusError" MonitorTypeStateID="StatusError" HealthState="Warning" />
+        </OperationalStates>
+        <Configuration>
+          <Interval>600</Interval>
+          <SyncTime />
+          <TargetSystem>$Target/Host/Property[Type="Unix!Microsoft.Unix.Computer"]/NetworkName$</TargetSystem>
+          <UserName>$RunAs[Name="Unix!Microsoft.Unix.ActionAccount"]/UserName$</UserName>
+          <Password>$RunAs[Name="Unix!Microsoft.Unix.ActionAccount"]/Password$</Password>
+          <Script>##ScriptBodyBase64##</Script>
+          <ScriptArgs>##ScriptArgs##</ScriptArgs>
+          <TimeOut>900</TimeOut>
+          <TimeOutInMS>900000</TimeOutInMS>
+          <HealthyExpression>
+            <SimpleExpression>
+              <ValueExpression>
+                <XPathQuery Type="Integer">//*[local-name()="StdOut"]</XPathQuery>
+              </ValueExpression>
+              <Operator>Equal</Operator>
+              <ValueExpression>
+                <Value Type="Integer">1</Value>
+              </ValueExpression>
+            </SimpleExpression>
+          </HealthyExpression>
+          <ErrorExpression>
+            <SimpleExpression>
+              <ValueExpression>
+                <XPathQuery Type="Integer">//*[local-name()="StdOut"]</XPathQuery>
+              </ValueExpression>
+              <Operator>NotEqual</Operator>
+              <ValueExpression>
+                <Value Type="Integer">1</Value>
+              </ValueExpression>
+            </SimpleExpression>
+          </ErrorExpression>
+        </Configuration>
+      </UnitMonitor>
+    </Monitors>
+  </Monitoring>
+  <Presentation>
+    <StringResources>
+      <StringResource ID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.Monitor.AlertMessage" />
+    </StringResources>
+  </Presentation>
+  <LanguagePacks>
+    <LanguagePack ID="ENU">
+      <DisplayStrings>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.Monitor">
+          <Name>##CompanyID## ##AppName## Unix Script Monitor</Name>
+          <Description>Monitor the output of the ##ScriptFileName## Linux/Unix script running on the target system.</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.Monitor" SubElementID="StatusError">
+          <Name>StatusError</Name>
+          <Description>The ##ScriptFileName## script failed to produce the expected output.</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.Monitor" SubElementID="StatusOK">
+          <Name>StatusOK</Name>
+          <Description>The ##ScriptFileName## script produced the expected output value.</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.Monitor.AlertMessage">
+          <Name>##CompanyID## ##AppName## Unix Script Monitor Alert</Name>
+          <Description>The ##ScriptFileName## script failed to produce the expected output on {0}</Description>
+        </DisplayString>
+      </DisplayStrings>
+      <KnowledgeArticles></KnowledgeArticles>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>

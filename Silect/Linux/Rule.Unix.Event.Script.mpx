@@ -1,0 +1,119 @@
+<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!--
+%%
+Description:
+  A RULE that compares the output of a script with a fixed value
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  ClassID - is the targeted class; this fragment does not define its own; typically, use a class hosted by Microsoft.Unix.Computer
+  RuleID - is a unique identifier for the rule with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  RuleDisplayName - is the display name of the rule
+  RuleDescription - is the descripiton of the rule
+  AlertDisplayName - is the display name of the alert
+  AlertDescription - is the description of the alert; StdOut, StdErr, ReturnCode and ReturnValue will get appended to it
+  ScriptFileName - the name of a script file on disk to read when importing the fragment; it's expected to return 1 if successful, 0 on failure
+  ScriptBodyBase64 - is the base64-encoded version of the script (filled in automatically when selecting a script file)
+  ScriptArgs - are the command-line arguments provided to the script; refer to them in the script as $1, $2, etc
+
+Version: 1.0
+LastModified: 22-May-2019
+%%
+
+In this fragment you need to replace:
+##CompanyID##
+##ClassID##
+##RuleID##
+##RuleDisplayName##
+##RuleDescription##
+##AlertDisplayName##
+##AlertDescription##
+##ScriptFileName##
+##ScriptBodyBase64##
+##ScriptArgs##
+
+This fragment depends on references:
+  RequiredReference: Alias="Unix", ID="Microsoft.Unix.Library"
+  RequiredReference: Alias="UnixShell", ID="Microsoft.Unix.ShellCommand.Library"
+  RequiredReference: Alias="Health", ID="System.Health.Library"
+
+@@Author=Silect Software, Inc.@@
+-->
+  <Monitoring>
+    <Rules>
+      <Rule ID="##CompanyID##.##RuleID##" Enabled="true" Target="##ClassID##" ConfirmDelivery="false" Remotable="true" Priority="Normal" DiscardLevel="100">
+        <Category>Alert</Category>
+        <DataSources>
+          <DataSource ID="InvokeDS" TypeID="UnixShell!Microsoft.Unix.Invoke.Script.DataSource">
+            <Interval>43200</Interval>
+            <SyncTime />
+            <TargetSystem>$Target/Host/Property[Type="Unix!Microsoft.Unix.Computer"]/NetworkName$</TargetSystem>
+            <UserName>$RunAs[Name="Unix!Microsoft.Unix.ActionAccount"]/UserName$</UserName>
+            <Password>$RunAs[Name="Unix!Microsoft.Unix.ActionAccount"]/Password$</Password>
+            <Script>##ScriptBodyBase64##</Script>
+            <ScriptArgs>##ScriptArgs##</ScriptArgs>
+            <TimeOut>120</TimeOut>
+            <TimeOutInMS>120000</TimeOutInMS>
+            <FilterExpression>
+              <RegExExpression>
+                <ValueExpression>
+                  <XPathQuery Type="String">//*[local-name()="StdOut"]</XPathQuery>
+                </ValueExpression>
+                <Operator>DoesNotMatchRegularExpression</Operator>
+                <Pattern>^1</Pattern>
+              </RegExExpression>
+            </FilterExpression>
+          </DataSource>
+        </DataSources>
+        <WriteActions>
+          <WriteAction ID="Alert" TypeID="Health!System.Health.GenerateAlert">
+            <Priority>1</Priority>
+            <Severity>2</Severity>
+            <AlertName />
+            <AlertDescription />
+            <AlertOwner />
+            <AlertMessageId>$MPElement[Name="##CompanyID##.##RuleID##.AlertMessage"]$</AlertMessageId>
+            <AlertParameters>
+		<AlertParameter1>$Data/WsManData/*[local-name(.)='SCX_OperatingSystem_OUTPUT']/*[local-name(.)='StdOut']$</AlertParameter1>
+		<AlertParameter2>$Data/WsManData/*[local-name(.)='SCX_OperatingSystem_OUTPUT']/*[local-name(.)='StdErr']$</AlertParameter2>
+		<AlertParameter3>$Data/WsManData/*[local-name(.)='SCX_OperatingSystem_OUTPUT']/*[local-name(.)='ReturnCode']$</AlertParameter3>
+		<AlertParameter4>$Data/WsManData/*[local-name(.)='SCX_OperatingSystem_OUTPUT']/*[local-name(.)='ReturnValue']$</AlertParameter4>
+            </AlertParameters>
+            <Suppression />
+            <Custom1 />
+            <Custom2 />
+            <Custom3 />
+            <Custom4 />
+            <Custom5 />
+            <Custom6 />
+            <Custom7 />
+            <Custom8 />
+            <Custom9 />
+            <Custom10 />
+          </WriteAction>
+        </WriteActions>
+      </Rule>
+    </Rules>
+  </Monitoring>
+  <Presentation>
+    <StringResources>
+      <StringResource ID="##CompanyID##.##RuleID##.AlertMessage" />
+    </StringResources>
+  </Presentation>
+  <LanguagePacks>
+    <LanguagePack ID="ENU">
+      <DisplayStrings>
+        <DisplayString ElementID="##CompanyID##.##RuleID##">
+          <Name>##RuleDisplayName##</Name>
+          <Description>##RuleDescription##</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##RuleID##.AlertMessage">
+          <Name>##AlertDisplayName##</Name>
+          <Description>##AlertDescription##
+StdOut: {0}
+StdErr: {1}
+ReturnCode: {2}
+Return Value: {3}</Description>
+        </DisplayString>
+      </DisplayStrings>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>

@@ -1,0 +1,308 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--
+%%
+Description:
+  A MONITOR to run a SHELL COMMAND and compare the ouput of the command to expression criteria
+  In this example we compare the output based on whether it will return a "true" or a "false" but this can be changed
+  
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
+  ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem  
+  UniqueID - Is a unique short description of the monitor purpose (NO SPACES OR SPECIAL CHARACTERS ALLOWED) such as "MonitorFilesInFolder"	
+  ShellCommand - My sample Shell command script needs to be base64 encoded before pasting into the fragment.  
+		Refer to Blog for Base64 encoding https://blogs.technet.microsoft.com/kevinjustin/2019/05/21/using-unix-mps-for-shell-commands-and-scripts/
+
+Version: 1.0
+LastModified: 21-May-2019
+%%
+
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName##
+  ##ClassID##
+  ##UniqueID##  
+  ##ShellCommand##
+
+This fragment depends on references:
+  RequiredReference: Alias="Health", ID="System.Health.Library"
+  RequiredReference: Alias="MLL", ID="Microsoft.Linux.Library"  
+  RequiredReference: Alias="MUL", ID="Microsoft.Unix.Library"
+  RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library"
+  RequiredReference: Alias="System", ID="System.Library"  
+  RequiredReference: Alias="WSM", ID="Microsoft.SystemCenter.WSManagement.Library"
+
+@@Author=Kevin Justin@@  
+--> 
+
+
+  <TypeDefinitions>
+    <ModuleTypes>
+      <!-- Invoke Script Data Source -->
+      <DataSourceModuleType ID="##CompanyID##.##AppName##.Unix.ShellCommand.Invoke.Script.MatchCountSampleCount.DS" Accessibility="Public" Batching="false">
+        <Configuration>
+          <IncludeSchemaTypes>
+            <SchemaType>System!System.ExpressionEvaluatorSchema</SchemaType>
+          </IncludeSchemaTypes>
+          <xsd:element name="Interval" type="xsd:unsignedInt" minOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="SyncTime" type="xsd:string" minOccurs="0" maxOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="TargetSystem" type="xsd:string" minOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="UserName" type="xsd:string" minOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="Password" type="xsd:string" minOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="Script" type="xsd:string" minOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="ScriptArgs" type="xsd:string" minOccurs="0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="TimeOut" type="xsd:unsignedInt" minOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="TimeOutInMS" type="xsd:unsignedInt" minOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="FilterExpression" type="ExpressionType" maxOccurs="1" minOccurs="0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="MatchCount" type="xsd:unsignedInt" maxOccurs="1" minOccurs="0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="SampleCount" type="xsd:unsignedInt" maxOccurs="1" minOccurs="0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="Interval" Selector="$Config/Interval$" ParameterType="int" />
+          <OverrideableParameter ID="ScriptArgs" Selector="$Config/ScriptArgs$" ParameterType="string" />
+          <OverrideableParameter ID="TimeOut" Selector="$Config/TimeOut$" ParameterType="int" />
+          <OverrideableParameter ID="TimeOutInMS" Selector="$Config/TimeOutInMS$" ParameterType="int" />
+		  <OverrideableParameter ID="MatchCount" Selector="$Config/MatchCount$" ParameterType="int" />
+		  <OverrideableParameter ID="SampleCount" Selector="$Config/SampleCount$" ParameterType="int" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <DataSource ID="Scheduler" TypeID="System!System.Scheduler">
+                <Scheduler>
+                  <SimpleReccuringSchedule>
+                    <Interval>$Config/Interval$</Interval>
+                    <SyncTime>$Config/SyncTime$</SyncTime>
+                  </SimpleReccuringSchedule>
+                  <ExcludeDates />
+                </Scheduler>
+              </DataSource>
+              <ProbeAction ID="Invoke" TypeID="##CompanyID##.##AppName##.Unix.ShellCommand.Invoke.Script.MatchCountSampleCount.PA">
+                <TargetSystem>$Config/TargetSystem$</TargetSystem>
+                <UserName>$Config/UserName$</UserName>
+                <Password>$Config/Password$</Password>
+                <Script>$Config/Script$</Script>
+                <ScriptArgs>$Config/ScriptArgs$</ScriptArgs>
+                <TimeOut>$Config/TimeOut$</TimeOut>
+                <TimeOutInMS>$Config/TimeOutInMS$</TimeOutInMS>
+				<MatchCount>$Config/MatchCount$</MatchCount>
+				<SampleCount>$Config/SampleCount$</SampleCount>
+              </ProbeAction>
+              <ConditionDetection ID="Filter" TypeID="System!System.ExpressionFilter">
+                <Expression>$Config/FilterExpression$</Expression>
+              </ConditionDetection>
+            </MemberModules>
+            <Composition>
+              <Node ID="Filter">
+                <Node ID="Invoke">
+                  <Node ID="Scheduler" />
+                </Node>
+              </Node>
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>WSM!Microsoft.SystemCenter.WSManagement.WSManData</OutputType>
+      </DataSourceModuleType>
+	  
+	  <!-- Invoke Script Probe Action -->
+      <ProbeActionModuleType ID="##CompanyID##.##AppName##.Unix.ShellCommand.Invoke.Script.MatchCountSampleCount.PA" Accessibility="Public">
+        <Configuration>
+          <xsd:element name="TargetSystem" type="xsd:string" minOccurs="1" />
+          <xsd:element name="UserName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+          <xsd:element name="Password" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+          <xsd:element name="Script" type="xsd:string" minOccurs="1" />
+          <xsd:element name="ScriptArgs" type="xsd:string" minOccurs="0" />
+          <xsd:element name="TimeOut" type="xsd:unsignedInt" minOccurs="1" />
+          <xsd:element name="TimeOutInMS" type="xsd:unsignedInt" minOccurs="1" />
+		  <xsd:element name="MatchCount" type="xsd:unsignedInt" maxOccurs="1" minOccurs="0" />
+          <xsd:element name="SampleCount" type="xsd:unsignedInt" maxOccurs="1" minOccurs="0" />
+        </Configuration>
+        <OverrideableParameters />
+        <ModuleImplementation>
+          <Composite>
+            <MemberModules>
+              <ProbeAction ID="Invoke" TypeID="MUL!Microsoft.Unix.WSMan.Invoke.VarPriv.ProbeAction">
+                <TargetSystem>$Config/TargetSystem$</TargetSystem>
+                <UserName>$Config/UserName$</UserName>
+                <Password>$Config/Password$</Password>
+                <Uri>http://schemas.microsoft.com/wbem/wscim/1/cim-schema/2/SCX_OperatingSystem?__cimnamespace=root/scx</Uri>
+                <Selector />
+                <InvokeAction>ExecuteScript</InvokeAction>
+                <Input><![CDATA[
+                  <;p:ExecuteScript_INPUT xmlns:p="http://schemas.microsoft.com/wbem/wscim/1/cim-schema/2/SCX_OperatingSystem">;
+                  <;p:script>;$Config/Script$<;/p:script>;
+                  <;p:arguments>;$Config/ScriptArgs$<;/p:arguments>;
+                  <;p:timeout>;$Config/TimeOut$<;/p:timeout>;
+                  <;p:b64encoded>;true<;/p:b64encoded>;
+                  <;/p:ExecuteScript_INPUT>;]]>
+                </Input>
+                <TimeOutInMS>$Config/TimeOutInMS$</TimeOutInMS>
+				
+				
+              </ProbeAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="Invoke" />
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>WSM!Microsoft.SystemCenter.WSManagement.WSManData</OutputType>
+        <InputType>System!System.BaseData</InputType>
+      </ProbeActionModuleType>
+	  
+	  <!-- Invoke Script Write Action -->
+      <WriteActionModuleType ID="##CompanyID##.##AppName##.Unix.ShellCommand.Invoke.Script.MatchCountSampleCount.WA" Accessibility="Public">
+        <Configuration>
+          <xsd:element name="TargetSystem" type="xsd:string" minOccurs="1" />
+          <xsd:element name="UserName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+          <xsd:element name="Password" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+          <xsd:element name="Script" type="xsd:string" minOccurs="1" />
+          <xsd:element name="ScriptArgs" type="xsd:string" minOccurs="0" />
+          <xsd:element name="TimeOut" type="xsd:unsignedInt" minOccurs="1" />
+          <xsd:element name="TimeOutInMS" type="xsd:unsignedInt" minOccurs="1" />
+		  <xsd:element name="MatchCount" type="xsd:unsignedInt" maxOccurs="1" minOccurs="0" />
+          <xsd:element name="SampleCount" type="xsd:unsignedInt" maxOccurs="1" minOccurs="0" />
+        </Configuration>
+        <OverrideableParameters />
+        <ModuleImplementation>
+          <Composite>
+            <MemberModules>
+              <WriteAction ID="Invoke" TypeID="MUL!Microsoft.Unix.WSMan.Invoke.VarPriv.WriteAction">
+                <TargetSystem>$Config/TargetSystem$</TargetSystem>
+                <UserName>$Config/UserName$</UserName>
+                <Password>$Config/Password$</Password>
+                <Uri>http://schemas.microsoft.com/wbem/wscim/1/cim-schema/2/SCX_OperatingSystem?__cimnamespace=root/scx</Uri>
+                <Selector />
+                <InvokeAction>ExecuteScript</InvokeAction>
+                <Input><![CDATA[
+                  <;p:ExecuteScript_INPUT xmlns:p="http://schemas.microsoft.com/wbem/wscim/1/cim-schema/2/SCX_OperatingSystem">;
+                  <;p:script>;$Config/Script$<;/p:script>;
+                  <;p:arguments>;$Config/ScriptArgs$<;/p:arguments>;
+                  <;p:timeout>;$Config/TimeOut$<;/p:timeout>;
+                  <;p:b64encoded>;true<;/p:b64encoded>;
+                  <;/p:ExecuteScript_INPUT>;]]>
+                </Input>
+                <TimeOutInMS>$Config/TimeOutInMS$</TimeOutInMS>
+              </WriteAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="Invoke" />
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>WSM!Microsoft.SystemCenter.WSManagement.WSManData</OutputType>
+        <InputType>System!System.BaseData</InputType>
+      </WriteActionModuleType>
+    </ModuleTypes>
+	<MonitorTypes>
+	  <!--
+        Unit Monitor Type for two-state monitoring with a Script, using WSMan Invoker Data Source.  Expressions are passed in dynamically.  This functions as a template for a monitor.
+      -->
+      <UnitMonitorType ID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.TwoState.MatchCountSampleCount.MonitorType" Accessibility="Public">
+        <MonitorTypeStates>
+          <MonitorTypeState ID="StatusOK" NoDetection="false" />
+          <MonitorTypeState ID="StatusError" NoDetection="false" />
+        </MonitorTypeStates>
+        <Configuration>
+          <IncludeSchemaTypes>
+            <SchemaType>System!System.ExpressionEvaluatorSchema</SchemaType>
+          </IncludeSchemaTypes>
+          <xsd:element name="Interval" type="xsd:unsignedInt" minOccurs="1" />
+          <xsd:element name="SyncTime" type="xsd:string" maxOccurs="1" />
+          <xsd:element name="TargetSystem" type="xsd:string" minOccurs="1" />
+          <xsd:element name="UserName" type="xsd:string" minOccurs="1" />
+          <xsd:element name="Password" type="xsd:string" minOccurs="1" />
+          <xsd:element name="Script" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+          <xsd:element name="ScriptArgs" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"/>
+          <xsd:element name="TimeOut" type="xsd:unsignedInt" minOccurs="1" />
+          <xsd:element name="TimeOutInMS" type="xsd:unsignedInt" minOccurs="1" />
+          <xsd:element name="HealthyExpression" type="ExpressionType" minOccurs="1" />
+          <xsd:element name="ErrorExpression" type="ExpressionType" minOccurs="1" />
+		  <xsd:element name="MatchCount" type="xsd:unsignedInt" maxOccurs="1" minOccurs="0" />
+          <xsd:element name="SampleCount" type="xsd:unsignedInt" maxOccurs="1" minOccurs="0" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="Interval" Selector="$Config/Interval$" ParameterType="int" />
+          <OverrideableParameter ID="Script" Selector="$Config/Script$" ParameterType="string" />
+          <OverrideableParameter ID="TimeOut" Selector="$Config/TimeOut$" ParameterType="int" />
+          <OverrideableParameter ID="TimeOutInMS" Selector="$Config/TimeOutInMS$" ParameterType="int" />
+          <OverrideableParameter ID="MatchCount" Selector="$Config/MatchCount$" ParameterType="int" />
+          <OverrideableParameter ID="SampleCount" Selector="$Config/SampleCount$" ParameterType="int" />
+        </OverrideableParameters>
+        <MonitorImplementation>
+          <MemberModules>
+            <DataSource ID="InvokeDS" TypeID="##CompanyID##.##AppName##.Unix.ShellCommand.Invoke.Script.MatchCountSampleCount.DS">
+              <Interval>$Config/Interval$</Interval>
+              <SyncTime>$Config/SyncTime$</SyncTime>
+              <TargetSystem>$Config/TargetSystem$</TargetSystem>
+              <UserName>$Config/UserName$</UserName>
+              <Password>$Config/Password$</Password>
+              <Script>$Config/Script$</Script>
+              <ScriptArgs>$Config/ScriptArgs$</ScriptArgs>
+              <TimeOut>$Config/TimeOut$</TimeOut>
+              <TimeOutInMS>$Config/TimeOutInMS$</TimeOutInMS>
+              <MatchCount>$Config/MatchCount$</MatchCount>
+              <SampleCount>$Config/SampleCount$</SampleCount>
+            </DataSource>
+            <ConditionDetection ID="CDStatusOK" TypeID="System!System.ExpressionFilter">
+              <Expression>$Config/HealthyExpression$</Expression>
+            </ConditionDetection>
+            <ConditionDetection ID="CDStatusError" TypeID="System!System.ExpressionFilter">
+              <Expression>$Config/ErrorExpression$</Expression>
+			  <SuppressionSettings>
+                  <MatchCount>$Config/MatchCount$</MatchCount>
+                  <SampleCount>$Config/SampleCount$</SampleCount>
+               </SuppressionSettings>
+            </ConditionDetection>
+          </MemberModules>
+          <RegularDetections>
+            <RegularDetection MonitorTypeStateID="StatusOK">
+              <Node ID="CDStatusOK">
+                <Node ID="InvokeDS" />
+              </Node>
+            </RegularDetection>
+            <RegularDetection MonitorTypeStateID="StatusError">
+              <Node ID="CDStatusError">
+                <Node ID="InvokeDS" />
+              </Node>
+            </RegularDetection>
+          </RegularDetections>
+        </MonitorImplementation>
+      </UnitMonitorType>
+	</MonitorTypes>
+  </TypeDefinitions>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="false">
+      <DisplayStrings>
+	    <DisplayString ElementID="##CompanyID##.##AppName##.Unix.ShellCommand.Invoke.Script.MatchCountSampleCount.DS">
+          <Name>##CompanyID## ##AppName## UNIX/Linux Script Data Source with MatchCount and SampleCount</Name>
+          <Description>##CompanyID## ##AppName## UNIX/Linux Script Data Source for WSMan invoke</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Unix.ShellCommand.Invoke.Script.MatchCountSampleCount.DS" SubElementID="Interval">
+          <Name>Interval</Name>
+          <Description>Interval in seconds.</Description>
+        </DisplayString>
+		
+		<DisplayString ElementID="##CompanyID##.##AppName##.Unix.ShellCommand.Invoke.Script.MatchCountSampleCount.PA">
+          <Name>UNIX/Linux Script</Name>
+          <Description>##CompanyID## ##AppName## UNIX/Linux Script Probe Action</Description>
+        </DisplayString>
+		
+		<DisplayString ElementID="##CompanyID##.##AppName##.Unix.ShellCommand.Invoke.Script.MatchCountSampleCount.WA">
+          <Name>UNIX/Linux Script</Name>
+          <Description>UNIX/Linux Script Write Action</Description>
+        </DisplayString>
+
+		<DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.TwoState.MatchCountSampleCount.MonitorType">
+          <Name>UNIX/Linux Script Two State Monitor</Name>
+          <Description>##CompanyID## ##AppName## Two states monitortype with MatchCount and SampleCount, based on a UNIX/Linux Script.</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.TwoState.MatchCountSampleCount.MonitorType" SubElementID="Interval">
+          <Name>Interval</Name>
+          <Description>Interval in seconds.</Description>
+        </DisplayString>
+
+      </DisplayStrings>
+      <KnowledgeArticles></KnowledgeArticles>
+    </LanguagePack>
+  </LanguagePacks>   
+</ManagementPackFragment>

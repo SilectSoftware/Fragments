@@ -1,0 +1,155 @@
+﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!--
+%%
+Description:
+  A MONITOR to run a SHELL COMMAND and compare the ouput of the command to expression criteria
+  Use this fragment if you have already imported the DataSource,ProbeAction,WriteAction,UnitMonitorType for UNIX to allow SampleCount and MatchCount.
+  In this example we compare the output based on whether it will return a "true" or a "false" but this can be changed
+  
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
+  ClassID - is the targeted class such as your custom class or Linux!Microsoft.Linux.Computer
+  UniqueID - Is a unique short description of the monitor purpose (NO SPACES OR SPECIAL CHARACTERS ALLOWED) such as "MonitorFilesInFolder"	
+  ShellCommand - ClearText Shell command script to use in the UNIX fragment
+
+Version: 1.0
+LastModified: 21-May-2019
+%%
+
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName##
+  ##ClassID##
+  ##UniqueID##  
+  ##ShellCommand##
+  ##SampleCount##
+  ##MatchCount##  
+
+This fragment depends on references:
+  RequiredReference: Alias="Health", ID="System.Health.Library"
+  RequiredReference: Alias="MLL", ID="Microsoft.Linux.Library"  
+  RequiredReference: Alias="MUL", ID="Microsoft.Unix.Library"
+  RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library"
+  RequiredReference: Alias="System", ID="System.Library"  
+  RequiredReference: Alias="WSM", ID="Microsoft.SystemCenter.WSManagement.Library"
+
+@@Author=Kevin Justin@@  
+--> 
+
+
+  <Monitoring>
+    <Monitors>
+      <UnitMonitor ID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.MatchCountSampleCount.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.TwoState.MatchCountSampleCount.MonitorType" ConfirmDelivery="false">
+        <Category>Custom</Category>
+        <AlertSettings AlertMessage="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.MatchCountSampleCount.Monitor_AlertMessageResourceID">
+          <AlertOnState>Error</AlertOnState>
+          <AutoResolve>true</AutoResolve>
+          <AlertPriority>Normal</AlertPriority>
+          <AlertSeverity>MatchMonitorHealth</AlertSeverity>
+        </AlertSettings>
+        <OperationalStates>
+          <OperationalState ID="StatusOK" MonitorTypeStateID="StatusOK" HealthState="Success" />
+          <OperationalState ID="StatusError" MonitorTypeStateID="StatusError" HealthState="Warning" />  <!-- HealthState = Warning or Error -->
+        </OperationalStates>
+        <Configuration>
+          <Interval>60</Interval>  <!-- seconds -->
+          <SyncTime />
+          <TargetSystem>$Target/Property[Type="MUL!Microsoft.Unix.Computer"]/NetworkName$</TargetSystem>
+          <UserName>$RunAs[Name="MUL!Microsoft.Unix.ActionAccount"]/UserName$</UserName>
+          <Password>$RunAs[Name="MUL!Microsoft.Unix.ActionAccount"]/Password$</Password>
+          <Script>##ShellCommand##</Script>
+          <ScriptArgs />
+          <TimeOut>120</TimeOut>
+          <TimeOutInMS>120000</TimeOutInMS>
+          <HealthyExpression>
+            <And>
+              <Expression>
+                <RegExExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">//*[local-name()="StdOut"]
+                            </XPathQuery>   <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
+                  </ValueExpression>
+                  <Operator>ContainsSubstring</Operator>  <!-- Common options for SimpleExpression Operator are "Equal" "NotEqual" "Greater" "Less" "GreaterEqual" "LessEqual" "Like" "NotLike" -->
+                  <Pattern>Up</Pattern>
+                </RegExExpression>
+              </Expression>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="Integer">//*[local-name()="ReturnCode"]
+                            </XPathQuery>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
+                  </ValueExpression>
+                  <Operator>Equal</Operator>  <!-- Common options for SimpleExpression Operator are "Equal" "NotEqual" "Greater" "Less" "GreaterEqual" "LessEqual" "Like" "NotLike" -->
+                  <ValueExpression>
+                    <Value Type="Integer">0
+                            </Value>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </And>
+          </HealthyExpression>
+          <ErrorExpression>
+            <And>
+              <Expression>
+                <RegExExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="String">//*[local-name()="StdOut"]
+                            </XPathQuery>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
+                  </ValueExpression>
+                  <Operator>DoesNotContainSubstring</Operator>  <!-- Common options for SimpleExpression Operator are "Equal" "NotEqual" "Greater" "Less" "GreaterEqual" "LessEqual" "Like" "NotLike" -->
+                  <Pattern>Up</Pattern>
+                </RegExExpression>
+              </Expression>
+              <Expression>
+                <SimpleExpression>
+                  <ValueExpression>
+                    <XPathQuery Type="Integer">//*[local-name()="ReturnCode"]
+                            </XPathQuery>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
+                  </ValueExpression>
+                  <Operator>Equal</Operator>  <!-- Common options for SimpleExpression Operator are "Equal" "NotEqual" "Greater" "Less" "GreaterEqual" "LessEqual" "Like" "NotLike" -->
+                  <ValueExpression>
+                    <Value Type="Integer">0
+                            </Value>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
+                  </ValueExpression>
+                </SimpleExpression>
+              </Expression>
+            </And>
+          </ErrorExpression>
+		  
+			<MatchCount>##MatchCount##</MatchCount>  <!-- How many matches before alert condition  -->
+			<SampleCount>##SampleCount##</SampleCount>  <!-- How many samples in error before alert condition  -->
+		  
+        </Configuration>
+      </UnitMonitor>
+    </Monitors>
+  </Monitoring>
+  <Presentation>
+    <StringResources>
+      <StringResource ID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.MatchCountSampleCount.Monitor_AlertMessageResourceID" />
+    </StringResources>
+  </Presentation>
+  <LanguagePacks>
+    <LanguagePack ID="ENU" IsDefault="false">
+      <DisplayStrings>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.MatchCountSampleCount.Monitor">
+          <Name>##CompanyID## ##AppName## Unix Shell Two State Command Monitor NOT encoded</Name>
+          <Description>##CompanyID## ##AppName## ##UniqueID## Unix ShellCommand TwoState MatchCountSampleCount Monitor</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.MatchCountSampleCount.Monitor" SubElementID="StatusOK">
+          <Name>StatusOK</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.MatchCountSampleCount.Monitor" SubElementID="StatusError">
+          <Name>StatusError</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.MatchCountSampleCount.Monitor_AlertMessageResourceID">
+          <Name>##CompanyID## ##AppName## ##UniqueID## Unix ShellCommand TwoState MatchCountSampleCount Monitor</Name>
+          <Description>##CompanyID## ##AppName## ##UniqueID## for a specific interval to then alert when MatchCount and SampleCount conditions have been met.
+		  
+		  See monitor properties for  NOT encoded script/command payload.
+		  Please see the alert context for details.</Description>
+        </DisplayString>
+      </DisplayStrings>
+      <KnowledgeArticles></KnowledgeArticles>
+    </LanguagePack>
+  </LanguagePacks>   
+</ManagementPackFragment>
