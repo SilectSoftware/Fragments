@@ -2,13 +2,18 @@
 <!--
 %%
 Description:
-  A MONITOR which runs a timed PowerShell script and inspects a FolderPath for changes since a reference date
-  The script queries a folder for any changed files and folders NEWER than a set date and the output submitted by the script in a propertybag.
-	The purpose is to monitor a folder and ensure nothing has been modified.  A modified file is BAD in this example
+  A MONITOR which runs a timed PowerShell script and inspects a FolderPath for files that are older than a threshold
+	If any files are OLDER than a threshold in Minutes we will consider this bad.
+	The example is when we expect files to change and if they do not something is broken
   CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
   AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
   ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem  
   UniqueID - Is a unique short description of the monitor purpose (NO SPACES OR SPECIAL CHARACTERS ALLOWED) such as "MonitorFilesInFolder"
+  IntervalSeconds - How often the script should run
+  FolderPath - a Local or UNC path to search such as C:\TEST\Folder or \\servername\sharename\TEST\Folder
+  FileExtensionFilter - a comma seperated wildcard supporting filter in the format of *.log,*.t?t
+  FileAgeThresholdMinutes - The INTEGER age of the files to be considered old in minutes
+  FileCountThreshold - The number of old files needed to breach the threshold
   
 Version: 1.2
 LastModified: 25-May-2019
@@ -18,7 +23,13 @@ In this fragment you need to replace:
   ##CompanyID##
   ##AppName##
   ##ClassID##
-  ##UniqueID##  
+  ##UniqueID##
+  ##IntervalSeconds##
+  ##FolderPath##
+  ##FileExtensionFilter##
+  ##FileAgeThresholdMinutes##
+  ##FileCountThreshold##
+	
 
 This fragment depends on references:  
   RequiredReference: Alias="System", ID="System.Library"
@@ -29,18 +40,22 @@ This fragment depends on references:
 --> 
 	<TypeDefinitions>
 		<ModuleTypes>
-			<DataSourceModuleType ID="##CompanyID##.##AppName##.##UniqueID##.Monitor.DataSource" Accessibility="Internal" Batching="false">
+			<DataSourceModuleType ID="##CompanyID##.##AppName##.##UniqueID##.FileAge.Monitor.DS" Accessibility="Internal" Batching="false">
 				<Configuration>
 					<xsd:element minOccurs="1" name="IntervalSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></xsd:element>
 					<xsd:element minOccurs="0" name="SyncTime" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></xsd:element>
-					<xsd:element minOccurs="1" name="FileDateThreshold" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></xsd:element>	
-					<xsd:element minOccurs="1" name="FolderPath" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></xsd:element>							
+					<xsd:element minOccurs="1" name="FileAgeThresholdMinutes" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></xsd:element>
+					<xsd:element minOccurs="1" name="FileExtensionFilter" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></xsd:element>
+					<xsd:element minOccurs="1" name="FileCountThreshold" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></xsd:element>
+					<xsd:element minOccurs="1" name="FolderPath" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></xsd:element>					
 					<xsd:element minOccurs="1" name="TimeoutSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></xsd:element>
 				</Configuration>
 				<OverrideableParameters>
 					<OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
 					<OverrideableParameter ID="SyncTime" Selector="$Config/SyncTime$" ParameterType="string" />
-					<OverrideableParameter ID="FileDateThreshold" Selector="$Config/FileDateThreshold$" ParameterType="string" />
+					<OverrideableParameter ID="FileAgeThresholdMinutes" Selector="$Config/FileAgeThresholdMinutes$" ParameterType="int" />
+					<OverrideableParameter ID="FileExtensionFilter" Selector="$Config/FileExtensionFilter$" ParameterType="string" />
+					<OverrideableParameter ID="FileCountThreshold" Selector="$Config/FileCountThreshold$" ParameterType="int" />
 					<OverrideableParameter ID="FolderPath" Selector="$Config/FolderPath$" ParameterType="string" />	
 					<OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
 				</OverrideableParameters>
@@ -57,27 +72,32 @@ This fragment depends on references:
 								</Scheduler>
 							</DataSource>
 							<ProbeAction ID="PA" TypeID="Windows!Microsoft.Windows.PowerShellPropertyBagTriggerOnlyProbe">
-								<ScriptName>##CompanyID##.##AppName##.##UniqueID##.Monitor.DataSource.ps1</ScriptName>
+								<ScriptName>##CompanyID##.##AppName##.##UniqueID##.FileAge.Monitor.DS.ps1</ScriptName>
 								<ScriptBody>
 #=================================================================================
-#  Folder and File changes since date monitoring script
+#  File age monitoring script
+#  This script takes a file age threshold, file extension filter, Count, and path
+#  It will evaluate if a threshold is breached and output good or bad with properties
 #
 #  Author: Kevin Holman
-#  v1.0
+#  v1.2
 #=================================================================================
-param($FileDateThreshold, $FolderPath)
+param([int]$FileAgeThresholdMinutes,[string]$FileExtensionFilter,[int]$FileCountThreshold,[string]$FolderPath)
 
 
 # Manual Testing section - put stuff here for manually testing script - typically parameters:
 #=================================================================================
-# $FileDateThreshold = "01/01/2019"
-# $FolderPath = "C:\Windows\temp"
+#[int]$FileAgeThresholdMinutes = 10
+#[string]$FileExtensionFilter = "*.message,*.n?ack"
+#[int]$FileCountThreshold = 2
+#[string]$FolderPath = "c:\test"
 #=================================================================================
+
 
 # Constants section - modify stuff here:
 #=================================================================================
 # Assign script name variable for use in event logging.  
-$ScriptName = "##CompanyID##.##AppName##.##UniqueID##.Monitor.DataSource.ps1"
+$ScriptName = "##CompanyID##.##AppName##.##UniqueID##.FileAge.Monitor.DS.ps1"
 $EventID = "8675"
 #=================================================================================
 
@@ -98,16 +118,18 @@ $bag = $momapi.CreatePropertyBag()
 # Begin MAIN script section
 #=================================================================================
 #Log script event that we are starting task
-$momapi.LogScriptEvent($ScriptName,$EventID,0,"`n Script is starting. `n FileDateThreshold: ($FileDateThreshold) `n FolderPath: ($FolderPath) `n Running as ($whoami).")
+$momapi.LogScriptEvent($ScriptName,$EventID,0,"`n Script is starting. `n FolderPath: ($FolderPath) `n FileExtensionFilter: ($FileExtensionFilter) `n FileAgeThresholdMinutes: ($FileAgeThresholdMinutes) `n FileCountThreshold: ($FileCountThreshold) `n Running as ($whoami).")
 
 # Test to see if the folder exists and exit with error if not
 IF (!(Test-Path $FolderPath))
 {
   $momapi.LogScriptEvent($ScriptName,$EventID,0,"FATAL ERROR:  The expected folder ($FolderPath) was not found.")
   $bag.AddValue('Result','BadCondition')
-  $bag.AddValue('Message','FolderMissing')
+  $bag.AddValue('Message','The FolderPath was not available.')
   $bag.AddValue('FolderPath',$FolderPath)
-  $bag.AddValue('FileDateThreshold',$FileDateThreshold)
+  $bag.AddValue('FileExtensionFilter',$FileExtensionFilter)
+  $bag.AddValue('FileAgeThresholdMinutes',$FileAgeThresholdMinutes)
+  $bag.AddValue('FileCountThreshold',$FileCountThreshold)
   # Return all bags
   $bag
   EXIT
@@ -115,58 +137,82 @@ IF (!(Test-Path $FolderPath))
 
 # Clear any previous errors
 $Error.Clear()
-# Get items in target folder path
-$FolderItems = Get-ChildItem $FolderPath -Recurse
+#Build array from filter string
+$FileExtensionFilterArr = $FileExtensionFilter.Split(",")
+
+# Create Empty array
+$FolderItems = @()
+#Create empty filter string:
+[string]$FileExtensionFilterString = ""
+
+# Loop through each filter extension and get the files then combine them into one big array
+# We use this because using Get-ChildItem -Include can throw errors if items change rapdily 
+FOREACH ($FileExtensionFilterString in $FileExtensionFilterArr)
+{
+  $FoldItemsTempArr = Get-ChildItem $FolderPath -Filter $FileExtensionFilterString
+  $FolderItems += $FoldItemsTempArr
+}
+
+#Exit the script if we throw an error from Get-ChildItem
 IF ($Error) 
 { 
   $momapi.LogScriptEvent($ScriptName,$EventID,1,"`n FATAL ERROR: Error while getting folderitems in path: ($FolderPath). `n Terminating script. `n Error is: ($Error).")
   $bag.AddValue('Result','BadCondition')
-  $bag.AddValue('Message','GetFolderItemsFailed')
+  $bag.AddValue('Message',"Running Get-ChildItem for the FolderPath threw an Error. $Error")
   $bag.AddValue('FolderPath',$FolderPath)
-  $bag.AddValue('FileDateThreshold',$FileDateThreshold)
+  $bag.AddValue('FileExtensionFilter',$FileExtensionFilter)
+  $bag.AddValue('FileAgeThresholdMinutes',$FileAgeThresholdMinutes)
+  $bag.AddValue('FileCountThreshold',$FileCountThreshold)
   # Return all bags
   $bag
   EXIT
 }
 
-# Get Date based on threshold
-[datetime]$DateThreshold = Get-Date $FileDateThreshold
+[int]$i=0
+[string]$OldFileList = "Files older than threshold: "
 
-# Set fileschanged value to false
-$FilesChanged = $false
-[string]$ChangedFileList = "Files have changed: "
-
-# Loop through each item and see if any folderitems are newer than threshold date
+# Loop through each item and see if any folderitems are older than the threshold
 FOREACH ($FolderItem in $FolderItems)
 {
   [datetime]$FolderItemLastWriteTime = $FolderItem.LastWriteTime
-  IF ($FolderItemLastWriteTime -gt $DateThreshold)
+  [int]$FileAge = ($StartTime - $FolderItemLastWriteTime).TotalMinutes
+    
+  IF ($FileAge -gt $FileAgeThresholdMinutes)
   {
-    $FilesChanged = $true
+    #Since this is true we found a file older than the threshold
+    #Increment a counter in case more than 1 file must be found older than threshold
+    $i++
     [string]$FolderItemFullName = $FolderItem.FullName
     [string]$FolderItemLastWriteTimeStr = $FolderItemLastWriteTime.ToString()
-    $ChangedFileList = $ChangedFileList + $FolderItemFullName + " " + $FolderItemLastWriteTimeStr + ", "
+    $OldFileList = $OldFileList + $FolderItemFullName + " " + $FolderItemLastWriteTimeStr + ", "
   }
 }
 
-IF ($FilesChanged -eq $true)
+#Evaluate if number of old files found is greater or equal to our threshold
+IF ($i -ge $FileCountThreshold)
 {
-  IF ($ChangedFileList.Length -gt 1024)
+  #This is true so number of old files were found greater than or equal to threshold
+  #Truncate log in case it is too big
+  IF ($OldFileList.Length -gt 1024)
   {
-    $ChangedFileList = $ChangedFileList.Substring(0,1024)
-  }
-  $momapi.LogScriptEvent($ScriptName,$EventID,0,"`n Folder and Files have changed since threshold date of ($DateThreshold). `n ($ChangedFileList).")
+    $OldFileList = $OldFileList.Substring(0,1024)
+  } 
+  $momapi.LogScriptEvent($ScriptName,$EventID,0,"`n Old files were found. `n ($OldFileList).")
   $bag.AddValue('Result','BadCondition')
-  $bag.AddValue('Message',$ChangedFileList)
+  $bag.AddValue('Message',$OldFileList)
   $bag.AddValue('FolderPath',$FolderPath)
-  $bag.AddValue('FileDateThreshold',$FileDateThreshold)
+  $bag.AddValue('FileExtensionFilter',$FileExtensionFilter)
+  $bag.AddValue('FileAgeThresholdMinutes',$FileAgeThresholdMinutes)
+  $bag.AddValue('FileCountThreshold',$FileCountThreshold)
 }
 ELSE
 {
   $bag.AddValue('Result','GoodCondition')
-  $bag.AddValue('Message','Files have not changed')
+  $bag.AddValue('Message','No old files found, or less than the FileCountThreshold')
   $bag.AddValue('FolderPath',$FolderPath)
-  $bag.AddValue('FileDateThreshold',$FileDateThreshold)
+  $bag.AddValue('FileExtensionFilter',$FileExtensionFilter)
+  $bag.AddValue('FileAgeThresholdMinutes',$FileAgeThresholdMinutes)
+  $bag.AddValue('FileCountThreshold',$FileCountThreshold)
 }
 
 # Return all bags
@@ -180,13 +226,21 @@ $EndTime = Get-Date
 $ScriptTime = ($EndTime - $StartTime).TotalSeconds
 $momapi.LogScriptEvent($ScriptName,$EventID,0,"`n Script Completed. `n Script Runtime: ($ScriptTime) seconds.")
 #=================================================================================
-# End of script
+# End of script								
                 </ScriptBody>
 								<Parameters>
 									<Parameter>
-										<Name>FileDateThreshold</Name>
-										<Value>$Config/FileDateThreshold$</Value>									
+										<Name>FileAgeThresholdMinutes</Name>
+										<Value>$Config/FileAgeThresholdMinutes$</Value>									
 									</Parameter>
+									<Parameter>
+										<Name>FileExtensionFilter</Name>
+										<Value>$Config/FileExtensionFilter$</Value>									
+									</Parameter>
+									<Parameter>
+										<Name>FileCountThreshold</Name>
+										<Value>$Config/FileCountThreshold$</Value>									
+									</Parameter>										
 									<Parameter>
 										<Name>FolderPath</Name>
 										<Value>$Config/FolderPath$</Value>									
@@ -206,7 +260,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"`n Script Completed. `n Script Ru
 			</DataSourceModuleType>
 		</ModuleTypes>
 		<MonitorTypes>
-			<UnitMonitorType ID="##CompanyID##.##AppName##.##UniqueID##.Monitor.MonitorType" Accessibility="Internal">
+			<UnitMonitorType ID="##CompanyID##.##AppName##.##UniqueID##.FileAge.Monitor.MonitorType" Accessibility="Internal">
 				<MonitorTypeStates>
 					<MonitorTypeState ID="GoodCondition" NoDetection="false" />
 					<MonitorTypeState ID="BadCondition" NoDetection="false" />
@@ -214,23 +268,29 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"`n Script Completed. `n Script Ru
 				<Configuration>
 					<xsd:element minOccurs="1" name="IntervalSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></xsd:element>
 					<xsd:element minOccurs="0" name="SyncTime" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></xsd:element>
-					<xsd:element minOccurs="1" name="FileDateThreshold" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></xsd:element>
+					<xsd:element minOccurs="1" name="FileAgeThresholdMinutes" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></xsd:element>
+					<xsd:element minOccurs="1" name="FileExtensionFilter" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></xsd:element>
+					<xsd:element minOccurs="1" name="FileCountThreshold" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></xsd:element>
 					<xsd:element minOccurs="1" name="FolderPath" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></xsd:element>					
 					<xsd:element minOccurs="1" name="TimeoutSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema"></xsd:element>
 				</Configuration>
 				<OverrideableParameters>
 					<OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
 					<OverrideableParameter ID="SyncTime" Selector="$Config/SyncTime$" ParameterType="string" />
-					<OverrideableParameter ID="FileDateThreshold" Selector="$Config/FileDateThreshold$" ParameterType="string" />
+					<OverrideableParameter ID="FileAgeThresholdMinutes" Selector="$Config/FileAgeThresholdMinutes$" ParameterType="int" />
+					<OverrideableParameter ID="FileExtensionFilter" Selector="$Config/FileExtensionFilter$" ParameterType="string" />
+					<OverrideableParameter ID="FileCountThreshold" Selector="$Config/FileCountThreshold$" ParameterType="int" />
 					<OverrideableParameter ID="FolderPath" Selector="$Config/FolderPath$" ParameterType="string" />	
 					<OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
 				</OverrideableParameters>
 				<MonitorImplementation>
 					<MemberModules>
-						<DataSource ID="DS" TypeID="##CompanyID##.##AppName##.##UniqueID##.Monitor.DataSource">
+						<DataSource ID="DS" TypeID="##CompanyID##.##AppName##.##UniqueID##.FileAge.Monitor.DS">
 							<IntervalSeconds>$Config/IntervalSeconds$</IntervalSeconds>
 							<SyncTime>$Config/SyncTime$</SyncTime>
-							<FileDateThreshold>$Config/FileDateThreshold$</FileDateThreshold>
+							<FileAgeThresholdMinutes>$Config/FileAgeThresholdMinutes$</FileAgeThresholdMinutes>
+							<FileExtensionFilter>$Config/FileExtensionFilter$</FileExtensionFilter>
+							<FileCountThreshold>$Config/FileCountThreshold$</FileCountThreshold>
 							<FolderPath>$Config/FolderPath$</FolderPath>
 							<TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
 						</DataSource>
@@ -291,29 +351,33 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"`n Script Completed. `n Script Ru
 	</TypeDefinitions>
 	<Monitoring>
 		<Monitors>
-			<UnitMonitor ID="##CompanyID##.##AppName##.##UniqueID##.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="##CompanyID##.##AppName##.##UniqueID##.Monitor.MonitorType" ConfirmDelivery="true">
+			<UnitMonitor ID="##CompanyID##.##AppName##.##UniqueID##.FileAge.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="##CompanyID##.##AppName##.##UniqueID##.FileAge.Monitor.MonitorType" ConfirmDelivery="true">
 				<Category>AvailabilityHealth</Category>
-				<AlertSettings AlertMessage="##CompanyID##.##AppName##.##UniqueID##.Monitor.AlertMessage">
+				<AlertSettings AlertMessage="##CompanyID##.##AppName##.##UniqueID##.FileAge.Monitor.AlertMessage">
 					<AlertOnState>Warning</AlertOnState>
 					<AutoResolve>true</AutoResolve>
 					<AlertPriority>Normal</AlertPriority>
 					<AlertSeverity>Error</AlertSeverity>
-          <AlertParameters>
-            <AlertParameter1>$Data/Context/Property[@Name='Result']$</AlertParameter1>
+					<AlertParameters>
+						<AlertParameter1>$Data/Context/Property[@Name='Result']$</AlertParameter1>
 						<AlertParameter2>$Data/Context/Property[@Name='Message']$</AlertParameter2>
 						<AlertParameter3>$Data/Context/Property[@Name='FolderPath']$</AlertParameter3>
-						<AlertParameter4>$Data/Context/Property[@Name='FileDateThreshold']$</AlertParameter4>
-          </AlertParameters>					
+						<AlertParameter4>$Data/Context/Property[@Name='FileExtensionFilter']$</AlertParameter4>
+						<AlertParameter5>$Data/Context/Property[@Name='FileAgeThresholdMinutes']$</AlertParameter5>
+						<AlertParameter6>$Data/Context/Property[@Name='FileCountThreshold']$</AlertParameter6>
+					</AlertParameters>					
 				</AlertSettings>
 				<OperationalStates>
 					<OperationalState ID="GoodCondition" MonitorTypeStateID="GoodCondition" HealthState="Success" />
 					<OperationalState ID="BadCondition" MonitorTypeStateID="BadCondition" HealthState="Warning" />
 				</OperationalStates>
 				<Configuration>
-					<IntervalSeconds>14400</IntervalSeconds>
+					<IntervalSeconds>##IntervalSeconds##</IntervalSeconds>
 					<SyncTime></SyncTime>
-					<FileDateThreshold>01/01/2019</FileDateThreshold>
-					<FolderPath>C:\Windows\temp</FolderPath>
+					<FileAgeThresholdMinutes>##FileAgeThresholdMinutes##</FileAgeThresholdMinutes>
+					<FileExtensionFilter>##FileExtensionFilter##</FileExtensionFilter>
+					<FileCountThreshold>##FileCountThreshold##</FileCountThreshold>
+					<FolderPath>##FolderPath##</FolderPath>
 					<TimeoutSeconds>120</TimeoutSeconds>
 				</Configuration>
 			</UnitMonitor>
@@ -321,27 +385,30 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"`n Script Completed. `n Script Ru
 	</Monitoring>
   <Presentation>
     <StringResources>
-      <StringResource ID="##CompanyID##.##AppName##.##UniqueID##.Monitor.AlertMessage" />
+      <StringResource ID="##CompanyID##.##AppName##.##UniqueID##.FileAge.Monitor.AlertMessage" />
     </StringResources>
   </Presentation>
   <LanguagePacks>
     <LanguagePack ID="ENU" IsDefault="true">
       <DisplayStrings>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Monitor">
-          <Name>##CompanyID## ##AppName## ##UniqueID## Monitor</Name>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.FileAge.Monitor">
+          <Name>##CompanyID## ##AppName## ##UniqueID## File Age Monitor</Name>
           <Description></Description>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Monitor" SubElementID="GoodCondition">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.FileAge.Monitor" SubElementID="GoodCondition">
           <Name>GoodCondition</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Monitor" SubElementID="BadCondition">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.FileAge.Monitor" SubElementID="BadCondition">
           <Name>BadCondition</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Monitor.AlertMessage">
-          <Name>##CompanyID## ##AppName## ##UniqueID## Monitor: Files have changed</Name>
-          <Description>##CompanyID## ##AppName## ##UniqueID## Monitor - result: {0}
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.FileAge.Monitor.AlertMessage">
+          <Name>##CompanyID## ##AppName## ##UniqueID## File Monitor: Old Files Found</Name>
+          <Description>##CompanyID## ##AppName## ##UniqueID## File Age Monitor
+Result: {0}
 FolderPath: {2}
-FileDateThreshold: {3}
+FileExtensionFilter: {3}
+FileAgeThresholdMinutes: {4}
+FileCountThreshold: {5}
 Message: {1}</Description>
         </DisplayString>		
       </DisplayStrings>

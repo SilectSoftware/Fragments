@@ -24,3 +24,16 @@
 		Combo.DataSource.Monitor.Unix.ShellCommand.NOT.Base64Encoded
 		Monitor.Unix.ShellCommand.NOT.Base64Encoded
 		Monitor.Unix.ShellCommand.Base64Encoded
+1.5 - (5-31-2019)
+	Updated multiple fragments:
+		Combo.DataSource.Monitor.Unix.ShellCommand.Base64Encoded.mpx
+		Combo.DataSource.Monitor.Unix.ShellCommand.NOT.Base64Encoded.mpx
+		Combo.DataSource.Unix.ShellCommand.Base64Encoded.mpx
+		Combo.DataSource.Unix.ShellCommand.NOT.Base64Encoded.mpx
+		Monitor.Unix.ShellCommand.NOT.Base64Encoded.mpx
+		Monitor.Unix.ShellCommand.Base64Encoded.mpx
+	Added fragments
+		Combo.DataSource.MonitorType.Unix.ShellCommand.Base64Encoded.mpx
+		Combo.DataSource.MonitorType.Unix.ShellCommand.NOT.Base64Encoded.mpx
+		Combo.DataSource.Monitor.Unix.ShellCommand.wCDATA.NOT.Base64Encoded.mpx
+		Combo.DataSource.Monitor.Unix.ShellCommand.withoutCDATA.NOT.Base64Encoded.mpx

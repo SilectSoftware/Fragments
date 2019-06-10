@@ -9,10 +9,10 @@ Description:
   AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
   ClassID - is the targeted class such as your custom class or MLL!Microsoft.Linux.Computer
   UniqueID - Is a unique short description of the monitor purpose (NO SPACES OR SPECIAL CHARACTERS ALLOWED) such as "MonitorFilesInFolder"	
-  ShellCommand - ClearText Shell command script to use in the UNIX fragment
-  Severity - Warning or Error health state
-  
-Version: 1.2
+  ShellCommand - My sample Shell command script needs to be base64 encoded before pasting into the fragment.  
+		Refer to Blog for Base64 encoding https://blogs.technet.microsoft.com/kevinjustin/2019/05/21/using-unix-mps-for-shell-commands-and-scripts/
+
+Version: 1.1
 LastModified: 29-May-2019
 %%
 
@@ -24,8 +24,6 @@ In this fragment you need to replace:
   ##ShellCommand##
   ##SampleCount##
   ##MatchCount##
-  ##Severity##
-    
 
 This fragment depends on references:
   RequiredReference: Alias="Health", ID="System.Health.Library"
@@ -59,7 +57,7 @@ This fragment depends on references:
           <xsd:element name="FilterExpression" type="ExpressionType" maxOccurs="1" minOccurs="0"/>
 		  <xsd:element name="MatchCount" type="xsd:unsignedInt" maxOccurs="1" minOccurs="0" />
           <xsd:element name="SampleCount" type="xsd:unsignedInt" maxOccurs="1" minOccurs="0" />
-        </Configuration>
+		  </Configuration>
         <OverrideableParameters>
           <OverrideableParameter ID="Interval" Selector="$Config/Interval$" ParameterType="int" />
           <OverrideableParameter ID="ScriptArgs" Selector="$Config/ScriptArgs$" ParameterType="string" />
@@ -136,7 +134,7 @@ This fragment depends on references:
                   &lt;p:script&gt;$Config/Script$&lt;/p:script&gt;
                   &lt;p:arguments&gt;$Config/ScriptArgs$&lt;/p:arguments&gt;
                   &lt;p:timeout&gt;$Config/TimeOut$&lt;/p:timeout&gt;
-                  &lt;p:b64encoded&gt;false&lt;/p:b64encoded&gt;
+                  &lt;p:b64encoded&gt;true&lt;/p:b64encoded&gt;
                   &lt;/p:ExecuteScript_INPUT&gt;
                 </Input>
                 <TimeOutInMS>$Config/TimeOutInMS$</TimeOutInMS>
@@ -182,7 +180,7 @@ This fragment depends on references:
                   &lt;p:script&gt;$Config/Script$&lt;/p:script&gt;
                   &lt;p:arguments&gt;$Config/ScriptArgs$&lt;/p:arguments&gt;
                   &lt;p:timeout&gt;$Config/TimeOut$&lt;/p:timeout&gt;
-                  &lt;p:b64encoded&gt;false&lt;/p:b64encoded&gt;
+                  &lt;p:b64encoded&gt;true&lt;/p:b64encoded&gt;
                   &lt;/p:ExecuteScript_INPUT&gt;
                 </Input>
                 <TimeOutInMS>$Config/TimeOutInMS$</TimeOutInMS>
@@ -274,102 +272,11 @@ This fragment depends on references:
       </UnitMonitorType>
 	</MonitorTypes>
   </TypeDefinitions>
-  <Monitoring>
-    <Monitors>
-      <UnitMonitor ID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.MatchCountSampleCount.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.TwoState.MatchCountSampleCount.MonitorType" ConfirmDelivery="false">
-        <Category>Custom</Category>
-        <AlertSettings AlertMessage="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.MatchCountSampleCount.Monitor_AlertMessageResourceID">
-          <AlertOnState>##Severity##</AlertOnState>
-          <AutoResolve>true</AutoResolve>
-          <AlertPriority>Normal</AlertPriority>
-          <AlertSeverity>MatchMonitorHealth</AlertSeverity>
-        </AlertSettings>
-        <OperationalStates>
-          <OperationalState ID="StatusOK" MonitorTypeStateID="StatusOK" HealthState="Success" />
-          <OperationalState ID="StatusError" MonitorTypeStateID="StatusError" HealthState="##Severity##" />  <!-- HealthState = Warning or Error -->
-        </OperationalStates>
-        <Configuration>
-          <Interval>60</Interval>  <!-- seconds -->
-          <SyncTime />
-          <TargetSystem>$Target/Property[Type="MUL!Microsoft.Unix.Computer"]/NetworkName$</TargetSystem>
-          <UserName>$RunAs[Name="MUL!Microsoft.Unix.ActionAccount"]/UserName$</UserName>
-          <Password>$RunAs[Name="MUL!Microsoft.Unix.ActionAccount"]/Password$</Password>
-          <Script>##ShellCommand##</Script>
-          <ScriptArgs />
-          <TimeOut>120</TimeOut>
-          <TimeOutInMS>120000</TimeOutInMS>
-          <HealthyExpression>
-            <And>
-              <Expression>
-                <RegExExpression>
-                  <ValueExpression>
-                    <XPathQuery Type="String">//*[local-name()="StdOut"]
-                            </XPathQuery>   <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
-                  </ValueExpression>
-                  <Operator>ContainsSubstring</Operator>  <!-- Common options for SimpleExpression Operator are "Equal" "NotEqual" "Greater" "Less" "GreaterEqual" "LessEqual" "Like" "NotLike" -->
-                  <Pattern>Up</Pattern>
-                </RegExExpression>
-              </Expression>
-              <Expression>
-                <SimpleExpression>
-                  <ValueExpression>
-                    <XPathQuery Type="Integer">//*[local-name()="ReturnCode"]
-                            </XPathQuery>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
-                  </ValueExpression>
-                  <Operator>Equal</Operator>  <!-- Common options for SimpleExpression Operator are "Equal" "NotEqual" "Greater" "Less" "GreaterEqual" "LessEqual" "Like" "NotLike" -->
-                  <ValueExpression>
-                    <Value Type="Integer">0
-                            </Value>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
-                  </ValueExpression>
-                </SimpleExpression>
-              </Expression>
-            </And>
-          </HealthyExpression>
-          <ErrorExpression>
-            <And>
-              <Expression>
-                <RegExExpression>
-                  <ValueExpression>
-                    <XPathQuery Type="String">//*[local-name()="StdOut"]
-                            </XPathQuery>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
-                  </ValueExpression>
-                  <Operator>DoesNotContainSubstring</Operator>  <!-- Common options for SimpleExpression Operator are "Equal" "NotEqual" "Greater" "Less" "GreaterEqual" "LessEqual" "Like" "NotLike" -->
-                  <Pattern>Up</Pattern>
-                </RegExExpression>
-              </Expression>
-              <Expression>
-                <SimpleExpression>
-                  <ValueExpression>
-                    <XPathQuery Type="Integer">//*[local-name()="ReturnCode"]
-                            </XPathQuery>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
-                  </ValueExpression>
-                  <Operator>Equal</Operator>  <!-- Common options for SimpleExpression Operator are "Equal" "NotEqual" "Greater" "Less" "GreaterEqual" "LessEqual" "Like" "NotLike" -->
-                  <ValueExpression>
-                    <Value Type="Integer">0
-                            </Value>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
-                  </ValueExpression>
-                </SimpleExpression>
-              </Expression>
-            </And>
-          </ErrorExpression>
-		  
-			<MatchCount>##MatchCount##</MatchCount>  <!-- How many matches before alert condition  -->
-			<SampleCount>##SampleCount##</SampleCount>  <!-- How many samples in error before alert condition  -->
-		  
-        </Configuration>
-      </UnitMonitor>
-    </Monitors>
-  </Monitoring>
-  <Presentation>
-    <StringResources>
-      <StringResource ID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.MatchCountSampleCount.Monitor_AlertMessageResourceID" />
-    </StringResources>
-  </Presentation>
   <LanguagePacks>
     <LanguagePack ID="ENU" IsDefault="false">
       <DisplayStrings>
 	    <DisplayString ElementID="##CompanyID##.##AppName##.Unix.ShellCommand.Invoke.Script.MatchCountSampleCount.DS">
-          <Name>##CompanyID## ##AppName## UNIX/Linux Script Data Source Script NOT encoded using MatchCount and SampleCount</Name>
+          <Name>##CompanyID## ##AppName## UNIX/Linux Script Data Source with MatchCount and SampleCount</Name>
           <Description>##CompanyID## ##AppName## UNIX/Linux Script Data Source for WSMan invoke</Description>
         </DisplayString>
         <DisplayString ElementID="##CompanyID##.##AppName##.Unix.ShellCommand.Invoke.Script.MatchCountSampleCount.DS" SubElementID="Interval">
@@ -389,30 +296,13 @@ This fragment depends on references:
 
 		<DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.TwoState.MatchCountSampleCount.MonitorType">
           <Name>UNIX/Linux Script Two State Monitor</Name>
-          <Description>##CompanyID## ##AppName## Two states monitortype NOT encoded using MatchCount and SampleCount, based on a UNIX/Linux Script.</Description>
+          <Description>##CompanyID## ##AppName## Two states monitortype with MatchCount and SampleCount, based on a UNIX/Linux Script.</Description>
         </DisplayString>
         <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.TwoState.MatchCountSampleCount.MonitorType" SubElementID="Interval">
           <Name>Interval</Name>
           <Description>Interval in seconds.</Description>
         </DisplayString>
 
-        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.MatchCountSampleCount.Monitor">
-          <Name>##CompanyID## ##AppName## Unix Shell Two State Command Monitor NOT encoded</Name>
-          <Description>##CompanyID## ##AppName## ##UniqueID## Unix ShellCommand TwoState MatchCountSampleCount Monitor</Description>
-        </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.MatchCountSampleCount.Monitor" SubElementID="StatusOK">
-          <Name>StatusOK</Name>
-        </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.MatchCountSampleCount.Monitor" SubElementID="StatusError">
-          <Name>StatusError</Name>
-        </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.MatchCountSampleCount.Monitor_AlertMessageResourceID">
-          <Name>##CompanyID## ##AppName## ##UniqueID## Unix ShellCommand TwoState MatchCountSampleCount Monitor</Name>
-          <Description>##CompanyID## ##AppName## ##UniqueID## for a specific interval to then alert when MatchCount and SampleCount conditions have been met.
-		  
-		  See monitor properties for  NOT encoded script/command payload.
-		  Please see the alert context for details.</Description>
-        </DisplayString>
       </DisplayStrings>
       <KnowledgeArticles></KnowledgeArticles>
     </LanguagePack>

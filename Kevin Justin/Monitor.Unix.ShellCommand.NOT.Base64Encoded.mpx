@@ -8,12 +8,13 @@ Description:
   
   CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
   AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
-  ClassID - is the targeted class such as your custom class or Linux!Microsoft.Linux.Computer
+  ClassID - is the targeted class such as your custom class or MLL!Microsoft.Linux.Computer
   UniqueID - Is a unique short description of the monitor purpose (NO SPACES OR SPECIAL CHARACTERS ALLOWED) such as "MonitorFilesInFolder"	
   ShellCommand - ClearText Shell command script to use in the UNIX fragment
-
-Version: 1.0
-LastModified: 21-May-2019
+  State - Health State is Warning or Error
+  
+Version: 1.1
+LastModified: 29-May-2019
 %%
 
 In this fragment you need to replace:
@@ -24,14 +25,12 @@ In this fragment you need to replace:
   ##ShellCommand##
   ##SampleCount##
   ##MatchCount##  
-
+  ##State##
+  
 This fragment depends on references:
   RequiredReference: Alias="Health", ID="System.Health.Library"
   RequiredReference: Alias="MLL", ID="Microsoft.Linux.Library"  
   RequiredReference: Alias="MUL", ID="Microsoft.Unix.Library"
-  RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library"
-  RequiredReference: Alias="System", ID="System.Library"  
-  RequiredReference: Alias="WSM", ID="Microsoft.SystemCenter.WSManagement.Library"
 
 @@Author=Kevin Justin@@  
 --> 
@@ -42,14 +41,14 @@ This fragment depends on references:
       <UnitMonitor ID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.MatchCountSampleCount.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.TwoState.MatchCountSampleCount.MonitorType" ConfirmDelivery="false">
         <Category>Custom</Category>
         <AlertSettings AlertMessage="##CompanyID##.##AppName##.##UniqueID##.Unix.ShellCommand.MatchCountSampleCount.Monitor_AlertMessageResourceID">
-          <AlertOnState>Error</AlertOnState>
+          <AlertOnState>##State##</AlertOnState>
           <AutoResolve>true</AutoResolve>
           <AlertPriority>Normal</AlertPriority>
           <AlertSeverity>MatchMonitorHealth</AlertSeverity>
         </AlertSettings>
         <OperationalStates>
           <OperationalState ID="StatusOK" MonitorTypeStateID="StatusOK" HealthState="Success" />
-          <OperationalState ID="StatusError" MonitorTypeStateID="StatusError" HealthState="Warning" />  <!-- HealthState = Warning or Error -->
+          <OperationalState ID="StatusError" MonitorTypeStateID="StatusError" HealthState="##State##" />  <!-- HealthState = Warning or Error -->
         </OperationalStates>
         <Configuration>
           <Interval>60</Interval>  <!-- seconds -->
@@ -70,7 +69,7 @@ This fragment depends on references:
                             </XPathQuery>   <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
                   </ValueExpression>
                   <Operator>ContainsSubstring</Operator>  <!-- Common options for SimpleExpression Operator are "Equal" "NotEqual" "Greater" "Less" "GreaterEqual" "LessEqual" "Like" "NotLike" -->
-                  <Pattern>Up</Pattern>
+                  <Pattern>true</Pattern>
                 </RegExExpression>
               </Expression>
               <Expression>
@@ -97,7 +96,7 @@ This fragment depends on references:
                             </XPathQuery>  <!-- Common options for XPathQuery Type are "Boolean" "String" "Integer" "Double" -->
                   </ValueExpression>
                   <Operator>DoesNotContainSubstring</Operator>  <!-- Common options for SimpleExpression Operator are "Equal" "NotEqual" "Greater" "Less" "GreaterEqual" "LessEqual" "Like" "NotLike" -->
-                  <Pattern>Up</Pattern>
+                  <Pattern>true</Pattern>
                 </RegExExpression>
               </Expression>
               <Expression>

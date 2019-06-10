@@ -6,17 +6,17 @@ Description:
   CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
   AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
   AppFilePath - is the directory path to your application conf file, such as: /opt/myapp/myapp.conf
-	UniqueID - We need a Unique ID to reuse the fragment within the same MP.  Use a shortened descriptive name with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  UniqueID - We need a Unique ID to reuse the fragment within the same MP.  Use a shortened descriptive name of the app with NO SPACES OR SPECIAL CHARACTERS ALLOWED
 	
-Version: 1.3
-LastModified: 12-Feb-2019
+Version: 1.4
+LastModified: 26-May-2019
 %%
 
 In this fragment you need to replace:
   ##CompanyID##
   ##AppName##
   ##AppFilePath##
-	##UniqueID##
+  ##UniqueID##
 
 This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"
@@ -28,14 +28,14 @@ This fragment depends on references:
   <TypeDefinitions>
     <EntityTypes>
       <ClassTypes>
-        <ClassType ID="##CompanyID##.##AppName##.##UniqueID##.Unix.Class" Accessibility="Public" Abstract="false" Base="MUL!Microsoft.Unix.LocalApplication" Hosted="true" Singleton="false">
+        <ClassType ID="##CompanyID##.##AppName##.##UniqueID##.Class" Accessibility="Public" Abstract="false" Base="MUL!Microsoft.Unix.LocalApplication" Hosted="true" Singleton="false">
           <Property ID="AppName" Type="string" Key="true" CaseSensitive="false" MaxLength="256" MinLength="0" />
           <Property ID="InstallPath" Type="string" Key="false" CaseSensitive="false" MaxLength="256" MinLength="0" />
         </ClassType>
       </ClassTypes>
     </EntityTypes>
     <ModuleTypes>
-      <DataSourceModuleType ID="##CompanyID##.##AppName##.##UniqueID##.Unix.Class.Discovery.DS" Accessibility="Public" Batching="false">
+      <DataSourceModuleType ID="##CompanyID##.##AppName##.##UniqueID##.Class.Discovery.DS" Accessibility="Public" Batching="false">
         <Configuration>
           <xsd:element minOccurs="1" name="TargetSystem" type="xsd:string" />
           <xsd:element minOccurs="1" name="IntervalSeconds" type="xsd:integer" />
@@ -47,7 +47,7 @@ This fragment depends on references:
         <ModuleImplementation Isolation="Any">
           <Composite>
             <MemberModules>
-              <DataSource ID="DS" TypeID="##CompanyID##.##AppName##.##UniqueID##.Unix.Class.Discovery.Shell.DS">
+              <DataSource ID="DS" TypeID="##CompanyID##.##AppName##.##UniqueID##.Class.Discovery.Shell.DS">
                 <TargetSystem>$Config/TargetSystem$</TargetSystem>
                 <ShellCommand>ls $Config/AppPath$ | wc -l</ShellCommand>
                 <TimeoutSeconds>120</TimeoutSeconds>
@@ -65,15 +65,15 @@ This fragment depends on references:
                     </ValueExpression>
                   </SimpleExpression>
                 </Expression>
-                <ClassId>$MPElement[Name='##CompanyID##.##AppName##.##UniqueID##.Unix.Class']$</ClassId>
+                <ClassId>$MPElement[Name='##CompanyID##.##AppName##.##UniqueID##.Class']$</ClassId>
                 <InstanceSettings>
                   <Settings>
                     <Setting>
-                      <Name>$MPElement[Name='##CompanyID##.##AppName##.##UniqueID##.Unix.Class']/AppName$</Name>
-                      <Value>##AppName##</Value>
+                      <Name>$MPElement[Name='##CompanyID##.##AppName##.##UniqueID##.Class']/AppName$</Name>
+                      <Value>##UniqueID##</Value>
                     </Setting>
                     <Setting>
-                      <Name>$MPElement[Name='##CompanyID##.##AppName##.##UniqueID##.Unix.Class']/InstallPath$</Name>
+                      <Name>$MPElement[Name='##CompanyID##.##AppName##.##UniqueID##.Class']/InstallPath$</Name>
                       <Value>$Config/AppPath$</Value>
                     </Setting>
                     <Setting>
@@ -97,7 +97,7 @@ This fragment depends on references:
         </ModuleImplementation>
         <OutputType>System!System.Discovery.Data</OutputType>
       </DataSourceModuleType>
-      <DataSourceModuleType ID="##CompanyID##.##AppName##.##UniqueID##.Unix.Class.Discovery.Shell.DS" Accessibility="Public" Batching="false">
+      <DataSourceModuleType ID="##CompanyID##.##AppName##.##UniqueID##.Class.Discovery.Shell.DS" Accessibility="Public" Batching="false">
         <Configuration>
           <xsd:element minOccurs="1" name="TargetSystem" type="xsd:string" />
           <xsd:element minOccurs="1" name="ShellCommand" type="xsd:string" />
@@ -118,7 +118,7 @@ This fragment depends on references:
                   <ExcludeDates />
                 </Scheduler>
               </DataSource>
-              <ProbeAction ID="Probe" TypeID="##CompanyID##.##AppName##.Unix.ShellCommand.PA">
+              <ProbeAction ID="Probe" TypeID="##CompanyID##.##AppName##.##UniqueID##.Class.Discovery.ShellCommand.PA">
                 <TargetSystem>$Config/TargetSystem$</TargetSystem>
                 <ShellCommand>$Config/ShellCommand$</ShellCommand>
                 <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
@@ -133,7 +133,7 @@ This fragment depends on references:
         </ModuleImplementation>
         <OutputType>MSWL!Microsoft.SystemCenter.WSManagement.WSManData</OutputType>
       </DataSourceModuleType>
-      <ProbeActionModuleType ID="##CompanyID##.##AppName##.Unix.ShellCommand.PA" Accessibility="Public" Batching="false" PassThrough="false">
+      <ProbeActionModuleType ID="##CompanyID##.##AppName##.##UniqueID##.Class.Discovery.ShellCommand.PA" Accessibility="Public" Batching="false" PassThrough="false">
         <Configuration>
           <xsd:element minOccurs="1" name="TargetSystem" type="xsd:string" />
           <xsd:element minOccurs="1" name="ShellCommand" type="xsd:string" />
@@ -172,12 +172,12 @@ This fragment depends on references:
   </TypeDefinitions>
   <Monitoring>
     <Discoveries>
-      <Discovery ID="##CompanyID##.##AppName##.##UniqueID##.Unix.Class.Discovery" Enabled="true" Target="MUL!Microsoft.Unix.Computer" ConfirmDelivery="true" Remotable="true" Priority="Normal">
+      <Discovery ID="##CompanyID##.##AppName##.##UniqueID##.Class.Discovery" Enabled="true" Target="MUL!Microsoft.Unix.Computer" ConfirmDelivery="true" Remotable="true" Priority="Normal">
         <Category>Discovery</Category>
         <DiscoveryTypes>
-          <DiscoveryClass TypeID="##CompanyID##.##AppName##.##UniqueID##.Unix.Class" />
+          <DiscoveryClass TypeID="##CompanyID##.##AppName##.##UniqueID##.Class" />
         </DiscoveryTypes>
-        <DataSource ID="DS" TypeID="##CompanyID##.##AppName##.##UniqueID##.Unix.Class.Discovery.DS">
+        <DataSource ID="DS" TypeID="##CompanyID##.##AppName##.##UniqueID##.Class.Discovery.DS">
           <TargetSystem>$Target/Property[Type="MUL!Microsoft.Unix.Computer"]/PrincipalName$</TargetSystem>
           <IntervalSeconds>14400</IntervalSeconds>
           <AppPath>##AppFilePath##</AppPath>
@@ -188,18 +188,18 @@ This fragment depends on references:
   <LanguagePacks>
     <LanguagePack ID="ENU" IsDefault="true">
       <DisplayStrings>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Unix.Class">
-          <Name>##CompanyID## ##AppName## ##UniqueID## Unix Class</Name>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Class">
+          <Name>##CompanyID## ##AppName## ##UniqueID## Class</Name>
           <Description></Description>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Unix.Class" SubElementID="AppName">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Class" SubElementID="AppName">
           <Name>Application Name</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Unix.Class" SubElementID="InstallPath">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Class" SubElementID="InstallPath">
           <Name>Install Path</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Unix.Class.Discovery">
-          <Name>##CompanyID## ##AppName## ##UniqueID## Unix Discovery</Name>
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Class.Discovery">
+          <Name>##CompanyID## ##AppName## ##UniqueID## Class Discovery</Name>
           <Description></Description>
         </DisplayString>		
       </DisplayStrings>

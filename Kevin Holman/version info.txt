@@ -126,4 +126,11 @@
 		Monitor.TimedScript.PowerShell.FolderFilesChanged.mpx
 		Folder.mpx
 	Bug Fixes for:
-		Added UniqueID to class and discovery workflows to allow reuse in the same MP	
+		Added UniqueID to class and discovery workflows to allow reuse in the same MP
+3.9 - (6-07-2019)
+	New Fragments:
+		Monitor.TimedScript.PowerShell.FileAge.mpx
+		Monitor.TimedScript.PowerShell.WithParams.mpx
+		Class.And.Discovery.Unix.CatFileProperties.mpx
+	Bug Fixes:
+		Multiple fragments - fixing displaynames, enhancing scripts

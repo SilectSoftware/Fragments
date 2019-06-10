@@ -25,7 +25,7 @@ In this fragment you need to replace:
   ##SampleCount##
   ##MatchCount##
   ##Severity##
-    
+  
 
 This fragment depends on references:
   RequiredReference: Alias="Health", ID="System.Health.Library"

@@ -7,12 +7,12 @@ Description:
   
   CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
   AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
-  ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem  
+  ClassID - is the targeted class such as your custom class or MLL!Microsoft.Linux.Computer
   UniqueID - Is a unique short description of the monitor purpose (NO SPACES OR SPECIAL CHARACTERS ALLOWED) such as "MonitorFilesInFolder"	
   ShellCommand - ClearText Shell command script to use in the UNIX fragment
 
-Version: 1.0
-LastModified: 21-May-2019
+Version: 1.1
+LastModified: 29-May-2019
 %%
 
 In this fragment you need to replace:
@@ -21,6 +21,8 @@ In this fragment you need to replace:
   ##ClassID##
   ##UniqueID##  
   ##ShellCommand##
+  ##SampleCount##
+  ##MatchCount##  
 
 This fragment depends on references:
   RequiredReference: Alias="Health", ID="System.Health.Library"
@@ -28,7 +30,7 @@ This fragment depends on references:
   RequiredReference: Alias="MUL", ID="Microsoft.Unix.Library"
   RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library"
   RequiredReference: Alias="System", ID="System.Library"  
-  RequiredReference: Alias="WSM", ID="Microsoft.SystemCenter.WSManagement.Library"
+  RequiredReference: Alias="MSWL", ID="Microsoft.SystemCenter.WSManagement.Library"
 
 @@Author=Kevin Justin@@  
 --> 
@@ -42,19 +44,19 @@ This fragment depends on references:
           <IncludeSchemaTypes>
             <SchemaType>System!System.ExpressionEvaluatorSchema</SchemaType>
           </IncludeSchemaTypes>
-          <xsd:element name="Interval" type="xsd:unsignedInt" minOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
-          <xsd:element name="SyncTime" type="xsd:string" minOccurs="0" maxOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
-          <xsd:element name="TargetSystem" type="xsd:string" minOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
-          <xsd:element name="UserName" type="xsd:string" minOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
-          <xsd:element name="Password" type="xsd:string" minOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
-          <xsd:element name="Script" type="xsd:string" minOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
-          <xsd:element name="ScriptArgs" type="xsd:string" minOccurs="0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
-          <xsd:element name="TimeOut" type="xsd:unsignedInt" minOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
-          <xsd:element name="TimeOutInMS" type="xsd:unsignedInt" minOccurs="1" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
-          <xsd:element name="FilterExpression" type="ExpressionType" maxOccurs="1" minOccurs="0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
-          <xsd:element name="MatchCount" type="xsd:unsignedInt" maxOccurs="1" minOccurs="0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
-          <xsd:element name="SampleCount" type="xsd:unsignedInt" maxOccurs="1" minOccurs="0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
-        </Configuration>
+           <xsd:element name="Interval" type="xsd:unsignedInt"  minOccurs="1" />  <!-- Originally this had for each line xmlns:xsd="http://www.w3.org/2001/XMLSchema" -->
+          <xsd:element name="SyncTime" type="xsd:string" minOccurs="0" maxOccurs="1" />
+          <xsd:element name="TargetSystem" type="xsd:string" minOccurs="1" />
+          <xsd:element name="UserName" type="xsd:string" minOccurs="1" />
+          <xsd:element name="Password" type="xsd:string" minOccurs="1" />
+          <xsd:element name="Script" type="xsd:string" minOccurs="1" />
+          <xsd:element name="ScriptArgs" type="xsd:string" minOccurs="0" />
+          <xsd:element name="TimeOut" type="xsd:unsignedInt" minOccurs="1" />
+          <xsd:element name="TimeOutInMS" type="xsd:unsignedInt" minOccurs="1" />
+          <xsd:element name="FilterExpression" type="ExpressionType" maxOccurs="1" minOccurs="0"/>
+		  <xsd:element name="MatchCount" type="xsd:unsignedInt" maxOccurs="1" minOccurs="0" />
+          <xsd:element name="SampleCount" type="xsd:unsignedInt" maxOccurs="1" minOccurs="0" />
+		</Configuration>
         <OverrideableParameters>
           <OverrideableParameter ID="Interval" Selector="$Config/Interval$" ParameterType="int" />
           <OverrideableParameter ID="ScriptArgs" Selector="$Config/ScriptArgs$" ParameterType="string" />
@@ -99,7 +101,7 @@ This fragment depends on references:
             </Composition>
           </Composite>
         </ModuleImplementation>
-        <OutputType>WSM!Microsoft.SystemCenter.WSManagement.WSManData</OutputType>
+        <OutputType>MSWL!Microsoft.SystemCenter.WSManagement.WSManData</OutputType>
       </DataSourceModuleType>
 	  
 	  <!-- Invoke Script Probe Action -->
@@ -126,13 +128,13 @@ This fragment depends on references:
                 <Uri>http://schemas.microsoft.com/wbem/wscim/1/cim-schema/2/SCX_OperatingSystem?__cimnamespace=root/scx</Uri>
                 <Selector />
                 <InvokeAction>ExecuteScript</InvokeAction>
-                <Input><![CDATA[
-                  <;p:ExecuteScript_INPUT xmlns:p="http://schemas.microsoft.com/wbem/wscim/1/cim-schema/2/SCX_OperatingSystem">;
-                  <;p:script>;$Config/Script$<;/p:script>;
-                  <;p:arguments>;$Config/ScriptArgs$<;/p:arguments>;
-                  <;p:timeout>;$Config/TimeOut$<;/p:timeout>;
-                  <;p:b64encoded>;false<;/p:b64encoded>;
-                  <;/p:ExecuteScript_INPUT>;]]>
+                <Input>
+                  &lt;p:ExecuteScript_INPUT xmlns:p="http://schemas.microsoft.com/wbem/wscim/1/cim-schema/2/SCX_OperatingSystem"&gt;
+                  &lt;p:script&gt;$Config/Script$&lt;/p:script&gt;
+                  &lt;p:arguments&gt;$Config/ScriptArgs$&lt;/p:arguments&gt;
+                  &lt;p:timeout&gt;$Config/TimeOut$&lt;/p:timeout&gt;
+                  &lt;p:b64encoded&gt;false&lt;/p:b64encoded&gt;
+                  &lt;/p:ExecuteScript_INPUT&gt;
                 </Input>
                 <TimeOutInMS>$Config/TimeOutInMS$</TimeOutInMS>
 				
@@ -144,7 +146,7 @@ This fragment depends on references:
             </Composition>
           </Composite>
         </ModuleImplementation>
-        <OutputType>WSM!Microsoft.SystemCenter.WSManagement.WSManData</OutputType>
+        <OutputType>MSWL!Microsoft.SystemCenter.WSManagement.WSManData</OutputType>
         <InputType>System!System.BaseData</InputType>
       </ProbeActionModuleType>
 	  
@@ -177,7 +179,7 @@ This fragment depends on references:
                   <;p:script>;$Config/Script$<;/p:script>;
                   <;p:arguments>;$Config/ScriptArgs$<;/p:arguments>;
                   <;p:timeout>;$Config/TimeOut$<;/p:timeout>;
-                  <;p:b64encoded>;false<;/p:b64encoded>;
+                  <;p:b64encoded>;true<;/p:b64encoded>;
                   <;/p:ExecuteScript_INPUT>;]]>
                 </Input>
                 <TimeOutInMS>$Config/TimeOutInMS$</TimeOutInMS>
@@ -188,7 +190,7 @@ This fragment depends on references:
             </Composition>
           </Composite>
         </ModuleImplementation>
-        <OutputType>WSM!Microsoft.SystemCenter.WSManagement.WSManData</OutputType>
+        <OutputType>MSWL!Microsoft.SystemCenter.WSManagement.WSManData</OutputType>
         <InputType>System!System.BaseData</InputType>
       </WriteActionModuleType>
     </ModuleTypes>

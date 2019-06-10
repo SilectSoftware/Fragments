@@ -12,8 +12,8 @@ Description:
   ServiceName - must be the short name of the service as seen in the HKLM\SYSTEM\CCS\Services registry
   UniqueID - We need a Unique ID for this Monitor to reuse the fragment.  If your service name contains spaces - create a shortened ServiceName with NO SPACES OR SPECIAL CHARACTERS ALLOWED
 
-Version: 1.1
-LastModified: 10-Oct-2018
+Version: 1.2
+LastModified: 25-May-2019
 %%
 
 In this fragment you need to replace:
@@ -460,9 +460,9 @@ This fragment depends on references:
         <Configuration>
           <ComputerName />
           <ServiceName>##ServiceName##</ServiceName> <!-- This is the service name as seen in the registry at HKLM\SYSTEM\CCS\Services -->
-		  <IntervalSeconds>30</IntervalSeconds> <!-- How often to check the state of the service.  Every 30 seconds is the default.-->
+					<IntervalSeconds>30</IntervalSeconds> <!-- How often to check the state of the service.  Every 30 seconds is the default.-->
           <CheckStartupType>true</CheckStartupType>
-		  <Samples>2</Samples> <!-- The number of consecutive times a service is detected as not running before changing state of the monitor. 2 samples is the default -->
+					<Samples>2</Samples> <!-- The number of consecutive times a service is detected as not running before changing state of the monitor. 2 samples is the default -->
         </Configuration>		
       </UnitMonitor>	  
     </Monitors>

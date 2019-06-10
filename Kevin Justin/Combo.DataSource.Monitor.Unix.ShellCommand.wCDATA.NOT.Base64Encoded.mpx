@@ -25,7 +25,7 @@ In this fragment you need to replace:
   ##SampleCount##
   ##MatchCount##
   ##Severity##
-    
+  
 
 This fragment depends on references:
   RequiredReference: Alias="Health", ID="System.Health.Library"
@@ -131,17 +131,15 @@ This fragment depends on references:
                 <Uri>http://schemas.microsoft.com/wbem/wscim/1/cim-schema/2/SCX_OperatingSystem?__cimnamespace=root/scx</Uri>
                 <Selector />
                 <InvokeAction>ExecuteScript</InvokeAction>
-                <Input>
-                  &lt;p:ExecuteScript_INPUT xmlns:p="http://schemas.microsoft.com/wbem/wscim/1/cim-schema/2/SCX_OperatingSystem"&gt;
-                  &lt;p:script&gt;$Config/Script$&lt;/p:script&gt;
-                  &lt;p:arguments&gt;$Config/ScriptArgs$&lt;/p:arguments&gt;
-                  &lt;p:timeout&gt;$Config/TimeOut$&lt;/p:timeout&gt;
-                  &lt;p:b64encoded&gt;false&lt;/p:b64encoded&gt;
-                  &lt;/p:ExecuteScript_INPUT&gt;
+                <Input><![CDATA[
+                  <p:ExecuteScript_INPUT xmlns:p="http://schemas.microsoft.com/wbem/wscim/1/cim-schema/2/SCX_OperatingSystem">
+                  <p:script>$Config/Script$</p:script>
+                  <p:arguments>$Config/ScriptArgs$</p:arguments>
+                  <p:timeout>$Config/TimeOut$</p:timeout>
+                  <p:b64encoded>false</p:b64encoded>
+                  </p:ExecuteScript_INPUT>]]>
                 </Input>
                 <TimeOutInMS>$Config/TimeOutInMS$</TimeOutInMS>
-				
-				
               </ProbeAction>
             </MemberModules>
             <Composition>
@@ -177,13 +175,13 @@ This fragment depends on references:
                 <Uri>http://schemas.microsoft.com/wbem/wscim/1/cim-schema/2/SCX_OperatingSystem?__cimnamespace=root/scx</Uri>
                 <Selector />
                 <InvokeAction>ExecuteScript</InvokeAction>
-                <Input>
-                  &lt;p:ExecuteScript_INPUT xmlns:p="http://schemas.microsoft.com/wbem/wscim/1/cim-schema/2/SCX_OperatingSystem"&gt;
-                  &lt;p:script&gt;$Config/Script$&lt;/p:script&gt;
-                  &lt;p:arguments&gt;$Config/ScriptArgs$&lt;/p:arguments&gt;
-                  &lt;p:timeout&gt;$Config/TimeOut$&lt;/p:timeout&gt;
-                  &lt;p:b64encoded&gt;false&lt;/p:b64encoded&gt;
-                  &lt;/p:ExecuteScript_INPUT&gt;
+                <Input><![CDATA[
+                  <p:ExecuteScript_INPUT xmlns:p="http://schemas.microsoft.com/wbem/wscim/1/cim-schema/2/SCX_OperatingSystem">
+                  <p:script>$Config/Script$</p:script>
+                  <p:arguments>$Config/ScriptArgs$</p:arguments>
+                  <p:timeout>$Config/TimeOut$</p:timeout>
+                  <p:b64encoded>false</p:b64encoded>
+                  </p:ExecuteScript_INPUT>]]>
                 </Input>
                 <TimeOutInMS>$Config/TimeOutInMS$</TimeOutInMS>
               </WriteAction>
