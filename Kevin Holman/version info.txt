@@ -134,3 +134,17 @@
 		Class.And.Discovery.Unix.CatFileProperties.mpx
 	Bug Fixes:
 		Multiple fragments - fixing displaynames, enhancing scripts
+4.0 - (07-25-2019)
+	New Fragments:
+		Class.Group.SQLQueryBasedGroupWindowsComputersAndWatchers.mpx
+		Rule.AlertGenerating.EventLog.EventIdEquals.mpx
+		Rule.AlertGenerating.EventLog.EventIdEquals.SourceEquals.DescriptionContains.mpx
+		Rule.AlertGenerating.EventLog.EventIdEquals.SourceEquals.mpx
+		Rule.AlertGenerating.EventLog.EventIdExpression.DescriptionContains.mpx
+		Rule.AlertGenerating.EventLog.EventIdExpression.mpx
+		Rule.AlertGenerating.EventLog.EventIdExpression.SourceEquals.DescriptionContains.mpx
+		Rule.AlertGenerating.EventLog.EventIdEquals.DescriptionContains.mpx
+		Rule.AlertGenerating.EventLog.EventIdExpression.SourceEquals.mpx
+		Class.And.Discovery.Script.ByServerName.mpx
+	Bug Fixes:
+		Class.And.Discovery.Script.PowerShell.Params.mpx
