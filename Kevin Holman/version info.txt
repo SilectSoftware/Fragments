@@ -148,3 +148,17 @@
 		Class.And.Discovery.Script.ByServerName.mpx
 	Bug Fixes:
 		Class.And.Discovery.Script.PowerShell.Params.mpx
+4.0 - (08-25-2019)
+	Bug Fixes:
+		Rule.AlertGenerating.TextLog.Fragment.mpx
+		Monitor.Service.WithRecovery.WithAlertRules.mpx
+4.1 - (08-31-2019)
+	New Fragments:
+		Class.And.Discovery.MultiRole.mpx
+		Class.And.Discovery.MultiRoleHostedByParentClass.mpx
+		Class.And.Discovery.Registry.ValueSimpleExpression.mpx
+		Class.And.Discovery.Registry.ValueRegExpression.mpx
+		Views.Alert.mpx
+		Views.State.mpx
+	Bug Fixes:
+		Multiple fragments mostly just making XML syntax more consistent with all fragments

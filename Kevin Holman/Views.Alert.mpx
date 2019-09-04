@@ -2,14 +2,14 @@
 <!--
 %%
 Description:
-  A STATE View and ALERT View scoped to your custom class.
+  An ALERT View scoped to your custom class.
   This assumes you already have included a ROOT FOLDER that has an ID of CompanyID.AppName.Root.Folder
   CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
   AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
   ClassID - is the targeted class for the views such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem
-  UniqueID - We need a Unique ID for these views to reuse the fragment such as a shortened version of your class name which will also be the View name.  NO SPACES OR SPECIAL CHARACTERS ALLOWED 
+  UniqueID - We need a Unique ID for these views to reuse the fragment such as a shortened version of your class name which will also be the View name.  NO SPACES OR SPECIAL CHARACTERS ALLOWED    
   
-Version: 1.3
+Version: 1.0
 LastModified: 31-Aug-2019
 %%
 
@@ -34,14 +34,9 @@ This fragment depends on references:
           </ResolutionState>
         </Criteria>
       </View>
-      <View ID="##CompanyID##.##AppName##.##UniqueID##.State.View" Accessibility="Internal" Enabled="true" Target="##ClassID##" TypeID="SC!Microsoft.SystemCenter.StateViewType" Visible="true">
-        <Category>Custom</Category>
-        <Criteria />
-      </View>
     </Views>
     <FolderItems>
       <FolderItem ElementID="##CompanyID##.##AppName##.##UniqueID##.Alert.View" ID="##CompanyID##.##AppName##.##UniqueID##.Alert.View.FolderItem" Folder="##CompanyID##.##AppName##.Root.Folder" />
-      <FolderItem ElementID="##CompanyID##.##AppName##.##UniqueID##.State.View" ID="##CompanyID##.##AppName##.##UniqueID##.State.View.FolderItem" Folder="##CompanyID##.##AppName##.Root.Folder" />
     </FolderItems>
   </Presentation>
   <LanguagePacks>
@@ -49,10 +44,6 @@ This fragment depends on references:
       <DisplayStrings>
         <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Alert.View">
           <Name>##UniqueID## Alerts</Name>
-          <Description />
-        </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.State.View">
-          <Name>##UniqueID## State</Name>
           <Description />
         </DisplayString>
       </DisplayStrings>

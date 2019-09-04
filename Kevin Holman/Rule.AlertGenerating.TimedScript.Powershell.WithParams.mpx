@@ -8,7 +8,6 @@ Description:
   ClassID - is the targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem
   UniqueID - Is a unique short description of the workflow purpose (NO SPACES OR SPECIAL CHARACTERS ALLOWED) such as "CountFilesInFolder"  
   
-  
 Version: 1.4
 LastModified: 25-May-2019
 %%
@@ -30,15 +29,15 @@ This fragment depends on references:
     <ModuleTypes>
       <DataSourceModuleType ID="##CompanyID##.##AppName##.##UniqueID##.Script.Alert.Rule.Datasource" Accessibility="Internal" Batching="false">
         <Configuration>
-					<xsd:element minOccurs="1" type="xsd:integer" name="IntervalSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
-					<xsd:element minOccurs="0" type="xsd:string" name="SyncTime" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
-					<xsd:element minOccurs="1" type="xsd:integer" name="TimeoutSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />	
-					<xsd:element minOccurs="1" type="xsd:integer" name="FileCountThreshold" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element minOccurs="1" type="xsd:integer" name="IntervalSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element minOccurs="0" type="xsd:string" name="SyncTime" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element minOccurs="1" type="xsd:integer" name="TimeoutSeconds" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />	
+          <xsd:element minOccurs="1" type="xsd:integer" name="FileCountThreshold" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
         </Configuration>
         <OverrideableParameters>
-		      <OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
-		      <OverrideableParameter ID="SyncTime" Selector="$Config/SyncTime$" ParameterType="string" />
-		      <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+          <OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
+          <OverrideableParameter ID="SyncTime" Selector="$Config/SyncTime$" ParameterType="string" />
+          <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
           <OverrideableParameter ID="FileCountThreshold" Selector="$Config/FileCountThreshold$" ParameterType="int" />		  
         </OverrideableParameters>
         <ModuleImplementation Isolation="Any">
@@ -48,7 +47,7 @@ This fragment depends on references:
                 <Scheduler>
                   <SimpleReccuringSchedule>
                     <Interval Unit="Seconds">$Config/IntervalSeconds$</Interval>
-										<SyncTime>$Config/SyncTime$</SyncTime>
+                    <SyncTime>$Config/SyncTime$</SyncTime>
                   </SimpleReccuringSchedule>
                   <ExcludeDates />
                 </Scheduler>
@@ -155,7 +154,7 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"`n Script Completed. `n Script Ru
                     <Value>$Config/FileCountThreshold$</Value>
                   </Parameter>
                 </Parameters>
-				        <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
               </ProbeAction>			  
             </MemberModules>
             <Composition>
@@ -176,23 +175,23 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"`n Script Completed. `n Script Ru
         <DataSources>
           <DataSource ID="DS" TypeID="##CompanyID##.##AppName##.##UniqueID##.Script.Alert.Rule.Datasource">
             <IntervalSeconds>3600</IntervalSeconds>
-			      <SyncTime></SyncTime>
-			      <TimeoutSeconds>120</TimeoutSeconds>
-			      <FileCountThreshold>25</FileCountThreshold>
+            <SyncTime></SyncTime>
+            <TimeoutSeconds>120</TimeoutSeconds>
+            <FileCountThreshold>25</FileCountThreshold>
           </DataSource>
         </DataSources>
         <ConditionDetection ID="CD" TypeID="System!System.ExpressionFilter">
-		      <Expression>
-		        <SimpleExpression>
-			        <ValueExpression>
-			          <XPathQuery Type="String">Property[@Name='Result']</XPathQuery>
-			        </ValueExpression>
-			        <Operator>Equal</Operator>
-			        <ValueExpression>
-			          <Value Type="String">BAD</Value>
-			        </ValueExpression>
-		        </SimpleExpression>
-		      </Expression>
+		  <Expression>
+			<SimpleExpression>
+				<ValueExpression>
+				  <XPathQuery Type="String">Property[@Name='Result']</XPathQuery>
+				</ValueExpression>
+				<Operator>Equal</Operator>
+				<ValueExpression>
+				  <Value Type="String">BAD</Value>
+				</ValueExpression>
+			</SimpleExpression>
+		  </Expression>
           <SuppressionSettings>
             <MatchCount>1</MatchCount>
           </SuppressionSettings>					
@@ -205,9 +204,9 @@ $momapi.LogScriptEvent($ScriptName,$EventID,0,"`n Script Completed. `n Script Ru
             <AlertParameters>
               <AlertParameter1>$Data/Property[@Name='Result']$</AlertParameter1>
               <AlertParameter2>$Data/Property[@Name='TempCount']$</AlertParameter2>
-			        <AlertParameter3>$Data/Property[@Name='Message']$</AlertParameter3>
+              <AlertParameter3>$Data/Property[@Name='Message']$</AlertParameter3>
             </AlertParameters>
-			      <Suppression>
+            <Suppression>
               <SuppressionValue>$Data/Property[@Name='Message']$</SuppressionValue>
             </Suppression>
           </WriteAction>

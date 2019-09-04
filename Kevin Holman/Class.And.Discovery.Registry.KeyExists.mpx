@@ -16,7 +16,7 @@ In this fragment you need to replace:
   ##CompanyID##
   ##AppName##
   ##RegKeyPath##
-	##UniqueID##
+  ##UniqueID##
 
 This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"
@@ -38,7 +38,7 @@ This fragment depends on references:
 	  <!-- We choose Microsoft.Windows.Server.OperatingSystem as the preferred target class to ensure this will run on all Windows Servers, but wont create duplicates on clusters -->
 	    <Category>Discovery</Category>
         <DiscoveryTypes>
-			<DiscoveryClass TypeID="##CompanyID##.##AppName##.##UniqueID##.Class" />
+		  <DiscoveryClass TypeID="##CompanyID##.##AppName##.##UniqueID##.Class" />
         </DiscoveryTypes>
         <DataSource ID="DS" TypeID="Windows!Microsoft.Windows.FilteredRegistryDiscoveryProvider">
           <ComputerName>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$</ComputerName> <!-- You may need to add or remove Host references in this line depending on your target -->

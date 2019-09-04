@@ -11,8 +11,8 @@ Description:
   ServiceName - must be the short name of the service as seen in the registry
   UniqueID - We need a Unique ID for this Monitor to reuse the fragment.  If your service name contains spaces - create a shortened ServiceName with NO SPACES OR SPECIAL CHARACTERS ALLOWED    
 
-Version: 1.2
-LastModified: 14-Oct-2018
+Version: 1.3
+LastModified: 25-Aug-2019
 %%
 
 In this fragment you need to replace:
@@ -262,7 +262,7 @@ This fragment depends on references:
       </UnitMonitor>	  
     </Monitors>
     <Recoveries>
-      <Recovery ID="##CompanyID##.##AppName##.##UniqueID##.Service.Recovery" Accessibility="Public" Enabled="true" Target="##ClassID##" Monitor="##CompanyID##.##AppName##.##ServiceName##.Service.Monitor" ResetMonitor="false" ExecuteOnState="Error" Remotable="true" Timeout="300">
+      <Recovery ID="##CompanyID##.##AppName##.##UniqueID##.Service.Recovery" Accessibility="Public" Enabled="true" Target="##ClassID##" Monitor="##CompanyID##.##AppName##.##UniqueID##.Service.Monitor" ResetMonitor="false" ExecuteOnState="Error" Remotable="true" Timeout="300">
         <Category>Custom</Category>
         <WriteAction ID="VBScriptWA" TypeID="Windows!Microsoft.Windows.ScriptWriteAction">
           <ScriptName>ServiceRecovery.vbs</ScriptName>

@@ -9,8 +9,8 @@ Description:
   UniqueID - needs to be your perf counter name, with NO SPACES OR SPECIAL CHARACTERS ALLOWED.  For instance, "% Processor Time" would be cleaned up to "PercentProcessorTime"
   In the event the monitor threshold is met, a script will be executed to gather additional propertybag data for the monitor context and alert description
 
-Version: 1.2
-LastModified: 4-Nov-2017
+Version: 1.3
+LastModified: 31-Aug-2019
 %%
 
 In this fragment you need to replace:
@@ -172,7 +172,7 @@ This fragment depends on references:
     <Monitors>
       <UnitMonitor ID="##CompanyID##.##AppName##.##UniqueID##.Perf.ThenScript.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.PerformanceState" Remotable="true" Priority="Normal" TypeID="##CompanyID##.##AppName##.##UniqueID##.Perf.ThenScript.MonitorType" ConfirmDelivery="false">
         <Category>PerformanceHealth</Category>
-        <AlertSettings AlertMessage="##CompanyID##.##AppName##.##UniqueID##.Perf.ThenScript.Monitor_AlertMessageResourceID">
+        <AlertSettings AlertMessage="##CompanyID##.##AppName##.##UniqueID##.Perf.ThenScript.Monitor.AlertMessage">
           <AlertOnState>Warning</AlertOnState>
           <AutoResolve>true</AutoResolve>
           <AlertPriority>Normal</AlertPriority>
@@ -299,7 +299,7 @@ $momapi.LogScriptEvent($ScriptName,1234,0,"Ending monitor script. Total runtime 
   </Monitoring>
   <Presentation>
     <StringResources>
-      <StringResource ID="##CompanyID##.##AppName##.##UniqueID##.Perf.ThenScript.Monitor_AlertMessageResourceID" />
+      <StringResource ID="##CompanyID##.##AppName##.##UniqueID##.Perf.ThenScript.Monitor.AlertMessage" />
     </StringResources>
   </Presentation>  
   <LanguagePacks>
@@ -315,7 +315,7 @@ $momapi.LogScriptEvent($ScriptName,1234,0,"Ending monitor script. Total runtime 
         <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Perf.ThenScript.Monitor" SubElementID="ConditionFalse">
           <Name>Healthy Condition Detected</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Perf.ThenScript.Monitor_AlertMessageResourceID">
+        <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Perf.ThenScript.Monitor.AlertMessage">
           <Name>##CompanyID## ##AppName## ##CounterName## has breached a threshold</Name>
           <Description>Object Name: {0}
 Counter Name: {1}

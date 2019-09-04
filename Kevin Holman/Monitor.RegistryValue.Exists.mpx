@@ -9,8 +9,8 @@ Description:
   RegValuePath - needs to be in the format of "SOFTWARE\Microsoft\CCM\HttpPort" or "SYSTEM\CurrentControlSet\Services\CcmExec\Start" as HKLM is assumed
   RegValueName - needs to be a UNIQUE short name to describe your Reg VALUE with NO SPACES OR SPECIAL CHARACTERS ALLOWED such as "HttpPort"
 
-Version: 1.1
-LastModified: 29-May-2017
+Version: 1.2
+LastModified: 31-Aug-2019
 %%
 
 In this fragment you need to replace:
@@ -96,7 +96,7 @@ This fragment depends on references:
     <Monitors>
       <UnitMonitor ID="##CompanyID##.##AppName##.RegValueExists.##RegValueName##.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.ConfigurationState" Remotable="true" Priority="Normal" TypeID="##CompanyID##.##AppName##.RegValueExists.##RegValueName##.MonitorType" ConfirmDelivery="true">
         <Category>Custom</Category>
-        <AlertSettings AlertMessage="##CompanyID##.##AppName##.RegValueExists.##RegValueName##.Monitor.Alert.Message">
+        <AlertSettings AlertMessage="##CompanyID##.##AppName##.RegValueExists.##RegValueName##.Monitor.AlertMessage">
           <AlertOnState>Warning</AlertOnState>  <!-- Warning or Error should match OperationalStates below  -->
           <AutoResolve>true</AutoResolve>
           <AlertPriority>Normal</AlertPriority>
@@ -112,7 +112,7 @@ This fragment depends on references:
   </Monitoring>
   <Presentation>
     <StringResources>
-      <StringResource ID="##CompanyID##.##AppName##.RegValueExists.##RegValueName##.Monitor.Alert.Message" />
+      <StringResource ID="##CompanyID##.##AppName##.RegValueExists.##RegValueName##.Monitor.AlertMessage" />
     </StringResources>
   </Presentation>
   <LanguagePacks>
@@ -132,7 +132,7 @@ This fragment depends on references:
         <DisplayString ElementID="##CompanyID##.##AppName##.RegValueExists.##RegValueName##.Monitor" SubElementID="Warning">
           <Name>RegValueMissing</Name>
         </DisplayString>
-        <DisplayString ElementID="##CompanyID##.##AppName##.RegValueExists.##RegValueName##.Monitor.Alert.Message">
+        <DisplayString ElementID="##CompanyID##.##AppName##.RegValueExists.##RegValueName##.Monitor.AlertMessage">
           <Name>##CompanyID## ##AppName## RegValueExists ##RegValueName## Monitor Alert</Name>
           <Description>##CompanyID## ##AppName## RegValueExists ##RegValueName## Monitor detected the registry path ##RegValuePath## is missing</Description>
         </DisplayString>		

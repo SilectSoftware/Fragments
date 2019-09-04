@@ -12,8 +12,8 @@ Description:
   ServiceName - must be the short name of the service as seen in the HKLM\SYSTEM\CCS\Services registry
   UniqueID - We need a Unique ID for this Monitor to reuse the fragment.  If your service name contains spaces - create a shortened ServiceName with NO SPACES OR SPECIAL CHARACTERS ALLOWED
 
-Version: 1.2
-LastModified: 25-May-2019
+Version: 1.3
+LastModified: 31-Aug-2019
 %%
 
 In this fragment you need to replace:
@@ -39,14 +39,14 @@ This fragment depends on references:
         <Configuration>
           <xsd:element name="ComputerName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
           <xsd:element name="ServiceName" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
-		      <xsd:element name="IntervalSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
-		      <xsd:element name="CheckStartupType" minOccurs="0" maxOccurs="1" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
-		      <xsd:element name="Samples" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="IntervalSeconds" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="CheckStartupType" minOccurs="0" maxOccurs="1" type="xsd:string" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+          <xsd:element name="Samples" type="xsd:integer" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
         </Configuration>		
         <OverrideableParameters>
           <OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
-		      <OverrideableParameter ID="CheckStartupType" Selector="$Config/CheckStartupType$" ParameterType="string" />
-		      <OverrideableParameter ID="Samples" Selector="$Config/Samples$" ParameterType="int" />
+          <OverrideableParameter ID="CheckStartupType" Selector="$Config/CheckStartupType$" ParameterType="string" />
+          <OverrideableParameter ID="Samples" Selector="$Config/Samples$" ParameterType="int" />
         </OverrideableParameters>
         <MonitorImplementation>
           <MemberModules>
@@ -54,7 +54,7 @@ This fragment depends on references:
               <ComputerName>$Config/ComputerName$</ComputerName>
               <ServiceName>$Config/ServiceName$</ServiceName>
               <Frequency>$Config/IntervalSeconds$</Frequency>
-			        <DisableCaching>true</DisableCaching>
+              <DisableCaching>true</DisableCaching>
               <CheckStartupType>$Config/CheckStartupType$</CheckStartupType>
             </DataSource>
             <ProbeAction ID="Probe" TypeID="Windows!Microsoft.Windows.Win32ServiceInformationProbe">
@@ -460,9 +460,9 @@ This fragment depends on references:
         <Configuration>
           <ComputerName />
           <ServiceName>##ServiceName##</ServiceName> <!-- This is the service name as seen in the registry at HKLM\SYSTEM\CCS\Services -->
-					<IntervalSeconds>30</IntervalSeconds> <!-- How often to check the state of the service.  Every 30 seconds is the default.-->
+          <IntervalSeconds>30</IntervalSeconds> <!-- How often to check the state of the service.  Every 30 seconds is the default.-->
           <CheckStartupType>true</CheckStartupType>
-					<Samples>2</Samples> <!-- The number of consecutive times a service is detected as not running before changing state of the monitor. 2 samples is the default -->
+          <Samples>2</Samples> <!-- The number of consecutive times a service is detected as not running before changing state of the monitor. 2 samples is the default -->
         </Configuration>		
       </UnitMonitor>	  
     </Monitors>
