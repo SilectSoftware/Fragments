@@ -9,8 +9,8 @@ Description:
   ServiceName - must be the short name of the service as seen in the registry
   UniqueID - We need a Unique ID for this Monitor to reuse the fragment.  If your service name contains spaces - create a shortened ServiceName with NO SPACES OR SPECIAL CHARACTERS ALLOWED
 
-Version: 1.3
-LastModified: 31-Aug-2019
+Version: 1.4
+LastModified: 05-Sep-2019
 %%
 
 In this fragment you need to replace:
@@ -31,22 +31,22 @@ This fragment depends on references:
       <UnitMonitor ID="##CompanyID##.##AppName##.##UniqueID##.Service.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.CheckNTServiceStateMonitorType" ConfirmDelivery="false">
         <Category>AvailabilityHealth</Category>
         <AlertSettings AlertMessage="##CompanyID##.##AppName##.##UniqueID##.Service.Monitor.AlertMessage">
-          <AlertOnState>Error</AlertOnState>
-          <AutoResolve>true</AutoResolve>
-          <AlertPriority>Normal</AlertPriority>
-          <AlertSeverity>Error</AlertSeverity>
+          <AlertOnState>Warning</AlertOnState> <!-- Warning/Error - This must match a possible OperationalState\HealthState below -->
+          <AutoResolve>true</AutoResolve> <!-- true/false -->
+          <AlertPriority>Normal</AlertPriority> <!-- Low/Normal/High -->
+          <AlertSeverity>Error</AlertSeverity> <!-- Error/Warning/Information/MatchMonitorHealth -->
           <AlertParameters>
             <AlertParameter1>$Data/Context/Property[@Name='Name']$</AlertParameter1>
             <AlertParameter2>$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/PrincipalName$</AlertParameter2>
           </AlertParameters>
         </AlertSettings>
         <OperationalStates>
-          <OperationalState ID="Running" MonitorTypeStateID="Running" HealthState="Success" />
-          <OperationalState ID="NotRunning" MonitorTypeStateID="NotRunning" HealthState="Error" />
-        </OperationalStates>
+          <OperationalState ID="Running" MonitorTypeStateID="Running" HealthState="Success" /> <!-- HealthState can be Error/Warning/Success -->
+          <OperationalState ID="NotRunning" MonitorTypeStateID="NotRunning" HealthState="Warning" /> <!-- HealthState can be Error/Warning/Success -->		  
+        </OperationalStates>		
         <Configuration>
           <ComputerName />
-          <ServiceName>##ServiceName##</ServiceName>
+          <ServiceName>##ServiceName##</ServiceName> <!-- This is the service name as seen in the registry at HKLM\SYSTEM\CCS\Services -->
           <CheckStartupType />
         </Configuration>
       </UnitMonitor>	  
@@ -70,7 +70,7 @@ This fragment depends on references:
           <Name>Not Running</Name>
         </DisplayString>
         <DisplayString ElementID="##CompanyID##.##AppName##.##UniqueID##.Service.Monitor.AlertMessage">
-          <Name>##CompanyID## ##AppName## ##ServiceName## service is not running</Name>
+          <Name>##AppName## ##ServiceName## service is not running</Name>
           <Description>Service {0} is not running on {1}</Description>
         </DisplayString>
       </DisplayStrings>

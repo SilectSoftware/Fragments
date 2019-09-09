@@ -148,11 +148,11 @@
 		Class.And.Discovery.Script.ByServerName.mpx
 	Bug Fixes:
 		Class.And.Discovery.Script.PowerShell.Params.mpx
-4.0 - (08-25-2019)
+4.1 - (08-25-2019)
 	Bug Fixes:
 		Rule.AlertGenerating.TextLog.Fragment.mpx
 		Monitor.Service.WithRecovery.WithAlertRules.mpx
-4.1 - (08-31-2019)
+4.2 - (08-31-2019)
 	New Fragments:
 		Class.And.Discovery.MultiRole.mpx
 		Class.And.Discovery.MultiRoleHostedByParentClass.mpx
@@ -162,3 +162,11 @@
 		Views.State.mpx
 	Bug Fixes:
 		Multiple fragments mostly just making XML syntax more consistent with all fragments
+4.3 - (09-05-2019)
+	New Fragments:
+		Combo.Class.Discovery.ServiceMonitor.Wildcard.WMIQuery.mpx
+		Monitor.Service.WithAlert.FreqAndSamples.IgnoreDisabled.mpx
+		Monitor.Service.WithAlert.FreqAndSamples.IgnoreDisabled.PSRecovery.mpx
+	Bug Fixes:
+		Streamlined all service monitor fragments to be more consistent and understandable
+		Removed redundant service monitor fragments

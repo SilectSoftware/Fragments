@@ -9,8 +9,8 @@ Description:
   ServiceName - must be the short name of the service as seen in the registry
   UniqueID - We need a Unique ID for this Monitor to reuse the fragment.  If your service name contains spaces - create a shortened ServiceName with NO SPACES OR SPECIAL CHARACTERS ALLOWED
 
-Version: 1.2
-LastModified: 14-Oct-2018
+Version: 1.4
+LastModified: 05-Sep-2019
 %%
 
 In this fragment you need to replace:
@@ -31,12 +31,12 @@ This fragment depends on references:
       <UnitMonitor ID="##CompanyID##.##AppName##.##UniqueID##.Service.Monitor" Accessibility="Public" Enabled="true" Target="##ClassID##" ParentMonitorID="Health!System.Health.AvailabilityState" Remotable="true" Priority="Normal" TypeID="Windows!Microsoft.Windows.CheckNTServiceStateMonitorType" ConfirmDelivery="false">
         <Category>AvailabilityHealth</Category>
         <OperationalStates>
-          <OperationalState ID="Running" MonitorTypeStateID="Running" HealthState="Success" />
-          <OperationalState ID="NotRunning" MonitorTypeStateID="NotRunning" HealthState="Error" />
+          <OperationalState ID="Running" MonitorTypeStateID="Running" HealthState="Success" /> <!-- HealthState can be Error/Warning/Success -->
+          <OperationalState ID="NotRunning" MonitorTypeStateID="NotRunning" HealthState="Warning" /> <!-- HealthState can be Error/Warning/Success -->		  
         </OperationalStates>
         <Configuration>
           <ComputerName />
-          <ServiceName>##ServiceName##</ServiceName>
+          <ServiceName>##ServiceName##</ServiceName> <!-- This is the service name as seen in the registry at HKLM\SYSTEM\CCS\Services -->
           <CheckStartupType />
         </Configuration>
       </UnitMonitor>
