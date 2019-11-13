@@ -170,3 +170,9 @@
 	Bug Fixes:
 		Streamlined all service monitor fragments to be more consistent and understandable
 		Removed redundant service monitor fragments
+4.4 - (11-13-2019)
+	New Fragments:
+		Rule.TimedScript.DistributeFile.mpx
+	Bug Fixes:
+		Enhanced Monitor.Process.mpx to use MatchCount and enforce lower case process name
+		Enhanced Monitor.Performance.ConsecSamples.ThenScript.TwoState.mpx CPU example and fixed core count mistake

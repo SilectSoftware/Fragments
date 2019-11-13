@@ -9,8 +9,8 @@ Description:
   UniqueID - needs to be your perf counter name, with NO SPACES OR SPECIAL CHARACTERS ALLOWED.  For instance, "% Processor Time" would be cleaned up to "PercentProcessorTime"
   In the event the monitor threshold is met, a script will be executed to gather additional propertybag data for the monitor context and alert description
 
-Version: 1.3
-LastModified: 31-Aug-2019
+Version: 1.4
+LastModified: 12-Nov-2019
 %%
 
 In this fragment you need to replace:
@@ -184,6 +184,7 @@ This fragment depends on references:
             <AlertParameter4>$Data/Context/Property[@Name='Last Sampled Value']$</AlertParameter4>
             <AlertParameter5>$Data/Context/Property[@Name='Number of Samples']$</AlertParameter5>
             <AlertParameter6>$Data/Context/Property[@Name='Processes by CPU']$</AlertParameter6>  <!-- This line is optional it is an example of your custom script propertybag output-->
+            <AlertParameter7>$Data/Context/Property[@Name='Total Cores']$</AlertParameter7>  <!-- This line is optional it is an example of your custom script propertybag output-->			
           </AlertParameters>		  
         </AlertSettings>		
         <OperationalStates>
@@ -205,7 +206,7 @@ This fragment depends on references:
 #  Generic monitoring script to input perf data and gather additional propertybags for alert enrichment
 #
 #  Kevin Holman
-#  v1.0
+#  v1.1
 #=================================================================================
 param ($ObjectName, $CounterName, $InstanceName, $SampleValue, $NumSamples)
 
@@ -234,7 +235,8 @@ $momapi.LogScriptEvent($ScriptName,1234,0, "Starting monitor script.   Running a
 # This example will gather the processes that are consuming the most CPU
 
 # Set variables to empty
-$cores = $null
+[int]$cores = 0
+[int]$totalcores = 0
 [string]$TopProcessCPUString = @()
 
 #Count Logical CPU
@@ -246,8 +248,8 @@ foreach ($proc in (Get-WmiObject Win32_Processor))
   }
   else
   {
-    [int]$cores = $proc.NumberOfLogicalProcessors
-    $cores += $cores
+    $cores = $proc.NumberOfLogicalProcessors
+    $totalcores += $cores
   }
 }
 
@@ -259,7 +261,7 @@ ForEach ($TopProc in $TopProcs)
   IF ($ProcName -ne "_total" -and $ProcName -ne "idle")
   {
     #Make the CPU percent realistic by divinding by number of cores and look pretty with fixed 2 decimal places
-	$CPUPercent = [Math]::round(($TopProc.CookedValue/$cores),2)
+	$CPUPercent = [Math]::round(($TopProc.CookedValue/$totalcores),2)
     $CPUPercent = "{0:N2}" -f $CPUPercent
     
 	#We need to define $TopProcessCPUString as a string and add text to it with a carriage return in a FOR loop because we cannot output an array to a propertybag or SCOM will choke
@@ -282,6 +284,7 @@ $bag.AddValue("Number of Samples",$NumSamples)
 
 # Output your custom propertybags you gather from the script
 $bag.AddValue("Processes by CPU",$TopProcessCPUString)
+$bag.AddValue("Total Cores",$totalcores)
 
 # Output all bags
 $bag
@@ -292,7 +295,7 @@ $ScriptTime = ($EndTime - $StartTime).TotalSeconds
 $momapi.LogScriptEvent($ScriptName,1234,0,"Ending monitor script. Total runtime ($ScriptTime) seconds.")
 </ScriptBody>
           <Parameters></Parameters>
-          <TimeoutSeconds>50</TimeoutSeconds>
+          <TimeoutSeconds>120</TimeoutSeconds>
         </Configuration>
       </UnitMonitor>
     </Monitors>
@@ -322,6 +325,7 @@ Counter Name: {1}
 Instance Name: {2}
 Last Sampled Value: {3}
 Number of Samples: {4}
+Total Cores: {6}
 Processes consuming the most CPU:
 {5}</Description>  <!-- The last alert description property is optional it would be from your custom script or you can add more -->
         </DisplayString>		
