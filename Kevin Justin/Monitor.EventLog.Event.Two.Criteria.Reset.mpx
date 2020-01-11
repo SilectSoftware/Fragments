@@ -1,21 +1,21 @@
 <ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 <!-- In this fragment you need to replace
 
-##COMPANY##
-##PRODUCTNAME##
-##APPNAME##
-##LOCATION##
-##BADEVENTID##
-##GOODEVENTID##
-##SENSORTYPE##
-##SERVERNAME##
+##COMPANY##,String,RegEx,ScomId
+##PRODUCTNAME##,String,RegEx,XsdString
+##APPNAME##,String,RegEx,ScomId
+##LOCATION##,String,RegEx,ScomId
+##BADEVENTID##,Integer,Range,0,65535
+##GOODEVENTID##,Integer,Range,0,65535
+##SENSORTYPE##,String,RegEx,ScomId
+##SERVERNAME##,String,RegEx,XsdString
 	If you want the event to cut on the server that is running, substitute this target
 	$Target/Host/Property[Type="Windows!Microsoft.Windows.Computer"]/NetbiosComputerName$
 	
-##CREATEDBY##
-##CREATIONDATE##
+##CREATEDBY##,String,RegEx,XsdString
+##CREATIONDATE##,String,RegEx,XsdString
 
-<!-- This fragment includes a monitor for Event Log data which uses 2 criteria in event description and two states -->
+This fragment includes a monitor for Event Log data which uses 2 criteria in event description and two states -->
 
 <!-- This fragment depends on references:
 	RequiredReference: Alias="Health", ID="System.Health.Library"

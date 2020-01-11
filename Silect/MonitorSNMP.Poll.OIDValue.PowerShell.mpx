@@ -14,11 +14,12 @@ LastModified: 11-May-2017
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##
-  ##DeviceName##
-  ##MonitorName##
-  ##ThresholdValue##
-  ##OID##
+  ##CompanyID##,String,RegEx,ScomId
+  ##DeviceName##,String,RegEx,ScomId
+  ##MonitorName##,String,RegEx,ScomId
+  ##ThresholdValue##,Real
+  ##OID##,String,RegEx,OID
+  ##ClassID##,Enumeration,Special,ClassId
 
 This fragment depends on references:
   RequiredReference: Alias="SNMP", ID="System.Snmp.Library", Version="7.0.8433.0"

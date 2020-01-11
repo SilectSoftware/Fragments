@@ -20,15 +20,15 @@ LastModified: 25-May-2019
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##
-  ##AppName##
-  ##ClassID##
-  ##UniqueID##
-  ##IntervalSeconds##
-  ##FolderPath##
-  ##FileExtensionFilter##
-  ##FileAgeThresholdMinutes##
-  ##FileCountThreshold##
+  ##CompanyID##,String,RegEx,ScomId
+  ##AppName##,String,RegEx,ScomId
+  ##ClassID##,Enumeration,Special,ClassId
+  ##UniqueID##,String,RegEx,ScomId
+  ##IntervalSeconds##,Integer,Range,0,86400
+  ##FolderPath##,String,RegEx,XsdString
+  ##FileExtensionFilter##,String,RegEx,XsdString
+  ##FileAgeThresholdMinutes##,Integer,Range,1,1000000
+  ##FileCountThreshold##,Integer,Range,1,1000000
 	
 
 This fragment depends on references:  

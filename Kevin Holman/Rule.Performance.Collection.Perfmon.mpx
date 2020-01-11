@@ -14,15 +14,15 @@ LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##
-  ##AppName##
-  ##ClassID##
-  ##UniqueID##
-  ##ClassID##
-  ##ObjectName##
-  ##CounterName##
-  ##InstanceName##
-  ##FrequencySeconds##
+  ##CompanyID##,String,RegEx,ScomId
+  ##AppName##,String,RegEx,ScomId
+  ##ClassID##,Enumeration,Special,ClassId
+  ##UniqueID##,String,RegEx,ScomId
+  ##ClassID##,Enumeration,Special,ClassId
+  ##ObjectName##,String,RegEx,XsdString
+  ##CounterName##,String,RegEx,XsdString
+  ##InstanceName##,String,RegEx,XsdString
+  ##FrequencySeconds##,Integer,Range,0,86400
 
 This fragment depends on references:
   RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library"

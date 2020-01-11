@@ -10,13 +10,13 @@ LastModified: 22-June-2017
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##
-  ##AppName## - LoadTesting
-  ##ClassID## - WindowsServer
-  ##RuleGUID## - Grab from specific PowerShell for each performance counter per OS
+  ##CompanyID##,String,RegEx,ScomId
+  ##AppName##,String,RegEx,ScomId - LoadTesting
+  ##ClassID##,Enumeration,Special,ClassId - WindowsServer
+  ##RuleGUID##,String,RegEx,GUID - Grab from specific PowerShell for each performance counter per OS
 		Example: 
 			get-scomrule | ? { $_.DisplayName -like "Performance Rule Name*" } | fl ID,DisplayName,Name
-  ##TargetGroupNumber## - Group ID from OpsMgrDW query
+  ##TargetGroupNumber##,Integer - Group ID from OpsMgrDW query
 	    Example:
 			select [ManagedEntityDefaultName],[ManagedEntityRowId]
 			FROM [vManagedEntity]

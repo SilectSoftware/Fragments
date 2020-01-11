@@ -1,13 +1,13 @@
 ﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 <!-- In this fragment you need to replace:
 
-##CompanyID##
-##AppName##
-##ClassID##
-##RunAsProfile##
-##Run As Profile##	With Spaces if it reads differently in the Run As Accounts display in SCOM Console
-##EventID##
-##EventDescription##
+##CompanyID##,String,RegEx,ScomId
+##AppName##,String,RegEx,ScomId
+##ClassID##,Enumeration,Special,ClassId
+##RunAsProfile##,String,RegEx,ScomId
+##RunAsProfileName##,String,RegEx,XsdString	- With Spaces if it reads differently in the Run As Accounts display in SCOM Console
+##EventID##,Integer,Range,0,65535
+##EventDescription##,String,RegEx,XsdString
 
 	This fragment sets up a RunAs Account.
 	The monitor runs a Probe Action PowerShell script, outputs a propertybag as GOOD or BAD.
@@ -248,7 +248,7 @@ $bag
     <LanguagePack ID="ENU" >
       <DisplayStrings>
         <DisplayString ElementID="##RunAsProfile##">
-          <Name>##Run As Profile##</Name>
+          <Name>##RunAsProfileName##</Name>
           <Description>This is the account to run Discovery and Monitoring scripts. 
 		  The ##RunAsProfile## should have access permission.
 		  </Description>

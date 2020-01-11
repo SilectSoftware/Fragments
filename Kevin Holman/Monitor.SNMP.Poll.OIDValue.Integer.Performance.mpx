@@ -13,12 +13,12 @@ LastModified: 29-May-2017
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##
-  ##AppName##
-  ##ClassID##
-  ##OID##
-  ##ThresholdIntegerAboveBad##
-  ##ThresholdIntegerBelowGood##
+  ##CompanyID##,String,RegEx,ScomId
+  ##AppName##,String,RegEx,ScomId
+  ##ClassID##,Enumeration,Special,ClassId
+  ##OID##,String,RegEx,OID
+  ##ThresholdIntegerAboveBad##,Integer
+  ##ThresholdIntegerBelowGood##,Integer
 
 This fragment depends on references:
   RequiredReference: Alias="Health", ID="System.Health.Library"

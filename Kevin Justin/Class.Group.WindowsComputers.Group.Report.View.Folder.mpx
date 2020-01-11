@@ -10,21 +10,21 @@ LastModified: 21-June-2017
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##
-  ##AppName## - LoadTesting
-  ##ClassID## - WindowsServer
-  ##OSVersion##
+  ##CompanyID##,String,RegEx,ScomId
+  ##AppName##,String,RegEx,ScomId - LoadTesting
+  ##ClassID##,Enumeration,Special,ClassId - WindowsServer
+  ##OSVersion##,String,RegEx,ScomId
 		Example:
 			2012 = 6.2, 2012R2 = 2012.R2, 2016 = 100
-  ##MPReferenceID##
+  ##MPReferenceID##,String,RegEx,XsdString
 		MWS2M for 2012, MWS2RM for 2012R2
-  ##RuleGUID## - Grab from specific PowerShell for each performance counter per OS
+  ##RuleGUID##,String,RegEx,GUID - Grab from specific PowerShell for each performance counter per OS
 		Example: 
 			get-scomrule | ? { $_.DisplayName -like "Performance Rule Name*" } | fl ID,DisplayName,Name
-  ##TargetGroupID## - GUID ID field from PowerShell output
+  ##TargetGroupID##,String,RegEx,GUID - GUID ID field from PowerShell output
 		Example:
 			get-scomGroup | ? { $_.DisplayName -like "*Load Testing Group*" } | fl ID,DisplayName
-  ##TargetGroupNumber## - Group ID from OpsMgrDW query
+  ##TargetGroupNumber##,Integer - Group ID from OpsMgrDW query
 	    Example:
 			select [ManagedEntityDefaultName],[ManagedEntityRowId]
 			FROM [vManagedEntity]

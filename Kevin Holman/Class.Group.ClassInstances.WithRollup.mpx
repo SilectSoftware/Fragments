@@ -12,9 +12,9 @@ LastModified: 4-Oct-2017
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##
-  ##AppName##
-  ##ClassID##
+  ##CompanyID##,String,RegEx,ScomId
+  ##AppName##,String,RegEx,ScomId
+  ##ClassID##,Enumeration,Special,ClassId
 
 This fragment depends on references:
   RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library"

@@ -12,9 +12,9 @@ LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##
-  ##DeviceTypeName##
-  ##OID##
+  ##CompanyID##,String,RegEx,ScomId
+  ##DeviceTypeName##,String,RegEx,ScomId
+  ##OID##,String,RegEx,OID
 
 This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"

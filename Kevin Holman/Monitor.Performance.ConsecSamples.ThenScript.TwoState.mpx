@@ -14,14 +14,14 @@ LastModified: 12-Nov-2019
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##
-  ##AppName##
-  ##ClassID##
-  ##UniqueID##
-  ##ObjectName##
-  ##InstanceName##
-  ##CounterName##
-  ##Threshold##
+  ##CompanyID##,String,RegEx,ScomId
+  ##AppName##,String,RegEx,ScomId
+  ##ClassID##,Enumeration,Special,ClassId
+  ##UniqueID##,String,RegEx,ScomId
+  ##ObjectName##,String,RegEx,XsdString
+  ##InstanceName##,String,RegEx,XsdString
+  ##CounterName##,String,RegEx,XsdString
+  ##Threshold##,Real
 
 This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"

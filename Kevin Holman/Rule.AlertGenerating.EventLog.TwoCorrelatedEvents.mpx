@@ -12,15 +12,15 @@ LastModified: 2-Nov-2018
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##
-  ##AppName##
-  ##ClassID##
-  ##EventID1##
-  ##EventID2##  
-  ##EventSource1##
-  ##EventSource2##  
-  ##LogName1##
-  ##LogName2##  
+  ##CompanyID##,String,RegEx,ScomId
+  ##AppName##,String,RegEx,ScomId
+  ##ClassID##,Enumeration,Special,ClassId
+  ##EventID1##,Integer,Range,0,65535
+  ##EventID2##,Integer,Range,0,65535
+  ##EventSource1##,String,RegEx,XsdString
+  ##EventSource2##,String,RegEx,XsdString  
+  ##LogName1##,String,RegEx,XsdString
+  ##LogName2##,String,RegEx,XsdString
 
 This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"

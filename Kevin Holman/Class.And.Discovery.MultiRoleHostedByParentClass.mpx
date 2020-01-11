@@ -14,8 +14,8 @@ LastModified: 31-Aug-2019
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##
-  ##AppName##
+  ##CompanyID##,String,RegEx,ScomId
+  ##AppName##,String,RegEx,ScomId
 
 This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"

@@ -11,12 +11,12 @@ LastModified: 05-Jun-2017
 
 
 In this fragment you need to replace:
-##CustomApplicationName##
-##CustomApplicationFriendlyName##
-##ProcessName##
-##MinInstanceCount##
-##MaxInstanceCount##
-##RegValuePath##
+##CustomApplicationName##,String,RegEx,ScomId
+##CustomApplicationFriendlyName##,String,RegEx,XsdString
+##ProcessName##,String,RegEx,XsdString
+##MinInstanceCount##,Integer,Range,1,10000
+##MaxInstanceCount##,Integer,Range,1,10000
+##RegValuePath##,String,RegEx,XsdString
 
 This fragment depends on references:
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library", Version="7.5.8501.0"

@@ -8,12 +8,12 @@ LastModified: 07-Jul-2017
 %%
 
 In this fragment you need to replace:
-##CompanyId##
-##AppName##
-##ClassID##
-##Category##
-##PublisherName##
-##EventNumber##
+##CompanyId##,String,RegEx,ScomId
+##AppName##,String,RegEx,ScomId
+##ClassID##,Enumeration,Special,ClassId
+##Category##,String,RegEx,ScomId
+##PublisherName##,String,RegEx,ScomId
+##EventNumber##,Integer,Range,0,65535
 
 This fragment depends on references:
   RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library", Version="7.0.8437.0"

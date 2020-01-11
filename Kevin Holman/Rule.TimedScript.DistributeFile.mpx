@@ -15,12 +15,12 @@ LastModified: 18-Oct-2019
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##
-  ##AppName##
-  ##ClassID##
-  ##UniqueID##
-  ##DestinationFilePath##
-  ##FileName##
+  ##CompanyID##,String,RegEx,ScomId
+  ##AppName##,String,RegEx,ScomId
+  ##ClassID##,Enumeration,Special,ClassId
+  ##UniqueID##,String,RegEx,ScomId
+  ##DestinationFilePath##,String,RegEx,XsdString
+  ##FileName##,String,RegEx,XsdString
   
 This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"

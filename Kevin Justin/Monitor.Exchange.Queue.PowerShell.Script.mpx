@@ -9,9 +9,9 @@ LastModified: 23-June-2017
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##
-  ##AppName## - Edge.Exchange
-  ##RegularExpression## 
+  ##CompanyID##,String,RegEx,ScomId
+  ##AppName##,String,RegEx,ScomId - Edge.Exchange
+  ##RegularExpression##,String,RegEx,XsdString
 	Example:
 		Use case insensitive (?i) with attribute (example is windows computer)
 		(?i)Exchange|Server|Naming|Convention|here[1-9]

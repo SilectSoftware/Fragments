@@ -15,12 +15,12 @@ LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##
-  ##AppName##
-  ##GroupNameNoSpaces##
-  ##SQLServer##
-  ##SQLDBName##
-  ##SQLQuery##
+  ##CompanyID##,String,RegEx,ScomId
+  ##AppName##,String,RegEx,ScomId
+  ##GroupNameNoSpaces##,String,RegEx,ScomId
+  ##SQLServer##,String,RegEx,XsdString
+  ##SQLDBName##,String,RegEx,XsdString
+  ##SQLQuery##,String,RegEx,XsdString
 
 This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"  

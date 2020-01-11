@@ -16,13 +16,13 @@ LastModified: 25-July-2017
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##
-  ##AppName##
-  ##ClassID##
-  ##LogName##
-  ##EventID##
-  ##Description##
-  ##UniqueID##
+  ##CompanyID##,String,RegEx,ScomId
+  ##AppName##,String,RegEx,ScomId
+  ##ClassID##,Enumeration,Special,ClassId
+  ##LogName##,String,RegEx,XsdString
+  ##EventID##,Integer,Range,0,65535
+  ##Description##,String,RegEx,XsdString
+  ##UniqueID##,String,RegEx,ScomId
 
 This fragment depends on references:
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"

@@ -13,10 +13,10 @@ LastModified: 29-May-2017
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##
-  ##AppName##
-  ##ClassID##
-  ##TaskName##
+  ##CompanyID##,String,RegEx,ScomId
+  ##AppName##,String,RegEx,ScomId
+  ##ClassID##,Enumeration,Special,ClassId
+  ##TaskName##,String,RegEx,ScomId
 
 This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"

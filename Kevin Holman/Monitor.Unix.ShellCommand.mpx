@@ -15,11 +15,11 @@ LastModified: 4-Nov-2017
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##
-  ##AppName##
-  ##ClassID##
-  ##UniqueID##  
-  ##ShellCommand##
+  ##CompanyID##,String,RegEx,ScomId
+  ##AppName##,String,RegEx,ScomId
+  ##ClassID##,Enumeration,Special,ClassId
+  ##UniqueID##,String,RegEx,ScomId
+  ##ShellCommand##,String,RegEx,XsdString
 
 This fragment depends on references:
   RequiredReference: Alias="Health", ID="System.Health.Library"

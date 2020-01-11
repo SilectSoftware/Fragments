@@ -16,13 +16,13 @@ LastModified: 13-Aug-2019
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##
-  ##AppName##
-  ##UniqueID##  
-  ##ClassID##
-  ##LogFileDirectory##
-  ##LogFilePattern##
-  ##StringToMatch##
+  ##CompanyID##,String,RegEx,ScomId
+  ##AppName##,String,RegEx,ScomId
+  ##UniqueID##,String,RegEx,ScomId
+  ##ClassID##,Enumeration,Special,ClassId
+  ##LogFileDirectory##,String,RegEx,XsdString
+  ##LogFilePattern##,String,RegEx,XsdString
+  ##StringToMatch##,String,RegEx,XsdString
 
 This fragment depends on references:
   RequiredReference: Alias="Health", ID="System.Health.Library"	

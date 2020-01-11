@@ -1,13 +1,13 @@
 ﻿<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 <!-- In this fragment you need to replace:
 
-##CompanyID##
-##AppName##
-##ClassID##
-##EventID##
-##EventSource##
-##EventDescription##
-##ServiceName##
+##CompanyID##,String,RegEx,ScomId
+##AppName##,String,RegEx,ScomId
+##ClassID##,Enumeration,Special,ClassId
+##EventID##,Integer,Range,0,65535
+##EventSource##,String,RegEx,XsdString
+##EventDescription##,String,RegEx,XsdString
+##ServiceName##,String,RegEx,XsdString
 
 	This fragment includes a monitor for an event (ID, Source, and Description criteria).  It also includes a recovery script framework.
 		The example looks for an event, and runs restart-Service to resolve (substitute accordingly).  
