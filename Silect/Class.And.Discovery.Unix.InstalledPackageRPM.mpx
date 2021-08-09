@@ -1,0 +1,235 @@
+<ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!--
+%%
+Description:
+  A CLASS and DISCOVERY for a Unix/Linux application based on existence of an installed package
+  CompanyID - is a short abbreviation for your company with NO SPACES OR SPECIAL CHARACTERS ALLOWED
+  AppName - is a short name for your app with NO SPACES OR SPECIAL CHARACTERS ALLOWED  
+  PackageName - is the name of the package to look for, such as "openssh-server"
+Version: 1.0
+LastModified: 10-May-2019
+%%
+
+In this fragment you need to replace:
+  ##CompanyID##
+  ##AppName##
+  ##PackageName##
+
+This fragment depends on references:
+  RequiredReference: Alias="System", ID="System.Library"
+  RequiredReference: Alias="Unix", ID="Microsoft.Unix.Library"
+  RequiredReference: Alias="WSM", ID="Microsoft.SystemCenter.WSManagement.Library"	
+  
+@@Author=Silect Software, Inc.@@  
+@@Workflow=Unix Package Discovery@@
+-->
+  <TypeDefinitions>
+    <EntityTypes>
+      <ClassTypes>
+        <ClassType ID="##CompanyID##.##AppName##.Unix.Class" Accessibility="Public" Abstract="false" Base="Unix!Microsoft.Unix.LocalApplication" Hosted="true" Singleton="false">
+          <Property ID="AppName" Type="string" Key="true" CaseSensitive="false" MaxLength="256" MinLength="0" />
+        </ClassType>
+      </ClassTypes>
+    </EntityTypes>
+    <ModuleTypes>
+      <DataSourceModuleType ID="##CompanyID##.##AppName##.Unix.Class.Discovery.DS" Accessibility="Public" Batching="false">
+        <Configuration>
+          <xsd:element minOccurs="1" name="TargetSystem" type="xsd:string" />
+          <xsd:element minOccurs="1" name="IntervalSeconds" type="xsd:integer" />
+          <xsd:element minOccurs="1" name="PackageName" type="xsd:string" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
+          <OverrideableParameter ID="PackageName" Selector="$Config/PackageName$" ParameterType="string" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <DataSource ID="DS" TypeID="##CompanyID##.##AppName##.Unix.Class.Discovery.Shell.DS">
+                <TargetSystem>$Config/TargetSystem$</TargetSystem>
+                <ShellCommand><![CDATA[rpm -q $Config/PackageName$]]></ShellCommand>
+                <TimeoutSeconds>120</TimeoutSeconds>
+                <IntervalSeconds>$Config/IntervalSeconds$</IntervalSeconds>
+              </DataSource>
+              <ConditionDetection ID="Mapper" TypeID="System!System.Discovery.FilteredClassSnapshotDataMapper">
+                <Expression>
+                  <RegExExpression>
+                    <ValueExpression>
+                      <XPathQuery Type="String">//*[local-name()="StdOut"]</XPathQuery>
+                    </ValueExpression>
+                    <Operator>MatchesRegularExpression</Operator>
+                    <Pattern>^##PackageName##*</Pattern>
+                  </RegExExpression>
+                </Expression>
+                <ClassId>$MPElement[Name='##CompanyID##.##AppName##.Unix.Class']$</ClassId>
+                <InstanceSettings>
+                  <Settings>
+                    <Setting>
+                      <Name>$MPElement[Name='##CompanyID##.##AppName##.Unix.Class']/AppName$</Name>
+                      <Value>##AppName##</Value>
+                    </Setting>
+                    <Setting>
+                      <Name>$MPElement[Name='System!System.Entity']/DisplayName$</Name>
+                      <Value>$Config/TargetSystem$</Value>
+                    </Setting>
+                    <Setting>
+                      <Name>$MPElement[Name='Unix!Microsoft.Unix.Computer']/PrincipalName$</Name>
+                      <Value>$Config/TargetSystem$</Value>
+                    </Setting>
+                  </Settings>
+                </InstanceSettings>
+              </ConditionDetection>
+            </MemberModules>
+            <Composition>
+              <Node ID="Mapper">
+                <Node ID="DS" />
+              </Node>
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.Discovery.Data</OutputType>
+      </DataSourceModuleType>
+      <DataSourceModuleType ID="##CompanyID##.##AppName##.Unix.Class.Discovery.Shell.DS" Accessibility="Public" Batching="false">
+        <Configuration>
+          <xsd:element minOccurs="1" name="TargetSystem" type="xsd:string" />
+          <xsd:element minOccurs="1" name="ShellCommand" type="xsd:string" />
+          <xsd:element minOccurs="1" name="TimeoutSeconds" type="xsd:integer" />
+          <xsd:element minOccurs="1" name="IntervalSeconds" type="xsd:integer" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="IntervalSeconds" Selector="$Config/IntervalSeconds$" ParameterType="int" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <DataSource ID="DS" TypeID="System!System.Discovery.Scheduler">
+                <Scheduler>
+                  <SimpleReccuringSchedule>
+                    <Interval>$Config/IntervalSeconds$</Interval>
+                  </SimpleReccuringSchedule>
+                  <ExcludeDates />
+                </Scheduler>
+              </DataSource>
+              <ProbeAction ID="Probe" TypeID="##CompanyID##.##AppName##.Unix.ShellCommand.PA">
+                <TargetSystem>$Config/TargetSystem$</TargetSystem>
+                <ShellCommand>$Config/ShellCommand$</ShellCommand>
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              </ProbeAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="Probe">
+                <Node ID="DS" />
+              </Node>
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>WSM!Microsoft.SystemCenter.WSManagement.WSManData</OutputType>
+      </DataSourceModuleType>
+      <ProbeActionModuleType ID="##CompanyID##.##AppName##.Unix.ShellCommand.PA" Accessibility="Public" Batching="false" PassThrough="false">
+        <Configuration>
+          <xsd:element minOccurs="1" name="TargetSystem" type="xsd:string" />
+          <xsd:element minOccurs="1" name="ShellCommand" type="xsd:string" />
+          <xsd:element minOccurs="1" name="TimeoutSeconds" type="xsd:integer" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="TargetSystem" Selector="$Config/TargetSystem$" ParameterType="string" />
+          <OverrideableParameter ID="ShellCommand" Selector="$Config/ShellCommand$" ParameterType="string" />
+          <OverrideableParameter ID="TimeoutSeconds" Selector="$Config/TimeoutSeconds$" ParameterType="int" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <ProbeAction ID="Probe" TypeID="Unix!Microsoft.Unix.WSMan.Invoke.ProbeAction">
+                <TargetSystem>$Config/TargetSystem$</TargetSystem>
+                <Uri>http://schemas.microsoft.com/wbem/wscim/1/cim-schema/2/SCX_OperatingSystem?__cimnamespace=root/scx</Uri>
+                <Selector />
+                <InvokeAction>ExecuteShellCommand</InvokeAction>
+                <Input><![CDATA[
+<p:ExecuteShellCommand_INPUT xmlns:p="http://schemas.microsoft.com/wbem/wscim/1/cim-schema/2/SCX_OperatingSystem">
+<p:command>$Config/ShellCommand$</p:command>
+<p:timeout>$Config/TimeoutSeconds$</p:timeout>
+</p:ExecuteShellCommand_INPUT>
+]]></Input>
+              </ProbeAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="Probe" />
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>WSM!Microsoft.SystemCenter.WSManagement.WSManData</OutputType>
+        <InputType>System!System.BaseData</InputType>
+      </ProbeActionModuleType>
+    </ModuleTypes>
+  </TypeDefinitions>
+  <Monitoring>
+    <Discoveries>
+      <Discovery ID="##CompanyID##.##AppName##.Unix.Class.Discovery" Enabled="true" Target="Unix!Microsoft.Unix.Computer" ConfirmDelivery="true" Remotable="true" Priority="Normal">
+        <Category>Discovery</Category>
+        <DiscoveryTypes>
+          <DiscoveryClass TypeID="##CompanyID##.##AppName##.Unix.Class" />
+        </DiscoveryTypes>
+        <DataSource ID="DS" TypeID="##CompanyID##.##AppName##.Unix.Class.Discovery.DS">
+          <TargetSystem>$Target/Property[Type="Unix!Microsoft.Unix.Computer"]/PrincipalName$</TargetSystem>
+          <IntervalSeconds>14400</IntervalSeconds>
+          <PackageName>##PackageName##</PackageName>
+        </DataSource>
+      </Discovery>
+    </Discoveries>
+  </Monitoring>
+  <LanguagePacks>
+    <LanguagePack ID="ENU">
+      <DisplayStrings>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Unix.Class">
+          <Name>##CompanyID## ##AppName## Unix Class</Name>
+          <Description>Unix class discovered by the existence of package ##AppName## running on the target system.</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Unix.Class" SubElementID="AppName">
+          <Name>Application Name</Name>
+          <Description>Name of the application (##AppName##) package running on the target system.</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Unix.Class.Discovery">
+          <Name>##CompanyID## ##AppName## Unix Discovery</Name>
+          <Description>Discovery for Unix class based on the existence of package ##AppName## running on the target system.</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Unix.Class.Discovery.DS">
+          <Name>Discovery data source for Unix class based on the existance of an installed package</Name>
+          <Description>Discovery data source for Unix class based on the existance of an installed package</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Unix.Class.Discovery.DS" SubElementID="IntervalSeconds">
+          <Name>Discovery data source interval, in seconds, for Unix class based on the existance of an installed package</Name>
+          <Description>Discovery data source interval, in seconds, for Unix class based on the existance of an installed package</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Unix.Class.Discovery.DS" SubElementID="PackageName">
+          <Name>Discovery data source package name for Unix class based on the existance of an installed package</Name>
+          <Description>Discovery data source package name for Unix class based on the existance of an installed package</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Unix.Class.Discovery.Shell.DS">
+          <Name>Discovery data source shell for Unix class based on the existance of an installed package</Name>
+          <Description>Discovery data source shell for Unix class based on the existance of an installed package</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Unix.Class.Discovery.Shell.DS" SubElementID="IntervalSeconds">
+          <Name>Discovery data source shell interval, in seconds, for Unix class based on the existance of an installed package</Name>
+          <Description>Discovery data source shell interval, in seconds, for Unix class based on the existance of an installed package</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Unix.ShellCommand.PA">
+          <Name>Shell command probe action for Unix class based on the existance of an installed package</Name>
+          <Description>Shell command probe action for Unix class based on the existance of an installed package</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Unix.ShellCommand.PA" SubElementID="ShellCommand">
+          <Name>Shell command probe action shell command for Unix class based on the existance of an installed package</Name>
+          <Description>Shell command probe action shell command for Unix class based on the existance of an installed package</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Unix.ShellCommand.PA" SubElementID="TargetSystem">
+          <Name>Shell command probe action target system for Unix class based on the existance of an installed package</Name>
+          <Description>Shell command probe action target system for Unix class based on the existance of an installed package</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##AppName##.Unix.ShellCommand.PA" SubElementID="TimeoutSeconds">
+          <Name>Shell command probe action timeout, in seconds, for Unix class based on the existance of an installed package</Name>
+          <Description>Shell command probe action timeout, in seconds, for Unix class based on the existance of an installed package</Description>
+        </DisplayString>
+      </DisplayStrings>
+      <KnowledgeArticles></KnowledgeArticles>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>

@@ -12,9 +12,9 @@ LastModified: 29-May-2017
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##,String,RegEx,ScomId
-  ##AppName##,String,RegEx,ScomId
-  ##OID##,String,RegEx,OID
+  ##CompanyID##
+  ##AppName##
+  ##OID##
 
 This fragment depends on references:
   RequiredReference: Alias="Health", ID="System.Health.Library"

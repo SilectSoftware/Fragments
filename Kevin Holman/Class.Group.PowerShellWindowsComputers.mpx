@@ -12,9 +12,9 @@ LastModified: 11-Nov-2018
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##,String,RegEx,ScomId
-  ##AppName##,String,RegEx,ScomId
-  ##GroupNameNoSpaces##,String,RegEx,ScomId
+  ##CompanyID##
+  ##AppName##
+  ##GroupNameNoSpaces##
 
 
 This fragment depends on references:

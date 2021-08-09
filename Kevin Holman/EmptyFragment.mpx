@@ -10,31 +10,31 @@ LastModified: 4-Nov-2017
 
 In this fragment you need to replace:
 (ADD OR REMOVE THESE AS NEEDED)
-  ##CompanyID##,String,RegEx,ScomId
-  ##AppName##,String,RegEx,ScomId
-  ##ClassID##,Enumeration,Special,ClassId
-  ##RegKeyPath##,String,RegEx,XsdString
-  ##RegKeyPathSanitizeForUseInElementID##,String,RegEx,ScomId
-  ##RegValuePath##,String,RegEx,XsdString
-  ##RegValuePathSanitizeForUseInElementID##,String,RegEx,ScomId
-  ##RegValueExpression##,String,RegEx,XsdString
-  ##ServiceName##,String,RegEx,XsdString
-  ##ProcessName##,String,RegEx,XsdString
-  ##WMIQuery##,String,RegEx,XsdString
-  ##UniqueID##,String,RegEx,ScomId
-  ##ObjectName##,String,RegEx,XsdString
-  ##InstanceName##,String,RegEx,XsdString
-  ##CounterName##,String,RegEx,XsdString
-  ##CounterNameSanitizeForUseInElementID##,String,RegEx,ScomId
-  ##DeviceTypeName##,String,RegEx,ScomId
-  ##OID##,String,RegEx,OID
-  ##ThresholdIntegerAboveBad##,Integer
-  ##ThresholdIntegerBelowGood##,Integer
-  ##LogFileDirectory##,String,RegEx,XsdString
-  ##LogFilePattern##,String,RegEx,XsdString
-  ##StringToMatch##,String,RegEx,XsdString
-  ##AppFilePath##,String,RegEx,XsdString
-  ##ShellCommand##,String,RegEx,XsdString
+  ##CompanyID##
+  ##AppName##
+  ##ClassID##
+  ##RegKeyPath##
+  ##RegKeyPathSanitizeForUseInElementID##
+  ##RegValuePath##
+  ##RegValuePathSanitizeForUseInElementID##
+  ##RegValueExpression##
+  ##ServiceName##
+  ##ProcessName##
+  ##WMIQuery##
+  ##UniqueID##
+  ##ObjectName##
+  ##InstanceName##
+  ##CounterName##
+  ##CounterNameSanitizeForUseInElementID##
+  ##DeviceTypeName##
+  ##OID##
+  ##ThresholdIntegerAboveBad##
+  ##ThresholdIntegerBelowGood##
+  ##LogFileDirectory##
+  ##LogFilePattern##
+  ##StringToMatch##
+  ##AppFilePath##
+  ##ShellCommand##
   
 
 This fragment depends on references:

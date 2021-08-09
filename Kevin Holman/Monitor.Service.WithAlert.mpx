@@ -14,11 +14,11 @@ LastModified: 05-Sep-2019
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##,String,RegEx,ScomId
-  ##AppName##,String,RegEx,ScomId
-  ##ClassID##,Enumeration,Special,ClassId
-  ##ServiceName##,String,RegEx,XsdString
-  ##UniqueID##,String,RegEx,ScomId
+  ##CompanyID##
+  ##AppName##
+  ##ClassID##
+  ##ServiceName##
+  ##UniqueID##  
 
 This fragment depends on references:
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"

@@ -19,11 +19,11 @@ LastModified: 20-Nov-2018
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##,String,RegEx,ScomId
-  ##AppName##,String,RegEx,ScomId
-  ##RegKeyPath##,String,RegEx,XsdString
-  ##ServiceName##,String,RegEx,XsdString
-  ##UniqueID##,String,RegEx,ScomId
+  ##CompanyID##
+  ##AppName##
+  ##RegKeyPath##
+  ##ServiceName##
+  ##UniqueID##  
 
 This fragment depends on references:
   RequiredReference: Alias="System", ID="System.Library"

@@ -16,13 +16,13 @@ LastModified: 11-Dec-2017
 %%
 
 In this fragment you need to replace:
-  ##CompanyID##,String,RegEx,ScomId
-  ##AppName##,String,RegEx,ScomId
-  ##UniqueID##,String,RegEx,ScomId
-  ##ClassID##,Enumeration,Special,ClassId
-  ##LogFileDirectory##,String,RegEx,XsdString
-  ##LogFilePattern##,String,RegEx,XsdString
-  ##StringToMatch##,String,RegEx,XsdString
+  ##CompanyID##
+  ##AppName##
+  ##UniqueID##  
+  ##ClassID##
+  ##LogFileDirectory##
+  ##LogFilePattern##
+  ##StringToMatch##
 
 This fragment depends on references:
   RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library"  
