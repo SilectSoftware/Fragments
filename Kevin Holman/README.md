@@ -1,4 +1,4 @@
-# FragmentLibrary 4.8
+# FragmentLibrary Version 2021.08.22
 SCOM - Management Pack VSAE and Silect Fragment Library
 
 ## [Download Here][Download]
@@ -233,3 +233,10 @@ Version History:
 		* Recovery.Script.PowerShell.Simple.mpx
 		* Recovery.Script.PowerShell.Advanced.mpx
 		* Monitor.PortCheck
+* 2021.08.22
+	* New Fragments:
+		* Class.Group.ADGroupWindowsComputers.WithClusters.mpx
+		* Monitor.Process.Performance.ConsecSamples.TwoState.mpx
+		* Monitor.Performance.MultiInstance.ConsecSamples.TwoState.mpx
+	* Bug Fixes and Updates:
+		* Monitor.Process.mpx
