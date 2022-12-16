@@ -128,10 +128,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kevin Holman", "Kevin Holma
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Silect", "Silect", "{09D41F4F-1FF3-42E7-A7DE-918B448841AD}"
 	ProjectSection(SolutionItems) = preProject
+		Silect\Class.And.Discovery.Unix.InstalledPackageDPKG.mpx = Silect\Class.And.Discovery.Unix.InstalledPackageDPKG.mpx
+		Silect\Class.And.Discovery.Unix.InstalledPackageRPM.mpx = Silect\Class.And.Discovery.Unix.InstalledPackageRPM.mpx
 		Silect\Class.And.Discovery.Unix.ProcessExists.mpx = Silect\Class.And.Discovery.Unix.ProcessExists.mpx
+		Silect\Monitor.Unix.Daemon.mpx = Silect\Monitor.Unix.Daemon.mpx
+		Silect\Monitor.Unix.Script.mpx = Silect\Monitor.Unix.Script.mpx
 		Silect\MonitorProcessWithDiscoveryAndStateAndAlertView.mpx = Silect\MonitorProcessWithDiscoveryAndStateAndAlertView.mpx
 		Silect\MonitorSNMP.Poll.OIDValue.PowerShell.mpx = Silect\MonitorSNMP.Poll.OIDValue.PowerShell.mpx
 		Silect\ReadMe.txt = Silect\ReadMe.txt
+		Silect\Rule.Unix.Event.Script.mpx = Silect\Rule.Unix.Event.Script.mpx
+		Silect\Rule.Unix.Event.ShellCommand.mpx = Silect\Rule.Unix.Event.ShellCommand.mpx
+		Silect\Silect.Performance.ConsecutiveSamplesDoubleThreshold.mpx = Silect\Silect.Performance.ConsecutiveSamplesDoubleThreshold.mpx
 		Silect\View.Event.mpx = Silect\View.Event.mpx
 	EndProjectSection
 EndProject
@@ -148,13 +155,22 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kevin Justin", "Kevin Justin", "{26F30BC6-ACA7-4D33-BE47-FFD138419BD9}"
 	ProjectSection(SolutionItems) = preProject
 		Kevin Justin\Class.Group.WindowsComputers.Group.Report.View.Folder.mpx = Kevin Justin\Class.Group.WindowsComputers.Group.Report.View.Folder.mpx
+		Kevin Justin\Combo.DataSource.Monitor.Unix.ShellCommand.Base64Encoded.mpx = Kevin Justin\Combo.DataSource.Monitor.Unix.ShellCommand.Base64Encoded.mpx
+		Kevin Justin\Combo.DataSource.Monitor.Unix.ShellCommand.NOT.Base64Encoded.mpx = Kevin Justin\Combo.DataSource.Monitor.Unix.ShellCommand.NOT.Base64Encoded.mpx
+		Kevin Justin\Combo.DataSource.Monitor.Unix.ShellCommand.wCDATA.NOT.Base64Encoded.mpx = Kevin Justin\Combo.DataSource.Monitor.Unix.ShellCommand.wCDATA.NOT.Base64Encoded.mpx
+		Kevin Justin\Combo.DataSource.Monitor.Unix.ShellCommand.withoutCDATA.NOT.Base64Encoded.mpx = Kevin Justin\Combo.DataSource.Monitor.Unix.ShellCommand.withoutCDATA.NOT.Base64Encoded.mpx
+		Kevin Justin\Combo.DataSource.MonitorType.Unix.ShellCommand.Base64Encoded.mpx = Kevin Justin\Combo.DataSource.MonitorType.Unix.ShellCommand.Base64Encoded.mpx
+		Kevin Justin\Combo.DataSource.MonitorType.Unix.ShellCommand.NOT.Base64Encoded.mpx = Kevin Justin\Combo.DataSource.MonitorType.Unix.ShellCommand.NOT.Base64Encoded.mpx
+		Kevin Justin\Combo.DataSource.Unix.ShellCommand.Base64Encoded.mpx = Kevin Justin\Combo.DataSource.Unix.ShellCommand.Base64Encoded.mpx
+		Kevin Justin\Combo.DataSource.Unix.ShellCommand.NOT.Base64Encoded.mpx = Kevin Justin\Combo.DataSource.Unix.ShellCommand.NOT.Base64Encoded.mpx
 		Kevin Justin\Folder.Perf.Group.View.mpx = Kevin Justin\Folder.Perf.Group.View.mpx
 		Kevin Justin\Monitor.EventLog.Event.Three.Criteria.Reset.mpx = Kevin Justin\Monitor.EventLog.Event.Three.Criteria.Reset.mpx
 		Kevin Justin\Monitor.EventLog.Event.Two.Criteria.Reset.mpx = Kevin Justin\Monitor.EventLog.Event.Two.Criteria.Reset.mpx
 		Kevin Justin\Monitor.EventLog.Event.With.PowerShell.Recovery.mpx = Kevin Justin\Monitor.EventLog.Event.With.PowerShell.Recovery.mpx
 		Kevin Justin\Monitor.Exchange.Queue.PowerShell.Script.mpx = Kevin Justin\Monitor.Exchange.Queue.PowerShell.Script.mpx
 		Kevin Justin\Monitor.TimedScript.RunAs.PowerShell.mpx = Kevin Justin\Monitor.TimedScript.RunAs.PowerShell.mpx
-		Kevin Justin\Report.mpx = Kevin Justin\Report.mpx
+		Kevin Justin\Monitor.Unix.ShellCommand.Base64Encoded.mpx = Kevin Justin\Monitor.Unix.ShellCommand.Base64Encoded.mpx
+		Kevin Justin\Monitor.Unix.ShellCommand.NOT.Base64Encoded.mpx = Kevin Justin\Monitor.Unix.ShellCommand.NOT.Base64Encoded.mpx
 		Kevin Justin\Version.Info.txt = Kevin Justin\Version.Info.txt
 	EndProjectSection
 EndProject

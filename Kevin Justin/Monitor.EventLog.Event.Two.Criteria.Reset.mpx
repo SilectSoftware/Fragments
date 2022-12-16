@@ -1,5 +1,15 @@
 <ManagementPackFragment SchemaVersion="2.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-<!-- In this fragment you need to replace
+<!--
+%%
+Description:
+  This monitor was created to pull in events from specific devices and
+  only alert when the event is from the server that originated the event.
+  
+Version: 1.0
+LastModified: 29-May-2019
+%%
+
+In this fragment you need to replace
 
 ##COMPANY##,String,RegEx,ScomId
 ##PRODUCTNAME##,String,RegEx,XsdString
