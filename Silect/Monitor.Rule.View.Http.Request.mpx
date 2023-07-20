@@ -1,0 +1,791 @@
+<ManagementPackFragment SchemaVersion="2.0"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!--
+%%
+Description:
+  This fragment created a monitor for a web site, a rule to collect performance data, a view to show the performance data and a folder for the view.
+  ClassID - Targeted class such as your custom class or Windows!Microsoft.Windows.Server.OperatingSystem.
+  CompanyID - A short abbreviation for your company.
+  WebSiteName - A short name for the web site being monitored.
+  URI - Uniform Resource Identifier of the web site (example: http://www.google.com)
+  WarningThresholdMs - Warning threshold in milliseconds.
+  ErrorThresholdMs - Error threshold in milliseconds.
+
+Version: 1.5
+LastModified: 30-May-2023
+%%
+
+In this fragment you need to replace:
+##ClassID##,Enumeration,Special,ClassId
+##CompanyID##,String,RegEx,ScomId
+##WebSiteName##,String,RegEx,ScomId
+##URI##,String
+##WarningThresholdMs##,Integer,Range,0,1000000
+##ErrorThresholdMs##,Integer,Range,0,1000000
+
+This fragment depends on references:
+  RequiredReference: Alias="Windows", ID="Microsoft.Windows.Library", Version="7.5.8501.0"
+  RequiredReference: Alias="Health", ID="System.Health.Library", Version="7.0.8437.0"
+  RequiredReference: Alias="System", ID="System.Library", Version="7.5.8501.0"
+  RequiredReference: Alias="SC", ID="Microsoft.SystemCenter.Library", Version="7.0.8437.0"
+  RequiredReference: Alias="Performance", ID="System.Performance.Library", Version="7.0.8437.0"
+  
+@@Author=Mike Sargent@@
+@@Author=Silect Software, Inc.@@
+-->
+  <TypeDefinitions>
+    <ModuleTypes>
+      <DataSourceModuleType ID="Silect.Http.Request.DataSourceModuleType"
+          Accessibility="Internal"
+          Batching="false">
+        <Configuration>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              name="TimeoutSeconds"
+              type="xsd:integer" />
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              name="IntervalSeconds"
+              type="xsd:integer" />
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              name="URI"
+              type="xsd:string" />
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              name="Debug"
+              type="xsd:string" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="TimeoutSeconds"
+              Selector="$Config/TimeoutSeconds$"
+              ParameterType="int" />
+          <OverrideableParameter ID="IntervalSeconds"
+              Selector="$Config/IntervalSeconds$"
+              ParameterType="int" />
+          <OverrideableParameter ID="URI"
+              Selector="$Config/URI$"
+              ParameterType="string" />
+          <OverrideableParameter ID="Debug"
+              Selector="$Config/Debug$"
+              ParameterType="string" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <DataSource ID="Scheduler"
+                  TypeID="System!System.Scheduler">
+                <Scheduler>
+                  <SimpleReccuringSchedule>
+                    <Interval Unit="Seconds">$Config/IntervalSeconds$</Interval>
+                  </SimpleReccuringSchedule>
+                  <ExcludeDates />
+                </Scheduler>
+              </DataSource>
+              <ProbeAction ID="Probe"
+                  TypeID="Silect.Http.Request.ProbeActionModuleType">
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+                <URI>$Config/URI$</URI>
+                <Debug>$Config/Debug$</Debug>
+              </ProbeAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="Probe">
+                <Node ID="Scheduler" />
+              </Node>
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.PropertyBagData</OutputType>
+      </DataSourceModuleType>
+      <ProbeActionModuleType ID="Silect.Http.Request.ProbeActionModuleType"
+          Accessibility="Internal"
+          Batching="false"
+          PassThrough="false">
+        <Configuration>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              name="TimeoutSeconds"
+              type="xsd:integer" />
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              name="URI"
+              type="xsd:string" />
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              name="Debug"
+              type="xsd:string" />
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="TimeoutSeconds"
+              Selector="$Config/TimeoutSeconds$"
+              ParameterType="int" />
+          <OverrideableParameter ID="URI"
+              Selector="$Config/URI$"
+              ParameterType="string" />
+          <OverrideableParameter ID="Debug"
+              Selector="$Config/Debug$"
+              ParameterType="string" />
+        </OverrideableParameters>
+        <ModuleImplementation Isolation="Any">
+          <Composite>
+            <MemberModules>
+              <ProbeAction ID="Probe"
+                  TypeID="Windows!Microsoft.Windows.PowerShellPropertyBagTriggerOnlyProbe">
+                <ScriptName>##CompanyID##.##WebSiteName##.Monitor.DataSource.ps1</ScriptName>
+                <ScriptBody>#=================================================================================
+      #  This script will read data from a URI and resturn a property bag with status
+      #  codes, length, and times.
+      #
+      #  Author: Mike Sargent
+      #  v1.0
+      #=================================================================================
+      param([string]$URI,$Debug='false')
+      $Debug = [System.Convert]::ToBoolean($Debug)
+      
+      # Manual Testing section - put stuff here for manually testing script - typically parameters:
+      #=================================================================================
+      #$uri = 'www.microsoft.com/unkownhost'
+      #$uri = 'https://www.bing.com/search?q=how+many+feet+in+a+mile'
+      #$uri = 'http://www.google.com'
+      #$uri = 'http://www.giogle.com'
+      #$Debug = $true
+      #=================================================================================
+      
+      
+      #=================================================================================
+      # Constants section - modify stuff here:
+      # Assign script name variable for use in event logging
+      $ScriptName = "##CompanyID##.##WebSiteName##.Monitor.DataSource.ps1"
+      $EventID = "4430"
+      #=================================================================================
+      
+      
+      # Starting Script section - All scripts get this
+      #=================================================================================
+      # Gather the start time of the script
+      $StartTime = Get-Date
+      #Set variable to be used in logging events
+      $whoami = whoami
+      # Load MOMScript API
+      $momapi = New-Object -comObject MOM.ScriptAPI
+      #Log script event that we are starting task
+      $momapi.LogScriptEvent($ScriptName,$EventID,0,"`nScript is starting. `nRunning as ($whoami). `nURI: ($uri).")
+      #=================================================================================
+      
+      # PropertyBag Script section - Monitoring scripts get this
+      #=================================================================================
+      # Load SCOM PropertyBag function
+      $bag = $momapi.CreatePropertyBag()
+      #=================================================================================
+      
+      # Begin MAIN script section
+      #=================================================================================
+      # Clear any previous errors
+      $Error.Clear()
+      
+      $time = Measure-Command {
+          try
+          {
+              $Response = Invoke-WebRequest -Uri $uri -UseBasicParsing -ErrorAction SilentlyContinue
+              # This will only execute if the Invoke-WebRequest is successful.
+              $StatusCode = $Response.StatusCode
+              $StatusDescription = $Response.StatusDescription
+              $RawContentLength = $Response.RawContentLength
+          }
+          catch
+          {
+              $Exception = $_.Exception
+              if( $Exception.Response -ne $null)
+              {
+                  $StatusCode = $Exception.Response.StatusCode.value__
+                  $StatusDescription = $Exception.Response.StatusDescription
+              }
+              else
+              {
+                  $StatusCode = 404 # Not Found (best guess)
+                  $StatusDescription = $Exception.Message
+              }
+              $RawContentLength = -1
+          }
+      }
+      
+      If($Debug)
+      {
+          "URI:`t`t`t$uri"
+          "Status Code:`t$StatusCode"
+          "Description:`t$StatusDescription"
+          "Content Length:`t$RawContentLength"
+          "Milliseconds:`t$($time.TotalMilliseconds)"
+          "Seconds:`t`t$($time.TotalSeconds)"
+      }
+      
+      # Log the output of the Registry read
+      $Message = "`nHttp read completed. `nThe status returned is $StatusDescription."
+      $momapi.LogScriptEvent($ScriptName,$EventID,0,$Message)
+      If($Debug)
+      {
+        Write-Host -ForegroundColor White $Message
+      }
+      #=================================================================================
+      # End MAIN script section
+      
+      # PropertyBag Script section - Monitoring scripts get this
+      #=================================================================================
+      #Output the PropertyBag
+      $bag.AddValue('URI',$uri)
+      $bag.AddValue('StatusCode',$StatusCode)
+      $bag.AddValue('Description',$StatusDescription)
+      $bag.AddValue('Milliseconds',$time.TotalMilliseconds)  
+      $bag.AddValue('Seconds',$time.TotalSeconds)
+      
+      #=================================================================================
+      If($Debug)
+      {
+          # Return all bags (debugging -- only works with stand-alone PowerShell, not ISE)
+          $momapi.Return($bag)
+      }
+      Else
+      {
+          # Return all bags (nomal)
+          $bag
+      }
+      
+      # End of script section
+      #=================================================================================
+      #Log an event for script ending and total execution time.
+      $EndTime = Get-Date
+      $ScriptTime = ($EndTime - $StartTime).TotalSeconds
+      $momapi.LogScriptEvent($ScriptName,$EventID,0,"`nScript Completed. `nRuntime: ($ScriptTime) seconds.")
+      #=================================================================================
+      # End of script
+      </ScriptBody>
+                <Parameters>
+                  <Parameter>
+                    <Name>URI</Name>
+                    <Value>$Config/URI$</Value>
+                  </Parameter>
+                  <Parameter>
+                    <Name>Debug</Name>
+                    <Value>$Config/Debug$</Value>
+                  </Parameter>
+                </Parameters>
+                <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+                <StrictErrorHandling>false</StrictErrorHandling>
+              </ProbeAction>
+            </MemberModules>
+            <Composition>
+              <Node ID="Probe" />
+            </Composition>
+          </Composite>
+        </ModuleImplementation>
+        <OutputType>System!System.PropertyBagData</OutputType>
+        <TriggerOnly>true</TriggerOnly>
+      </ProbeActionModuleType>
+    </ModuleTypes>
+    <MonitorTypes>
+      <UnitMonitorType ID="Silect.Http.Request.UnitMonitorType"
+          Accessibility="Internal">
+        <MonitorTypeStates>
+          <MonitorTypeState ID="UnderWarning"
+              NoDetection="false" />
+          <MonitorTypeState ID="OverWarning"
+              NoDetection="false" />
+          <MonitorTypeState ID="OverError"
+              NoDetection="false" />
+        </MonitorTypeStates>
+        <Configuration>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              name="TimeoutSeconds"
+              type="xsd:integer">
+          </xsd:element>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              name="IntervalSeconds"
+              type="xsd:integer">
+          </xsd:element>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              name="URI"
+              type="xsd:string">
+          </xsd:element>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              name="Debug"
+              type="xsd:string">
+          </xsd:element>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              name="WarningThresholdMs"
+              type="xsd:integer">
+          </xsd:element>
+          <xsd:element xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+              name="ErrorThresholdMs"
+              type="xsd:integer">
+          </xsd:element>
+        </Configuration>
+        <OverrideableParameters>
+          <OverrideableParameter ID="TimeoutSeconds"
+              Selector="$Config/TimeoutSeconds$"
+              ParameterType="int" />
+          <OverrideableParameter ID="IntervalSeconds"
+              Selector="$Config/IntervalSeconds$"
+              ParameterType="int" />
+          <OverrideableParameter ID="URI"
+              Selector="$Config/URI$"
+              ParameterType="string" />
+          <OverrideableParameter ID="Debug"
+              Selector="$Config/Debug$"
+              ParameterType="string" />
+          <OverrideableParameter ID="WarningThresholdMs"
+              Selector="$Config/WarningThresholdMs$"
+              ParameterType="int" />
+          <OverrideableParameter ID="ErrorThresholdMs"
+              Selector="$Config/ErrorThresholdMs$"
+              ParameterType="int" />
+        </OverrideableParameters>
+        <MonitorImplementation>
+          <MemberModules>
+            <DataSource ID="DataSource"
+                TypeID="Silect.Http.Request.DataSourceModuleType">
+              <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              <IntervalSeconds>$Config/IntervalSeconds$</IntervalSeconds>
+              <URI>$Config/URI$</URI>
+              <Debug>$Config/Debug$</Debug>
+            </DataSource>
+            <ProbeAction ID="Probe"
+                TypeID="Silect.Http.Request.ProbeActionModuleType">
+              <TimeoutSeconds>$Config/TimeoutSeconds$</TimeoutSeconds>
+              <URI>$Config/URI$</URI>
+              <Debug>$Config/Debug$</Debug>
+            </ProbeAction>
+            <ConditionDetection ID="UnderWarningFilter"
+                TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <And>
+                  <Expression>
+                    <SimpleExpression>
+                      <ValueExpression>
+                        <XPathQuery Type="String">Property[@Name='StatusCode']</XPathQuery>
+                      </ValueExpression>
+                      <Operator>Equal</Operator>
+                      <ValueExpression>
+                        <Value Type="String">200</Value>
+                      </ValueExpression>
+                    </SimpleExpression>
+                  </Expression>
+                  <Expression>
+                    <SimpleExpression>
+                      <ValueExpression>
+                        <XPathQuery Type="Double">Property[@Name='Milliseconds']</XPathQuery>
+                      </ValueExpression>
+                      <Operator>LessEqual</Operator>
+                      <ValueExpression>
+                        <Value Type="Double">$Config/WarningThresholdMs$</Value>
+                      </ValueExpression>
+                    </SimpleExpression>
+                  </Expression>
+                </And>
+              </Expression>
+            </ConditionDetection>
+            <ConditionDetection ID="OverWarningFilter"
+                TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <And>
+                  <Expression>
+                    <SimpleExpression>
+                      <ValueExpression>
+                        <XPathQuery Type="String">Property[@Name='StatusCode']</XPathQuery>
+                      </ValueExpression>
+                      <Operator>Equal</Operator>
+                      <ValueExpression>
+                        <Value Type="String">200</Value>
+                      </ValueExpression>
+                    </SimpleExpression>
+                  </Expression>
+                  <Expression>
+                    <SimpleExpression>
+                      <ValueExpression>
+                        <XPathQuery Type="Double">Property[@Name='Milliseconds']</XPathQuery>
+                      </ValueExpression>
+                      <Operator>Greater</Operator>
+                      <ValueExpression>
+                        <Value Type="Double">$Config/WarningThresholdMs$</Value>
+                      </ValueExpression>
+                    </SimpleExpression>
+                  </Expression>
+                  <Expression>
+                    <SimpleExpression>
+                      <ValueExpression>
+                        <XPathQuery Type="Double">Property[@Name='Milliseconds']</XPathQuery>
+                      </ValueExpression>
+                      <Operator>LessEqual</Operator>
+                      <ValueExpression>
+                        <Value Type="Double">$Config/ErrorThresholdMs$</Value>
+                      </ValueExpression>
+                    </SimpleExpression>
+                  </Expression>
+                </And>
+              </Expression>
+            </ConditionDetection>
+            <ConditionDetection ID="OverErrorFilter"
+                TypeID="System!System.ExpressionFilter">
+              <Expression>
+                <Or>
+                  <Expression>
+                    <SimpleExpression>
+                      <ValueExpression>
+                        <XPathQuery Type="String">Property[@Name='StatusCode']</XPathQuery>
+                      </ValueExpression>
+                      <Operator>NotEqual</Operator>
+                      <ValueExpression>
+                        <Value Type="String">200</Value>
+                      </ValueExpression>
+                    </SimpleExpression>
+                  </Expression>
+                  <Expression>
+                    <SimpleExpression>
+                      <ValueExpression>
+                        <XPathQuery Type="Double">Property[@Name='Milliseconds']</XPathQuery>
+                      </ValueExpression>
+                      <Operator>Greater</Operator>
+                      <ValueExpression>
+                        <Value Type="Double">$Config/ErrorThresholdMs$</Value>
+                      </ValueExpression>
+                    </SimpleExpression>
+                  </Expression>
+                </Or>
+              </Expression>
+            </ConditionDetection>
+          </MemberModules>
+          <RegularDetections>
+            <RegularDetection MonitorTypeStateID="UnderWarning">
+              <Node ID="UnderWarningFilter">
+                <Node ID="DataSource" />
+              </Node>
+            </RegularDetection>
+            <RegularDetection MonitorTypeStateID="OverWarning">
+              <Node ID="OverWarningFilter">
+                <Node ID="DataSource" />
+              </Node>
+            </RegularDetection>
+            <RegularDetection MonitorTypeStateID="OverError">
+              <Node ID="OverErrorFilter">
+                <Node ID="DataSource" />
+              </Node>
+            </RegularDetection>
+          </RegularDetections>
+          <OnDemandDetections>
+            <OnDemandDetection MonitorTypeStateID="UnderWarning">
+              <Node ID="UnderWarningFilter">
+                <Node ID="Probe" />
+              </Node>
+            </OnDemandDetection>
+            <OnDemandDetection MonitorTypeStateID="OverWarning">
+              <Node ID="OverWarningFilter">
+                <Node ID="Probe" />
+              </Node>
+            </OnDemandDetection>
+            <OnDemandDetection MonitorTypeStateID="OverError">
+              <Node ID="OverErrorFilter">
+                <Node ID="Probe" />
+              </Node>
+            </OnDemandDetection>
+          </OnDemandDetections>
+        </MonitorImplementation>
+      </UnitMonitorType>
+    </MonitorTypes>
+  </TypeDefinitions>
+  <Monitoring>
+    <Rules>
+      <Rule ID="##CompanyID##.##WebSiteName##.Performance.Rule"
+          Enabled="true"
+          Target="##ClassID##"
+          ConfirmDelivery="false"
+          Remotable="true"
+          Priority="Normal"
+          DiscardLevel="100">
+        <Category>PerformanceCollection</Category>
+        <DataSources>
+          <DataSource ID="DataSource"
+              TypeID="Silect.Http.Request.DataSourceModuleType">
+            <TimeoutSeconds>300</TimeoutSeconds>
+            <IntervalSeconds>900</IntervalSeconds>
+            <URI>##URI##</URI>
+            <Debug>false</Debug>
+          </DataSource>
+        </DataSources>
+        <ConditionDetection ID="System.Performance.DataGenericMapper"
+            TypeID="Performance!System.Performance.DataGenericMapper">
+          <ObjectName>##CompanyID##</ObjectName>
+          <CounterName>##CompanyID##.##WebSiteName##.Monitor</CounterName>
+          <InstanceName>$Data/Property[@Name='URI']$</InstanceName>
+          <Value>$Data/Property[@Name='Milliseconds']$</Value>
+        </ConditionDetection>
+        <WriteActions>
+          <WriteAction ID="Microsoft.SystemCenter.CollectPerformanceData"
+              TypeID="SC!Microsoft.SystemCenter.CollectPerformanceData" />
+        </WriteActions>
+      </Rule>
+    </Rules>
+    <Monitors>
+      <UnitMonitor ID="##CompanyID##.##WebSiteName##.Monitor"
+          Accessibility="Public"
+          Enabled="true"
+          Target="##ClassID##"
+          ParentMonitorID="Health!System.Health.PerformanceState"
+          Remotable="true"
+          Priority="Normal"
+          TypeID="Silect.Http.Request.UnitMonitorType"
+          ConfirmDelivery="false">
+        <Category>PerformanceHealth</Category>
+        <AlertSettings AlertMessage="##CompanyID##.##WebSiteName##.Monitor.Alert.Message">
+          <AlertOnState>Error</AlertOnState>
+          <AutoResolve>true</AutoResolve>
+          <AlertPriority>Normal</AlertPriority>
+          <AlertSeverity>MatchMonitorHealth</AlertSeverity>
+          <AlertParameters>
+            <AlertParameter1>$Data/Context/Property[@Name='URI']$</AlertParameter1>
+            <AlertParameter2>$Data/Context/Property[@Name='StatusCode']$</AlertParameter2>
+            <AlertParameter3>$Data/Context/Property[@Name='Milliseconds']$</AlertParameter3>
+          </AlertParameters>
+        </AlertSettings>
+        <OperationalStates>
+          <OperationalState ID="UnderWarning"
+              MonitorTypeStateID="UnderWarning"
+              HealthState="Success" />
+          <OperationalState ID="OverWarning"
+              MonitorTypeStateID="OverWarning"
+              HealthState="Warning" />
+          <OperationalState ID="OverError"
+              MonitorTypeStateID="OverError"
+              HealthState="Error" />
+        </OperationalStates>
+        <Configuration>
+          <TimeoutSeconds>300</TimeoutSeconds>
+          <IntervalSeconds>300</IntervalSeconds>
+          <URI>##URI##</URI>
+          <Debug>false</Debug>
+          <WarningThresholdMs>##WarningThresholdMs##</WarningThresholdMs>
+          <ErrorThresholdMs>##ErrorThresholdMs##</ErrorThresholdMs>
+        </Configuration>
+      </UnitMonitor>
+    </Monitors>
+  </Monitoring>
+  <Presentation>
+    <Views>
+      <View ID="##CompanyID##.##WebSiteName##.Performance.Rule.PerformanceView"
+          Accessibility="Public"
+          Enabled="true"
+          Target="##ClassID##"
+          TypeID="SC!Microsoft.SystemCenter.PerformanceViewType"
+          Visible="true">
+        <Category>PerformanceCollection</Category>
+        <Criteria>
+          <RuleList>
+            <Rule>$MPElement[Name="##CompanyID##.##WebSiteName##.Performance.Rule"]$</Rule>
+          </RuleList>
+        </Criteria>
+        <Presentation>
+          <SortedColumnIndex>0</SortedColumnIndex>
+          <SortOrder>0</SortOrder>
+          <StartTime>2023-05-17T16:30:59.9797540-04:00</StartTime>
+          <EndTime>2023-05-18T16:30:59.9797540-04:00</EndTime>
+          <DynamicTimeTicks>864000000000</DynamicTimeTicks>
+          <IsDynamic>true</IsDynamic>
+          <Is3DMode>false</Is3DMode>
+          <ShowAlerts>false</ShowAlerts>
+          <ShowMaintenanceMode>false</ShowMaintenanceMode>
+          <BaselineMode>false</BaselineMode>
+          <ShowPointLabels>false</ShowPointLabels>
+          <EnableSmartLabels>true</EnableSmartLabels>
+          <RightAngleAxes>false</RightAngleAxes>
+          <ClusterSeries>false</ClusterSeries>
+          <Title />
+          <TitleFont>Microsoft Sans Serif,12.00,Regular</TitleFont>
+          <ChartFont>Microsoft Sans Serif,8.25,Regular</ChartFont>
+          <ShowBands>false</ShowBands>
+          <BandColor>-1579033</BandColor>
+          <ChartType>Line</ChartType>
+          <Depth>100</Depth>
+          <GapDepth>100</GapDepth>
+          <Perspective>10</Perspective>
+          <GraphXRotation>0</GraphXRotation>
+          <GraphYRotation>0</GraphYRotation>
+          <XLabelAngle>0</XLabelAngle>
+          <LabelColor>-16777216</LabelColor>
+          <LabelFont>Microsoft Sans Serif,8.25,Regular</LabelFont>
+          <XAxisVisible>True</XAxisVisible>
+          <XShowMajorGridlines>false</XShowMajorGridlines>
+          <XShowMinorGridlines>false</XShowMinorGridlines>
+          <ShowInterlaceStrips>false</ShowInterlaceStrips>
+          <XInterlaceColor>16777215</XInterlaceColor>
+          <XShowSideMargin>true</XShowSideMargin>
+          <XAxisFont>Microsoft Sans Serif,8.25,Regular</XAxisFont>
+          <AutoAxis>true</AutoAxis>
+          <AxisMax>100</AxisMax>
+          <AxisMin>0</AxisMin>
+          <YAxisVisible>True</YAxisVisible>
+          <YShowMajorGridlines>true</YShowMajorGridlines>
+          <YShowMinorGridlines>false</YShowMinorGridlines>
+          <YShowInterlaceStrips>false</YShowInterlaceStrips>
+          <YShowSideMargin>true</YShowSideMargin>
+          <YAxisFont>Microsoft Sans Serif,8.25,Regular</YAxisFont>
+          <BackgroundColor1>-1</BackgroundColor1>
+          <BackgroundColor2>-1</BackgroundColor2>
+          <GradientType>None</GradientType>
+          <Series />
+        </Presentation>
+      </View>
+    </Views>
+    <Folders>
+      <Folder ID="##CompanyID##.Http.Request.Root.Folder"
+          Accessibility="Public"
+          ParentFolder="SC!Microsoft.SystemCenter.Monitoring.ViewFolder.Root" />
+    </Folders>
+    <FolderItems>
+      <FolderItem ElementID="##CompanyID##.##WebSiteName##.Performance.Rule.PerformanceView"
+          ID="##CompanyID##.##WebSiteName##.Performance.Rule.PerformanceView.FolderItem"
+          Folder="##CompanyID##.Http.Request.Root.Folder" />
+    </FolderItems>
+    <StringResources>
+      <StringResource ID="##CompanyID##.##WebSiteName##.Monitor.Alert.Message" />
+    </StringResources>
+  </Presentation>
+  <LanguagePacks>
+    <LanguagePack ID="ENU">
+      <DisplayStrings>
+        <DisplayString ElementID="##CompanyID##.##WebSiteName##.Monitor">
+          <Name>##CompanyID## ##WebSiteName## Monitor</Name>
+          <Description>Monitor performance and availability of ##WebSiteName##.</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##WebSiteName##.Monitor.Alert.Message">
+          <Name>##CompanyID## ##WebSiteName## Monitor: Failure</Name>
+          <Description>Querying {0} either took too long or did not succeed.
+Status Code: {1} (should be 200)
+Milliseconds: {2}</Description>
+        </DisplayString>
+        <DisplayString ElementID="Silect.Http.Request.DataSourceModuleType">
+          <Name>Silect HTTP Request Monitor Data Source Module Type</Name>
+          <Description>Data Source Module Type for Unit Monitor</Description>
+        </DisplayString>
+        <DisplayString ElementID="Silect.Http.Request.DataSourceModuleType"
+            SubElementID="IntervalSeconds">
+          <Name>Interval Seconds</Name>
+        </DisplayString>
+        <DisplayString ElementID="Silect.Http.Request.DataSourceModuleType"
+            SubElementID="TimeoutSeconds">
+          <Name>Timeout Seconds</Name>
+        </DisplayString>
+        <DisplayString ElementID="Silect.Http.Request.DataSourceModuleType"
+            SubElementID="URI">
+          <Name>URI</Name>
+        </DisplayString>
+        <DisplayString ElementID="Silect.Http.Request.DataSourceModuleType"
+            SubElementID="Debug">
+          <Name>Debug</Name>
+        </DisplayString>
+        <DisplayString ElementID="Silect.Http.Request.ProbeActionModuleType">
+          <Name>Silect HTTP Request Monitor Probe Action Module Type</Name>
+          <Description>Probe Action Module Type for Unit Monitor</Description>
+        </DisplayString>
+        <DisplayString ElementID="Silect.Http.Request.ProbeActionModuleType"
+            SubElementID="TimeoutSeconds">
+          <Name>Timeout Seconds</Name>
+        </DisplayString>
+        <DisplayString ElementID="Silect.Http.Request.ProbeActionModuleType"
+            SubElementID="URI">
+          <Name>URI</Name>
+        </DisplayString>
+        <DisplayString ElementID="Silect.Http.Request.ProbeActionModuleType"
+            SubElementID="Debug">
+          <Name>Debug</Name>
+        </DisplayString>
+        <DisplayString ElementID="Silect.Http.Request.UnitMonitorType">
+          <Name>Silect HTTP Request Monitor Unit Monitor Type</Name>
+          <Description>Unit Monitor Type for Unit Monitor</Description>
+        </DisplayString>
+        <DisplayString ElementID="Silect.Http.Request.UnitMonitorType"
+            SubElementID="ErrorThresholdMs">
+          <Name>Error Threshold (mS)</Name>
+          <Description>Error threshold in milliseconds.</Description>
+        </DisplayString>
+        <DisplayString ElementID="Silect.Http.Request.UnitMonitorType"
+            SubElementID="IntervalSeconds">
+          <Name>Interval Seconds</Name>
+        </DisplayString>
+        <DisplayString ElementID="Silect.Http.Request.UnitMonitorType"
+            SubElementID="TimeoutSeconds">
+          <Name>Timeout Seconds</Name>
+        </DisplayString>
+        <DisplayString ElementID="Silect.Http.Request.UnitMonitorType"
+            SubElementID="URI">
+          <Name>URI</Name>
+        </DisplayString>
+        <DisplayString ElementID="Silect.Http.Request.UnitMonitorType"
+            SubElementID="Debug">
+          <Name>Debug</Name>
+        </DisplayString>
+        <DisplayString ElementID="Silect.Http.Request.UnitMonitorType"
+            SubElementID="WarningThresholdMs">
+          <Name>Warning Theshold (mS)</Name>
+          <Description>Warning threshold in milliseconds.</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##WebSiteName##.Monitor"
+            SubElementID="OverError">
+          <Name>OverError</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##WebSiteName##.Monitor"
+            SubElementID="OverWarning">
+          <Name>OverWarning</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##WebSiteName##.Monitor"
+            SubElementID="UnderWarning">
+          <Name>UnderWarning</Name>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##WebSiteName##.Performance.Rule">
+          <Name>##CompanyID## ##WebSiteName## Performance Rule</Name>
+          <Description>Collect performance data for ##WebSiteName##.</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.Http.Request.Root.Folder">
+          <Name>##CompanyID## Web Site Monitoring</Name>
+          <Description>Web site performance view folder for ##CompanyID##.</Description>
+        </DisplayString>
+        <DisplayString ElementID="##CompanyID##.##WebSiteName##.Performance.Rule.PerformanceView">
+          <Name>##CompanyID## ##WebSiteName## Performance Rule View</Name>
+          <Description>Web site performance view for ##WebSiteName##.</Description>
+        </DisplayString>
+      </DisplayStrings>
+      <KnowledgeArticles>
+        <KnowledgeArticle ElementID="##CompanyID##.##WebSiteName##.Monitor"
+            Visible="true">
+          <MamlContent>
+            <maml:section xmlns:maml="http://schemas.microsoft.com/maml/2004/10">
+              <maml:title>Summary</maml:title>
+              <maml:para>This monitor reads HTTP from a specified URI and returns status, length, and timing information.</maml:para>
+            </maml:section>
+            <maml:section xmlns:maml="http://schemas.microsoft.com/maml/2004/10">
+              <maml:title>Configuration</maml:title>
+              <maml:para>$uri - The URI to query. Must not require authentication.</maml:para>
+              <maml:para>$Debug - Set to True for testing.</maml:para>
+            </maml:section>
+            <maml:section xmlns:maml="http://schemas.microsoft.com/maml/2004/10">
+              <maml:title>Causes</maml:title>
+              <maml:para>The monitor is healthy if the HTTP request succeeds in less than 2 seconds.</maml:para>
+              <maml:para>The monitor will be in warning state if the HTTP request succeeds but takes more than 2 seconds.</maml:para>
+              <maml:para>The monitor will be in critical state if the HTTP request fails, or if it takes more than 10 seconds.</maml:para>
+            </maml:section>
+            <maml:section xmlns:maml="http://schemas.microsoft.com/maml/2004/10">
+              <maml:title>Resolutions</maml:title>
+              <maml:para>Ensure the URI can be read without requiring authentication.</maml:para>
+              <maml:para>Attempt to read from the URI using a browser and ensure the URI is correct and that any firewalls or proxies are set correctly.</maml:para>
+            </maml:section>
+          </MamlContent>
+        </KnowledgeArticle>
+        <KnowledgeArticle ElementID="##CompanyID##.##WebSiteName##.Performance.Rule"
+            Visible="true">
+          <MamlContent>
+            <maml:section xmlns:maml="http://schemas.microsoft.com/maml/2004/10">
+              <maml:title>Summary</maml:title>
+              <maml:para>This rule reads HTTP from a specified URI and collects timing information.</maml:para>
+            </maml:section>
+            <maml:section xmlns:maml="http://schemas.microsoft.com/maml/2004/10">
+              <maml:title>Configuration</maml:title>
+              <maml:para>$uri - The URI to query. Must not require authentication.</maml:para>
+              <maml:para>$Debug - Set to True for testing.</maml:para>
+            </maml:section>
+          </MamlContent>
+        </KnowledgeArticle>
+      </KnowledgeArticles>
+    </LanguagePack>
+  </LanguagePacks>
+</ManagementPackFragment>
